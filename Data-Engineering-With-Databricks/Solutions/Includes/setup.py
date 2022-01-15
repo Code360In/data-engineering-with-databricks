@@ -33,6 +33,7 @@ class BuildEnvironmentVariables:
     def __repr__(self):
         return self.__dict__.__repr__().replace(", ", ",\n")
 
+
 # COMMAND ----------
 
 username = spark.sql("SELECT current_user()").first()[0]
@@ -52,6 +53,7 @@ print(f"userhome: {userhome}")
 # print(f"dbacademy_env.username:      {dbacademy_env.username}")
 # print(f"dbacademy_env.database_name: {dbacademy_env.database_name}")
 # print(f"dbacademy_env.working_dir:   {dbacademy_env.working_dir}")
+
 
 # COMMAND ----------
 
@@ -92,4 +94,5 @@ if mode != "cleanup":
     
     # Once the database is created, init the hive variables
     dbacademy_env.set_hive_variables()
+    
 
