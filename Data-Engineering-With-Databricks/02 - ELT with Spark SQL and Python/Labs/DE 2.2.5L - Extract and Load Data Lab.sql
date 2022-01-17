@@ -56,7 +56,7 @@
 -- COMMAND ----------
 
 -- TODO
-<FILL-IN> {c.source}/events/events-kafka.json
+<FILL_IN> {c.source}/events/events-kafka.json
 
 -- COMMAND ----------
 
@@ -79,7 +79,7 @@
 -- COMMAND ----------
 
 -- TODO
-<FILL-IN>
+<FILL_IN>
 
 -- COMMAND ----------
 
@@ -100,7 +100,7 @@
 -- COMMAND ----------
 
 -- TODO
-<FILL-IN>
+<FILL_IN>
 
 -- COMMAND ----------
 
@@ -110,7 +110,7 @@
 -- COMMAND ----------
 
 -- TODO
-<FILL-IN>
+<FILL_IN>
 
 -- COMMAND ----------
 
@@ -132,16 +132,12 @@
 -- COMMAND ----------
 
 -- TODO
-<FILL-IN> {c.source}/products/products.parquet
+<FILL_IN> {c.source}/products/products.parquet
 
 -- COMMAND ----------
 
 -- MAGIC %md
 -- MAGIC Run the cell below to confirm the lookup table has been loaded correctly.
-
--- COMMAND ----------
-
-SELECT * FROM item_lookup
 
 -- COMMAND ----------
 

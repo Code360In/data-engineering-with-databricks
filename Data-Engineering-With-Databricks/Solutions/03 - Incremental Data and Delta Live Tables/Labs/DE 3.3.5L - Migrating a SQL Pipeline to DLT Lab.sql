@@ -23,17 +23,17 @@
 -- MAGIC %md
 -- MAGIC ## Declare Bronze Table
 -- MAGIC 
--- MAGIC Declare a bronze table that ingests JSON data incrementally (using Auto Loader) from the simulated cloud source. Here you will need to substitue the value obtained from the <a href="$./DE 3.3.4L - Intro & Config Lab" target="_blank">companion setup Notebook</a>.
+-- MAGIC Declare a bronze table that ingests JSON data incrementally (using Auto Loader) from the simulated cloud source. Here you will need to substitute the value obtained from the <a href="$./DE 3.3.4L - Intro & Config Lab" target="_blank">companion setup Notebook</a>.
 -- MAGIC 
 -- MAGIC As we did previously, include two additional columns:
 -- MAGIC * `receipt_time` that records a timestamp as returned by `current_timestamp()` 
--- MAGIC * `dataset` that notes the source. For now set this column to the literal value `"recordings"`
+-- MAGIC * `source_file` that is obtained by `input_file_name()`
 
 -- COMMAND ----------
 
 -- ANSWER
 CREATE INCREMENTAL LIVE TABLE recordings_bronze
-AS SELECT current_timestamp() receipt_time, "recordings" dataset, *
+AS SELECT current_timestamp() receipt_time, input_file_name() source_file, *
   FROM cloud_files("${source}", "json", map("cloudFiles.schemaHints", "time DOUBLE"))
 
 -- COMMAND ----------
@@ -41,7 +41,7 @@ AS SELECT current_timestamp() receipt_time, "recordings" dataset, *
 -- MAGIC %md
 -- MAGIC ### PII File
 -- MAGIC 
--- MAGIC Using a similar CTAS syntax, create a live **view** into the CSV data found at */mnt/training/healthcare/patient*.
+-- MAGIC Using a similar CTAS syntax, create a live **table** into the CSV data found at */mnt/training/healthcare/patient*.
 -- MAGIC 
 -- MAGIC To properly configure Auto Loader for this source, you will need to specify the following additional parameters:
 -- MAGIC 
@@ -55,7 +55,7 @@ AS SELECT current_timestamp() receipt_time, "recordings" dataset, *
 -- COMMAND ----------
 
 -- ANSWER
-CREATE INCREMENTAL LIVE VIEW pii
+CREATE INCREMENTAL LIVE TABLE pii
 AS SELECT *
   FROM cloud_files("/mnt/training/healthcare/patient", "csv", map("header", "true", "cloudFiles.inferColumnTypes", "true"))
 
@@ -64,8 +64,7 @@ AS SELECT *
 -- MAGIC %md
 -- MAGIC ## Declare Silver Tables
 -- MAGIC 
--- MAGIC The first of the silver tables, `recordings_parsed`, will subscribe to the `recordings` dataset in the multiplex `recordings_bronze` table and cast the fields as follows:
--- MAGIC 
+-- MAGIC Our silver tables, `recordings_parsed`, will subscribe to the `recordings` dataset and cast the fields as follows:
 -- MAGIC 
 -- MAGIC | Field | Type |
 -- MAGIC | --- | --- |
@@ -73,25 +72,8 @@ AS SELECT *
 -- MAGIC | `mrn` | `LONG` |
 -- MAGIC | `heartrate` | `DOUBLE` |
 -- MAGIC | `time` | `TIMESTAMP` (example provided below) |
-
--- COMMAND ----------
-
--- ANSWER
-
-CREATE INCREMENTAL LIVE TABLE recordings_parsed
-AS SELECT 
-  CAST(device_id AS INTEGER) device_id, 
-  CAST(mrn AS LONG) mrn, 
-  CAST(heartrate AS DOUBLE) heartrate, 
-  CAST(FROM_UNIXTIME(time, 'yyyy-MM-dd HH:mm:ss') AS TIMESTAMP) time 
-  FROM STREAM(live.recordings_bronze)
-
--- COMMAND ----------
-
--- MAGIC %md
--- MAGIC ### Enriching Data and Quality Control
 -- MAGIC 
--- MAGIC Create a second silver table, `recordings_enriched` that enriches the data from `recordings_parsed` with data from the `pii` view, using an inner join on the common `mrn` field.
+-- MAGIC This query should also enrich the data through an inner join with the `pii` table on the common `mrn` field.
 -- MAGIC 
 -- MAGIC Implement quality control by applying a contraint to drop records with an invalid `heartrate` (that is, not greater than zero). 
 
@@ -101,8 +83,13 @@ AS SELECT
 
 CREATE INCREMENTAL LIVE TABLE recordings_enriched
   (CONSTRAINT positive_heartrate EXPECT (heartrate > 0) ON VIOLATION DROP ROW)
-AS SELECT device_id, a.mrn, name, time, heartrate
-  FROM STREAM(live.recordings_parsed) a
+AS SELECT 
+  CAST(a.device_id AS INTEGER) device_id, 
+  CAST(a.mrn AS LONG) mrn, 
+  CAST(a.heartrate AS DOUBLE) heartrate, 
+  CAST(from_unixtime(a.time, 'yyyy-MM-dd HH:mm:ss') AS TIMESTAMP) time,
+  b.name
+  FROM STREAM(live.recordings_bronze) a
   INNER JOIN STREAM(live.pii) b
   ON a.mrn = b.mrn
 

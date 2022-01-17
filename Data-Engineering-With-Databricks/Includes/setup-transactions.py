@@ -6,7 +6,7 @@
 def create_transactions():
   spark.sql(f"""
     CREATE OR REPLACE TABLE transactions AS
-    SELECT * FROM (
+    SELECT * FROM ( 
       SELECT
         user_id,
         order_id,
@@ -38,8 +38,6 @@ def create_transactions():
     )
   """)
 
-
-# COMMAND ----------
-
 create_transactions()
+
 

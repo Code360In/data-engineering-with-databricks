@@ -55,23 +55,26 @@ dailyAvgCheckpoint           = userhome + "/checkpoints/dailyAvgPath"
 # COMMAND ----------
 
 class FileArrival:
-  def __init__(self):
-    self.source = dataSource + "/tracker/streaming/"
-    self.userdir = dataLandingLocation + "/"
-    self.curr_mo = 1
+    def __init__(self):
+        self.source = dataSource + "/tracker/streaming/"
+        self.userdir = dataLandingLocation + "/"
+        try:
+            self.curr_mo = 1 + int(max([x[1].split(".")[0] for x in dbutils.fs.ls(self.userdir)]))
+        except:
+            self.curr_mo = 1
     
-  def newData(self, continuous=False):
-    if self.curr_mo > 12:
-      print("Data source exhausted\n")
-    elif continuous == True:
-      while self.curr_mo <= 12:
-        curr_file = f"{self.curr_mo:02}.json"
-        dbutils.fs.cp(self.source + curr_file, self.userdir + curr_file)
-        self.curr_mo += 1
-    else:
-      curr_file = f"{str(self.curr_mo).zfill(2)}.json"
-      dbutils.fs.cp(self.source + curr_file, self.userdir + curr_file)
-      self.curr_mo += 1
-      
+    def newData(self, continuous=False):
+        if self.curr_mo > 12:
+            print("Data source exhausted\n")
+        elif continuous == True:
+            while self.curr_mo <= 12:
+                curr_file = f"{self.curr_mo:02}.json"
+                dbutils.fs.cp(self.source + curr_file, self.userdir + curr_file)
+                self.curr_mo += 1
+        else:
+            curr_file = f"{str(self.curr_mo).zfill(2)}.json"
+            dbutils.fs.cp(self.source + curr_file, self.userdir + curr_file)
+            self.curr_mo += 1
+
 File = FileArrival()
 

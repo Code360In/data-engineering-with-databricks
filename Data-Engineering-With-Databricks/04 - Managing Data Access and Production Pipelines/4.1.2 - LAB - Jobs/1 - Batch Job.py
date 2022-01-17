@@ -1,5 +1,5 @@
 # Databricks notebook source
-# MAGIC %run ../../Includes/multi-hop-setup
+# MAGIC %run ../../Includes/dlt-setup
 
 # COMMAND ----------
 
