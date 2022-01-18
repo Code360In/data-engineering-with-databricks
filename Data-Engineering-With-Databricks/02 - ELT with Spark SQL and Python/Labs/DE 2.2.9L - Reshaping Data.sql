@@ -27,7 +27,7 @@
 
 -- COMMAND ----------
 
--- MAGIC %run ../Includes/setup-transactions
+-- MAGIC %run ../../Includes/setup-transactions
 
 -- COMMAND ----------
 
@@ -89,24 +89,19 @@ CREATE OR REPLACE VIEW events_pivot
 
 -- MAGIC %python
 -- MAGIC def check_table_results(table_name, column_names, num_rows):
--- MAGIC   assert spark.table(table_name), f"Table named `{table_name}` does not exist"
--- MAGIC   assert spark.table(table_name).columns == column_names, "Please name the columns in the order provided above"
--- MAGIC   assert spark.table(table_name).count() == num_rows, f"The table should have {num_rows} records"
--- MAGIC   
--- MAGIC def check_first_row(table_name, expected_values):
--- MAGIC   assert [x for x in spark.table(table_name).first().asDict().values()] == expected_values
+-- MAGIC     assert spark.table(table_name), f"Table named `{table_name}` does not exist"
+-- MAGIC     assert spark.table(table_name).columns == column_names, "Please name the columns in the order provided above"
+-- MAGIC     assert spark.table(table_name).count() == num_rows, f"The table should have {num_rows} records"
 
 -- COMMAND ----------
 
--- MAGIC %md Run the cell below to confirm the table was created correctly.
+-- MAGIC %md Run the cell below to confirm the view was created correctly.
 
 -- COMMAND ----------
 
 -- MAGIC %python
 -- MAGIC event_columns = ['user', 'cart', 'pillows', 'login', 'main', 'careers', 'guest', 'faq', 'down', 'warranty', 'finalize', 'register', 'shipping_info', 'checkout', 'mattresses', 'add_item', 'press', 'email_coupon', 'cc_info', 'foam', 'reviews', 'original', 'delivery', 'premium']
--- MAGIC first_row = ['UA000000105209585', None, None, None, 1, 1, None, None, None, None, None, None, None, None, 1, None, None, 1, None, None, 1, 1, None, 1]
 -- MAGIC check_table_results("events_pivot", event_columns, 4085296)
--- MAGIC check_first_row("events_pivot", first_row)
 
 -- COMMAND ----------
 

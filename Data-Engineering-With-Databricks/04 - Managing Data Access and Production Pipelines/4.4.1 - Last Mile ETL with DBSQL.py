@@ -52,7 +52,7 @@
 
 # COMMAND ----------
 
-Gen = QueryGenerator(course"4_4", mode="reset")
+Gen = QueryGenerator(course="4_4", mode="reset")
 
 # COMMAND ----------
 
@@ -193,7 +193,7 @@ Gen.avg_ping()
 
 # COMMAND ----------
 
-Gen.user_timestamps()
+Gen.summary()
 
 # COMMAND ----------
 

@@ -8,13 +8,12 @@
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC # Working with Delta Lake
+-- MAGIC # Delta Lake Versioning, Optimization, and Vacuuming
 -- MAGIC 
--- MAGIC This notebook provides a hands-on review of some of the basic functionality of Delta Lake.
+-- MAGIC This notebook provides a hands-on review of some of the more esoteric features Delta Lake brings to the data lakehouse.
 -- MAGIC 
 -- MAGIC ## Learning Objectives
 -- MAGIC By the end of this lessons, student will be able to:
--- MAGIC - Execute standard operations to create and manipulate Delta Lake tables
 -- MAGIC - Review table history
 -- MAGIC - Query previous table versions and rollback a table to a specific version
 -- MAGIC - Perform file compaction and Z-order indexing
@@ -33,13 +32,11 @@
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC ## Create a Table
+-- MAGIC ## Recreate the History of your Bean Collection
 -- MAGIC 
--- MAGIC In this notebook, we'll be creating a table to track our bean collection.
+-- MAGIC This lab picks up where the last lab left off. The cell below condenses all the operations from the last lab into a single cell (other than the final `DROP TABLE` statement).
 -- MAGIC 
--- MAGIC Use the cell below to create a managed Delta Lake table named `beans`.
--- MAGIC 
--- MAGIC Provide the following schema:
+-- MAGIC For quick reference, the schema of the `beans` table created is:
 -- MAGIC 
 -- MAGIC | Field Name | Field type |
 -- MAGIC | --- | --- |
@@ -50,148 +47,29 @@
 
 -- COMMAND ----------
 
--- ANSWER
 CREATE TABLE beans 
-(name STRING, color STRING, grams FLOAT, delicious BOOLEAN); 
-
--- COMMAND ----------
-
--- MAGIC %md
--- MAGIC **NOTE**: We'll use Python to run checks occasionally throughout the lab. The following cell will return as error with a message on what needs to change if you have not followed instructions. No output from cell execution means that you have completed this step.
-
--- COMMAND ----------
-
--- MAGIC %python
--- MAGIC assert spark.table("beans"), "Table named `beans` does not exist"
--- MAGIC assert spark.table("beans").columns == ["name", "color", "grams", "delicious"], "Please name the columns in the order provided above"
--- MAGIC assert spark.table("beans").dtypes == [("name", "string"), ("color", "string"), ("grams", "float"), ("delicious", "boolean")], "Please make sure the column types are identical to those provided above"
-
--- COMMAND ----------
-
--- MAGIC %md
--- MAGIC ## Insert Data
--- MAGIC 
--- MAGIC Run the following cell to insert three rows into the table.
-
--- COMMAND ----------
+(name STRING, color STRING, grams FLOAT, delicious BOOLEAN);
 
 INSERT INTO beans VALUES
 ("black", "black", 500, true),
 ("lentils", "brown", 1000, true),
-("jelly", "rainbow", 42.5, false)
+("jelly", "rainbow", 42.5, false);
 
--- COMMAND ----------
-
--- MAGIC %md
--- MAGIC Manually review the table contents to ensure data was written as expected.
-
--- COMMAND ----------
-
--- ANSWER
-SELECT * FROM beans
-
--- COMMAND ----------
-
--- MAGIC %md
--- MAGIC Insert the additional records provided below. Make sure you execute this as a single transaction.
-
--- COMMAND ----------
-
--- ANSWER
 INSERT INTO beans VALUES
 ('pinto', 'brown', 1.5, true),
 ('green', 'green', 178.3, true),
-('beanbag chair', 'white', 40000, false)
-
--- COMMAND ----------
-
--- MAGIC %md
--- MAGIC Run the cell below to confirm the data is in the proper state.
-
--- COMMAND ----------
-
--- MAGIC %python
--- MAGIC assert spark.table("beans").count() == 6, "The table should have 6 records"
--- MAGIC assert spark.conf.get("spark.databricks.delta.lastCommitVersionInSession") == "2", "Only 3 commits should have been made to the table"
--- MAGIC assert set(row["name"] for row in spark.table("beans").select("name").collect()) == {'beanbag chair', 'black', 'green', 'jelly', 'lentils', 'pinto'}, "Make sure you have not modified the data provided"
-
--- COMMAND ----------
-
--- MAGIC %md
--- MAGIC ## Update Records
--- MAGIC 
--- MAGIC A friend is reviewing your inventory of beans. After much debate, you agree that jelly beans are delicious.
--- MAGIC 
--- MAGIC Run the following cell to update this record.
-
--- COMMAND ----------
+('beanbag chair', 'white', 40000, false);
 
 UPDATE beans
 SET delicious = true
-WHERE name = "jelly"
+WHERE name = "jelly";
 
--- COMMAND ----------
-
--- MAGIC %md
--- MAGIC You realize that you've accidentally entered the weight of your pinto beans incorrectly.
--- MAGIC 
--- MAGIC Update the `grams` column for this record to the correct weight of 1500.
-
--- COMMAND ----------
-
--- ANSWER
 UPDATE beans
 SET grams = 1500
-WHERE name = 'pinto'
+WHERE name = 'pinto';
 
--- COMMAND ----------
-
--- MAGIC %md
--- MAGIC Run the cell below to confirm this has completed properly.
-
--- COMMAND ----------
-
--- MAGIC %python
--- MAGIC assert spark.table("beans").filter("name='pinto'").count() == 1, "There should only be 1 entry for pinto beans"
--- MAGIC row = spark.table("beans").filter("name='pinto'").first()
--- MAGIC assert row["color"] == "brown", "The pinto bean should be labeled as the color brown"
--- MAGIC assert row["grams"] == 1500, "Make sure you correctly specified the `grams` as 1500"
--- MAGIC assert row["delicious"] == True, "The pinto bean is a delicious bean"
-
--- COMMAND ----------
-
--- MAGIC %md
--- MAGIC ## Delete Records
--- MAGIC 
--- MAGIC You've decided that you only want to keep track of delicious beans.
--- MAGIC 
--- MAGIC Execute a query to drop all beans that are not delicious.
-
--- COMMAND ----------
-
--- ANSWER
 DELETE FROM beans
-WHERE delicious = false
-
--- COMMAND ----------
-
--- MAGIC %md
--- MAGIC Run the following cell to confirm this operation was successful.
-
--- COMMAND ----------
-
--- MAGIC %python
--- MAGIC assert spark.table("beans").filter("delicious=true").count() == 5, "There should be 5 delicious beans in your table"
--- MAGIC assert spark.table("beans").filter("name='beanbag chair'").count() == 0, "Make sure your logic deletes non-delicious beans"
-
--- COMMAND ----------
-
--- MAGIC %md
--- MAGIC ## Using Merge to Upsert Records
--- MAGIC 
--- MAGIC Your friend gives you some new beans. The cell below registers these as a temporary view.
-
--- COMMAND ----------
+WHERE delicious = false;
 
 CREATE OR REPLACE TEMP VIEW new_beans(name, color, grams, delicious) AS VALUES
 ('black', 'black', 60.5, true),
@@ -199,45 +77,13 @@ CREATE OR REPLACE TEMP VIEW new_beans(name, color, grams, delicious) AS VALUES
 ('kidney', 'red', 387.2, true),
 ('castor', 'brown', 25, false);
 
-SELECT * FROM new_beans
-
--- COMMAND ----------
-
--- MAGIC %md
--- MAGIC In the cell below, use the above view to write a merge statement to update and insert new records to your `beans` table as one transaction.
--- MAGIC 
--- MAGIC Make sure your logic:
--- MAGIC - Matches beans by name **and** color
--- MAGIC - Updates existing beans by adding the new weight to the existing weight
--- MAGIC - Inserts new beans only if they are delicious
-
--- COMMAND ----------
-
--- ANSWER
 MERGE INTO beans a
 USING new_beans b
 ON a.name=b.name AND a.color = b.color
 WHEN MATCHED THEN
   UPDATE SET grams = a.grams + b.grams
 WHEN NOT MATCHED AND b.delicious = true THEN
-  INSERT *
-
--- COMMAND ----------
-
--- MAGIC %md
--- MAGIC Run the cell below to check your work.
-
--- COMMAND ----------
-
--- MAGIC %python
--- MAGIC version = spark.sql("DESCRIBE HISTORY beans").selectExpr("max(version)").first()[0]
--- MAGIC last_tx = spark.sql("DESCRIBE HISTORY beans").filter(f"version={version}")
--- MAGIC assert last_tx.select("operation").first()[0] == "MERGE", "Transaction should be completed as a merge"
--- MAGIC metrics = last_tx.select("operationMetrics").first()[0]
--- MAGIC assert metrics["numOutputRows"] == "3", "Make sure you only insert delicious beans"
--- MAGIC assert metrics["numTargetRowsUpdated"] == "1", "Make sure you match on name and color"
--- MAGIC assert metrics["numTargetRowsInserted"] == "2", "Make sure you insert newly collected beans"
--- MAGIC assert metrics["numTargetRowsDeleted"] == "0", "No rows should be deleted by this operation"
+  INSERT *;
 
 -- COMMAND ----------
 
