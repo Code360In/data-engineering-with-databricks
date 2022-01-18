@@ -35,12 +35,12 @@ In this section, we will create a Repo based on an existing repository on GitHub
 1. Click the **Repos** icon in the sidebar and click **Add Repo**.
 2. With **Clone remote Git repo** selected, paste the following URL into the **Git repo URL** field:
    ```
-   https://github.com/databricks-academy/platform-demos
+   https://github.com/databricks-academy/data-engineering-with-databricks
    ```
    Notice that values for **Git provider** and **Repo name** are inferred. For this exercise, leave the inferred values as they are.
 3. Click **Create**.
 
-We now have a Repo called **platform-demos** that contains a copy of the materials from the underlying git repository. Though parallel to the folders of your Workspace, the user interface metaphors for Repos are identical and it is easy to move material back and forth as we will soon see.
+We now have a Repo called **data-engineering-with-databricks** that contains a copy of the materials from the underlying git repository. Though parallel to the folders of your Workspace, the user interface metaphors for Repos are identical and it is easy to move material back and forth as we will soon see.
 
 ## Create a Notebook
 
@@ -67,23 +67,22 @@ A Notebook is an interactive web document that allows use to run commands on our
 
 ## Clone a Notebook
 
-Let's return our attention to the Repo we created earlier. When setting up Repos, we often want to copy in Notebooks we have been developing in our Workspace. This process of copying Notebooks is referred to as cloning the Notebook. You can clone a Notebook from your Workspace to a different location in your Workspace, from your Workspace to a Repo, from a Repo to your Workspace, or even from one Repo to another Repo. In this section, we clone a Notebook to transfer it from ther Workspace into the Repo we created.
+Let's return our attention to the Repo we created earlier. When setting up Repos, we often want to copy in Notebooks we have been developing in our Workspace. This process of copying Notebooks is referred to as cloning the Notebook. You can clone a Notebook from your Workspace to a different location in your Workspace, from your Workspace to a Repo, from a Repo to your Workspace, or even from one Repo to another Repo. In this section, we clone a Notebook to transfer it from the Workspace into the Repo we created.
 
 The cloning function is available from both the Workspace navigator, or from within the Notebook if you have it open (where it can be found in the **File** menu).
 
+**NOTE**: When cloning your notebook, be _very_ specific about the location; we'll leverage another notebook that uses a `%run` to call this notebook from a relative location and confirm success.
+
 1. With the Notebook open, open the **File** menu and select **Clone**.
-2. Replace the auto-generated value of **New Name** with *my_name*.
+2. Replace the auto-generated value of **New Name** with the string `my_name`.
 3. Specify the destination.
     1. Select **Repos** in the left-most column.
     2. Select the folder in the right column named after your user id.
-    3. Select the **platform-demos** Repo that appears in the rightmost column.
-    4. Click **Clone**.
+    3. Select the **data-engineering-with-databricks** Repo that appears in the rightmost column.
+    4. Use the file picker to navigate into the **platform-demos** directory, and then the **assets** folder.
+    5. Click **Clone**.
 
-The newly created copy of the Notebook opens. Note that there is now a Repo control button in the top-left because we are editing a Notebook contained in a Repo. The text appearing in this button reflects the branch of the Repo that is currently active; by default this will be either **main** or **master**, depending on how the underlying git repository was set up.
-
-Provide instruction to clone the notebook they just created into the Repo that they imported in step 2 above.
-
-(We'll want to be _very_ specific about the location; we'll create another notebook that uses a `%run` to call this notebook from a relative location and confirm success).
+The newly created copy of the Notebook opens. Note that there is now a Repo control button in the top-left because we are editing a Notebook contained in a Repo. The text appearing in this button reflects the branch of the Repo that is currently active; the Github repository we cloned uses a branch called `published` for its main production branch.
 
 ## Load a Dataset
 
@@ -139,9 +138,10 @@ We need compute resources to run cells in our Notebooks, but maybe the Notebook 
 In this section, we will attach a Notebook from the Repo to our running cluster.
 
 1. Click on the **Repos** icon in the sidebar.
-2. Navigate to the **platform-demos** Repo.
-3. Select the Notebook named **population_heatmap**. The Notebook opens.
-4. Locate the cluster dropdown at the top-right corner. From the dropdown, select your cluster.
+2. Navigate to the **data-engineering-with-databricks** Repo.
+3. Find the **platform-demos** directory, and then the **assets** folder.
+4. Select the Notebook named **population_heatmap**. The Notebook opens.
+5. Locate the cluster dropdown at the top-right corner. From the dropdown, select your cluster.
 
 With a running cluster attached, we can now run cells within the Notebook.
 
