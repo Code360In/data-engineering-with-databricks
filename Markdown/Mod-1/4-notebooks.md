@@ -114,7 +114,7 @@ Export the Notebook using HTML, then open the resulting .html file in a web brow
 
 Now export as a DBC Archive.
 
-** Import Notebooks
+## Import Notebooks
 
 Let's highlight two ways to import. First create a folder in your home directory in the Workspace. Call it **Test**. In that folder, select the import option. Now drag the .dbc file downloaded previously to the shared area of the dialog. This highlights the file import method (you can also browse for the file rather than dropping it onto the dialog). This gives us a copy of the Notebook we exported previously.
 
