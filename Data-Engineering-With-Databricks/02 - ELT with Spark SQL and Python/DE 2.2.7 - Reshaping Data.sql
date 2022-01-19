@@ -131,10 +131,10 @@ SELECT * FROM sales_enriched
 -- COMMAND ----------
 
 EXPLAIN FORMATTED
-SELECT /*+ BROADCAST(b) */ a.user_id, b.item
+SELECT /*+ BROADCAST(b) */ *
 FROM (SELECT *, explode(items) item FROM sales) a
 INNER JOIN item_lookup b
-ON a.item_id = b.item_id
+ON a.item.item_id = b.item_id
 
 -- COMMAND ----------
 

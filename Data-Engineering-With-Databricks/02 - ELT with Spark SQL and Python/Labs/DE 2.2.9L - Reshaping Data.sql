@@ -147,9 +147,7 @@ CREATE OR REPLACE VIEW clickpaths AS
 
 -- MAGIC %python
 -- MAGIC clickpath_columns = event_columns + ['user_id', 'order_id', 'transaction_timestamp', 'total_item_quantity', 'purchase_revenue_in_usd', 'unique_items', 'P_FOAM_K', 'M_STAN_Q', 'P_FOAM_S', 'M_PREM_Q', 'M_STAN_F', 'M_STAN_T', 'M_PREM_K', 'M_PREM_F', 'M_STAN_K', 'M_PREM_T', 'P_DOWN_S', 'P_DOWN_K']
--- MAGIC first_row = ['UA000000102360011', 1, None, None, None, None, 1, None, None, None, 1, None, 1, 1, 1, 1, None, None, 1, None, None, None, None, None, 'UA000000102360011', 287617, 1592548687090111, 1, 940.5, 1, None, 1, None, None, None, None, None, None, None, None, None, None]
 -- MAGIC check_table_results("clickpaths", clickpath_columns, 180680)
--- MAGIC check_first_row("clickpaths", first_row)
 
 -- COMMAND ----------
 

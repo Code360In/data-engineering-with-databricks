@@ -49,3 +49,8 @@ merge_deduped_users()
 merge_events_update()
 merge_sales_update()
 
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC CREATE OR REPLACE TABLE item_lookup AS
+# MAGIC SELECT * FROM parquet.`${c.source}/products/products.parquet`
