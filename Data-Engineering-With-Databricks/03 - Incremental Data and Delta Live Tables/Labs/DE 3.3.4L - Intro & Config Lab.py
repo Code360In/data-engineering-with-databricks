@@ -142,7 +142,7 @@ print(f"Storage Location: {storage_location.split(':')[1]}")
 
 # COMMAND ----------
 
-spark.sql(f"SELECT * FROM {database}daily_patient_avg")
+spark.sql(f"SELECT * FROM {database}.daily_patient_avg")
 
 # COMMAND ----------
 

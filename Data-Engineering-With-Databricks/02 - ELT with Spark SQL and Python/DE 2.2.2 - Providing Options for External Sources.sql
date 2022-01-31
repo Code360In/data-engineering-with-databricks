@@ -13,10 +13,11 @@
 -- MAGIC 
 -- MAGIC In this lesson, we will create tables using external data sources. While these tables will not yet be stored in the Delta Lake format (and therefore not be optimized for the Lakehouse), this technique helps to facilitate extracting data from diverse external systems.
 -- MAGIC 
--- MAGIC ##### Objectives
--- MAGIC - Use Spark SQL to configure options for extracting data from external sources
--- MAGIC - Create tables against external data sources for various file formats
--- MAGIC - Describe default behavior when querying tables defined against external sources
+-- MAGIC ## Learning Objectives
+-- MAGIC By the end of this lesson, students should feel confident:
+-- MAGIC - Using Spark SQL to configure options for extracting data from external sources
+-- MAGIC - Creating tables against external data sources for various file formats
+-- MAGIC - Describing default behavior when querying tables defined against external sources
 
 -- COMMAND ----------
 
@@ -40,7 +41,7 @@
 
 -- COMMAND ----------
 
-SELECT * FROM csv.`${c.source}/sales/sales.csv`
+SELECT * FROM csv.`${c.source}/sales-csv/`
 
 -- COMMAND ----------
 
@@ -93,7 +94,7 @@ OPTIONS (
   header = "true",
   delimiter = "|"
 )
-LOCATION "${c.source}/sales/sales.csv"
+LOCATION "${c.source}/sales-csv/"
 
 -- COMMAND ----------
 
@@ -137,7 +138,7 @@ DESCRIBE EXTENDED sales_csv
 -- COMMAND ----------
 
 -- MAGIC %python
--- MAGIC spark.table("sales_csv").write.mode("append").format("csv").save(f"{Paths.source}/sales/sales.csv")
+-- MAGIC spark.table("sales_csv").write.mode("append").format("csv").save(f"{source}/sales-csv")
 
 -- COMMAND ----------
 
@@ -225,7 +226,7 @@ DESCRIBE EXTENDED users_jdbc
 -- COMMAND ----------
 
 -- MAGIC %python
--- MAGIC jdbc_users_path = f"{Paths.database_location}/jdbc_users"
+-- MAGIC jdbc_users_path = f"{database_location}/users_jdbc/"
 -- MAGIC print(jdbc_users_path)
 -- MAGIC 
 -- MAGIC files = dbutils.fs.ls(jdbc_users_path)

@@ -16,10 +16,6 @@
 
 -- COMMAND ----------
 
--- MAGIC %run ../../Includes/classic-setup $mode="reset"
-
--- COMMAND ----------
-
 -- MAGIC %md
 -- MAGIC ## Declare Bronze Table
 -- MAGIC 

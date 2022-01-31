@@ -104,7 +104,7 @@ SELECT * FROM (
 
 -- MAGIC %python
 -- MAGIC event_columns = ['user', 'cart', 'pillows', 'login', 'main', 'careers', 'guest', 'faq', 'down', 'warranty', 'finalize', 'register', 'shipping_info', 'checkout', 'mattresses', 'add_item', 'press', 'email_coupon', 'cc_info', 'foam', 'reviews', 'original', 'delivery', 'premium']
--- MAGIC check_table_results("events_pivot", event_columns, 4085296)
+-- MAGIC check_table_results("events_pivot", event_columns, 204586)
 
 -- COMMAND ----------
 
@@ -153,7 +153,7 @@ JOIN transactions b
 
 -- MAGIC %python
 -- MAGIC clickpath_columns = event_columns + ['user_id', 'order_id', 'transaction_timestamp', 'total_item_quantity', 'purchase_revenue_in_usd', 'unique_items', 'P_FOAM_K', 'M_STAN_Q', 'P_FOAM_S', 'M_PREM_Q', 'M_STAN_F', 'M_STAN_T', 'M_PREM_K', 'M_PREM_F', 'M_STAN_K', 'M_PREM_T', 'P_DOWN_S', 'P_DOWN_K']
--- MAGIC check_table_results("clickpaths", clickpath_columns, 180680)
+-- MAGIC check_table_results("clickpaths", clickpath_columns, 9085)
 
 -- COMMAND ----------
 
@@ -189,9 +189,9 @@ FROM sales
 -- COMMAND ----------
 
 -- MAGIC %python
--- MAGIC check_table_results("sales_product_flags", ['items', 'mattress', 'pillow'], 210370)
+-- MAGIC check_table_results("sales_product_flags", ['items', 'mattress', 'pillow'], 10539)
 -- MAGIC product_counts = spark.sql("SELECT sum(CAST(mattress AS INT)) num_mattress, sum(CAST(pillow AS INT)) num_pillow FROM sales_product_flags").first().asDict()
--- MAGIC assert product_counts == {'num_mattress': 199764, 'num_pillow': 27481}, "There should be 199764 rows where mattress is true, and 27481 where pillow is true"
+-- MAGIC assert product_counts == {'num_mattress': 10015, 'num_pillow': 1386}, "There should be 10015 rows where mattress is true, and 1386 where pillow is true"
 
 -- COMMAND ----------
 

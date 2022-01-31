@@ -60,6 +60,7 @@ customersCheckpointPath = userhome + "/customersCheckpoint"
 
 # MAGIC %sql
 # MAGIC -- TODO
+# MAGIC 
 # MAGIC CREATE OR REPLACE TEMPORARY VIEW customer_count_by_state_temp AS
 # MAGIC SELECT
 # MAGIC   <FILL-IN>

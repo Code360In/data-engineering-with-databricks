@@ -155,7 +155,13 @@ GROUP BY order_date, city, customer_id, customer_name, ordered_products_explode.
 -- MAGIC %md
 -- MAGIC ## Update Pipeline
 -- MAGIC 
--- MAGIC Uncomment the following cell to declare another gold table. Similar to the previous gold table declaration, this filters for the `city` of Chicago. Re-run your pipeline to examine the updated results. Does it run as expected? Can you identify any issues?
+-- MAGIC Uncomment the following cell to declare another gold table. Similar to the previous gold table declaration, this filters for the `city` of Chicago. 
+-- MAGIC 
+-- MAGIC Re-run your pipeline to examine the updated results. 
+-- MAGIC 
+-- MAGIC Does it run as expected? 
+-- MAGIC 
+-- MAGIC Can you identify any issues?
 
 -- COMMAND ----------
 

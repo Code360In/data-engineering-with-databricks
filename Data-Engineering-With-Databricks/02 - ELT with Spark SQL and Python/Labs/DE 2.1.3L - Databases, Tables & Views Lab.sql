@@ -215,7 +215,8 @@ DESCRIBE EXTENDED weather_external
 
 -- COMMAND ----------
 
-CREATE DATABASE ${c.database} LOCATION '${c.userhome}/${c.database}'
+CREATE DATABASE ${c.database} LOCATION '${c.userhome}/${c.database}';
+USE ${c.database}
 
 -- COMMAND ----------
 

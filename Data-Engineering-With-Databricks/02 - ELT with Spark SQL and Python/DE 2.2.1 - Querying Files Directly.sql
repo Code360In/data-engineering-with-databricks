@@ -14,10 +14,10 @@
 -- MAGIC 
 -- MAGIC A number of file formats support this option, but it is most useful for self-describing data formats (such as parquet and JSON).
 -- MAGIC 
--- MAGIC ##### Objectives
--- MAGIC - Use Spark SQL to directly query data files
--- MAGIC - Layer views and CTEs to make referencing data files easier
--- MAGIC - Discuss limitations and applications of this approach
+-- MAGIC ## Learning Objectives
+-- MAGIC By the end of this lesson, students should feel confident:
+-- MAGIC - Using Spark SQL to directly query data files
+-- MAGIC - Leveraging `text` and `binaryFile` methods to review raw file contents
 
 -- COMMAND ----------
 
@@ -28,7 +28,7 @@
 
 -- COMMAND ----------
 
--- MAGIC %run ../Includes/setup
+-- MAGIC %run ../Includes/setup $mode="reset"
 
 -- COMMAND ----------
 
@@ -54,7 +54,7 @@
 -- COMMAND ----------
 
 -- MAGIC %python
--- MAGIC len(dbutils.fs.ls(f"{Paths.source}/events/events-kafka.json"))
+-- MAGIC len(dbutils.fs.ls(f"{source}/events-kafka/"))
 
 -- COMMAND ----------
 
@@ -76,7 +76,7 @@
 
 -- COMMAND ----------
 
-SELECT * FROM json.`${c.source}/events/events-kafka.json/001.json`
+SELECT * FROM json.`${c.source}/events-kafka/001.json`
 
 -- COMMAND ----------
 
@@ -92,7 +92,7 @@ SELECT * FROM json.`${c.source}/events/events-kafka.json/001.json`
 
 -- COMMAND ----------
 
-SELECT * FROM json.`${c.source}/events/events-kafka.json`
+SELECT * FROM json.`${c.source}/events-kafka/`
 
 -- COMMAND ----------
 
@@ -110,7 +110,7 @@ SELECT * FROM json.`${c.source}/events/events-kafka.json`
 -- COMMAND ----------
 
 CREATE OR REPLACE TEMP VIEW events_temp_view
-AS SELECT * FROM json.`${c.source}/events/events-kafka.json`;
+AS SELECT * FROM json.`${c.source}/events-kafka/`;
 
 SELECT * FROM events_temp_view
 
@@ -123,7 +123,7 @@ SELECT * FROM events_temp_view
 
 -- COMMAND ----------
 
-SELECT * FROM text.`${c.source}/events/events-kafka.json`
+SELECT * FROM text.`${c.source}/events-kafka/`
 
 -- COMMAND ----------
 
@@ -136,7 +136,7 @@ SELECT * FROM text.`${c.source}/events/events-kafka.json`
 
 -- COMMAND ----------
 
-SELECT * FROM binaryFile.`${c.source}/events/events-kafka.json`
+SELECT * FROM binaryFile.`${c.source}/events-kafka/`
 
 -- COMMAND ----------
 

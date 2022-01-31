@@ -7,15 +7,27 @@
 
 -- COMMAND ----------
 
--- MAGIC %md # Cleaning Data
+-- MAGIC %md 
+-- MAGIC # Cleaning Data
 -- MAGIC 
--- MAGIC Apply a number of common transformations to clean data with Spark SQL.
+-- MAGIC Most transformations completed with Spark SQL will be familiar to SQL-savvy developers.
 -- MAGIC 
--- MAGIC ##### Objectives
--- MAGIC - Summarize datasets and describe null behaviors
--- MAGIC - Retrieve and remove duplicates based on select columns
--- MAGIC - Validate datasets for expected counts, missing values, and duplicate records
--- MAGIC - Apply common transformations to clean and transform data
+-- MAGIC As we inspect and clean our data, we'll need to construct various column expressions and queries to express transformations to apply on our dataset.  
+-- MAGIC 
+-- MAGIC Column expressions are constructed from existing columns, operators, and built-in Spark SQL functions. They can be used in `SELECT` statements to express transformations that create new columns from datasets. 
+-- MAGIC 
+-- MAGIC Along with `SELECT`, many additional query commands can be used to express transformations in Spark SQL, including `WHERE`, `DISTINCT`, `ORDER BY`, `GROUP BY`, etc.
+-- MAGIC 
+-- MAGIC In this notebook, we'll review a few concepts that might differ from other systems you're used to, as well as calling out a few useful functions for common operations.
+-- MAGIC 
+-- MAGIC We'll pay special attention to behaviors around `NULL` values, as well as formatting strings and datetime fields.
+-- MAGIC 
+-- MAGIC ## Learning Objectives
+-- MAGIC By the end of this notebook, students should feel comfortable:
+-- MAGIC - Summarizing datasets and describe null behaviors
+-- MAGIC - Retrieving and removing duplicates
+-- MAGIC - Validating datasets for expected counts, missing values, and duplicate records
+-- MAGIC - Applying common transformations to clean and transform data
 
 -- COMMAND ----------
 
@@ -26,38 +38,35 @@
 
 -- COMMAND ----------
 
--- MAGIC %run ../Includes/setup-updates
+-- MAGIC %run ../Includes/setup-cleaning
 
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC We'll work with new users records in `users_update` table for this lesson.
+-- MAGIC We'll work with new users records in `users_dirty` table for this lesson.
 
 -- COMMAND ----------
 
-SELECT * FROM users_update
-
--- COMMAND ----------
-
--- MAGIC %md ## Transformations 
--- MAGIC As we inspect and clean our data, we'll need to construct various column expressions and queries to express transformations to apply on our dataset.  
--- MAGIC - Column expressions are constructed from existing columns, operators, and built-in Spark SQL functions. They can be used in `SELECT` statements to express transformations that create new columns from datasets. 
--- MAGIC - Along with `SELECT`, many additional query commands can be used to express transformations in Spark SQL, including `WHERE`, `DISTINCT`, `ORDER BY`, `GROUP BY`, etc.
-
--- COMMAND ----------
-
--- MAGIC %md ## Inspect Data
--- MAGIC We'll inspect `users_update` for missing values and duplicate records. 
+SELECT * FROM users_dirty
 
 -- COMMAND ----------
 
 -- MAGIC %md 
--- MAGIC ### Missing Values
--- MAGIC Count the number of missing values in each column of `users_update`. Note that nulls behave incorrectly in some math functions, including `count`.
+-- MAGIC ## Inspect Data
 -- MAGIC 
--- MAGIC #### Null Behavior with `count()`
--- MAGIC - `count(col)` skips `NULL` values when counting specific columns or expressions.
--- MAGIC - `count(*)` is a special case that counts the total number of rows without skipping `NULL` values
+-- MAGIC Let's start by counting values in each field of our data.
+
+-- COMMAND ----------
+
+SELECT count(user_id), count(user_first_touch_timestamp), count(email), count(updated), count(*)
+FROM users_dirty
+
+-- COMMAND ----------
+
+-- MAGIC %md 
+-- MAGIC Note that `count(col)` skips `NULL` values when counting specific columns or expressions.
+-- MAGIC 
+-- MAGIC However, `count(*)` is a special case that counts the total number of rows (including rows that are only `NULL` values).
 -- MAGIC 
 -- MAGIC To count null values, use the `count_if` function or `WHERE` clause to provide a condition that filters for records where the value `IS NULL`.
 
@@ -66,62 +75,158 @@ SELECT * FROM users_update
 SELECT
   count_if(user_id IS NULL) missing_user_ids, 
   count_if(user_first_touch_timestamp IS NULL) missing_timestamps, 
-  count_if(email IS NULL) missing_emails
-FROM users_update
+  count_if(email IS NULL) missing_emails,
+  count_if(updated IS NULL) missing_updates
+FROM users_dirty
 
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC ### Distinct Records
--- MAGIC - `DISTINCT *` returns rows with duplicates removed.
--- MAGIC - `DISTINCT col` returns unique values in column `col`
+-- MAGIC Clearly there are at least a handful of null values in all of our fields. Let's try to discover what is causing this.
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC ## Distinct Records
 -- MAGIC 
--- MAGIC Note that the count for distinct users is greater than the count for distinct rows; rows containing `NULL` values were skipped from processing distinct rows. `count(*)` is the only case where `count()` includes records with `NULL` values.
+-- MAGIC Start by looking for distinct rows.
+
+-- COMMAND ----------
+
+SELECT count(DISTINCT(*))
+FROM users_dirty
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC Note that when we called `DISTINCT(*)`, by default we ignored all rows containing **any** null values; as such, our result is the same as the count of user emails above.
+-- MAGIC 
+-- MAGIC Let's look at the `user_id` column.
+
+-- COMMAND ----------
+
+SELECT count(DISTINCT(user_id))
+FROM users_dirty
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC Because `user_id` is generated alongside the `user_first_touch_timestamp`, these fields should always be in parity for counts.
+
+-- COMMAND ----------
+
+SELECT count(DISTINCT(user_first_touch_timestamp))
+FROM users_dirty
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC Here we note that while there are some duplicate records relative to our total row count, we have a much higher number of distinct values.
+-- MAGIC 
+-- MAGIC Let's go ahead and combine our distinct counts with columnar counts to see these values side-by-side.
 
 -- COMMAND ----------
 
 SELECT 
   count(user_id) total_ids, count(DISTINCT user_id) unique_ids,
   count(email) total_emails, count(DISTINCT email) unique_emails,
-  count(*) total_rows, count(DISTINCT *) unique_non_null_rows
-FROM users_update
+  count(updated) total_updates, count(DISTINCT(updated)) unique_updates,
+  count(*) total_rows, count(DISTINCT(*)) unique_non_null_rows
+FROM users_dirty
 
 -- COMMAND ----------
 
--- MAGIC %md ## Deduplicate Rows
--- MAGIC 
--- MAGIC Use `DISTINCT *` to remove true duplicate records (rows with same values for all columns).
+-- MAGIC %md
+-- MAGIC Based on the above summary, we know:
+-- MAGIC * All of our emails are unique
+-- MAGIC * Our emails contain the largest number of null values
+-- MAGIC * The `updated` column contains only 1 distinct value, but most are non-null
 
 -- COMMAND ----------
 
-SELECT DISTINCT * FROM users_update
+-- MAGIC %md 
+-- MAGIC ## Deduplicate Rows
+-- MAGIC Based on the above behavior, what do you expect will happen if we use `DISTINCT *` to try to remove duplicate records?
 
 -- COMMAND ----------
 
--- MAGIC %md  #### Deduplicate Based on Specific Columns
+CREATE OR REPLACE TEMP VIEW users_deduped AS
+  SELECT DISTINCT(*) FROM users_dirty;
+
+SELECT * FROM users_deduped
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC Note in the preview above that there appear to be null values, even though our `COUNT(DISTINCT(*))` ignored these nulls.
 -- MAGIC 
--- MAGIC Use `GROUP BY` to remove duplicate records based on select columns. The query below groups rows by `user_id` to deduplicate rows based on values from this column.
+-- MAGIC How many rows do you expect passed through this `DISTINCT` command?
+
+-- COMMAND ----------
+
+SELECT COUNT(*) FROM users_deduped
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC Note that we now have a completely new number.
 -- MAGIC 
--- MAGIC The `max()` aggregate function is used on the `email` column as a hack to capture non-null emails when multiple records are present.
+-- MAGIC Spark skips null values while counting values in a column or counting distinct values for a field, but does not omit rows with nulls from a `DISTINCT` query.
+-- MAGIC 
+-- MAGIC Indeed, the reason we're seeing a new number that is 1 higher than previous counts is because we have 3 rows that are all nulls (here included as a single distinct row).
+
+-- COMMAND ----------
+
+SELECT * FROM users_dirty
+WHERE
+  user_id IS NULL AND
+  user_first_touch_timestamp IS NULL AND
+  email IS NULL AND
+  updated IS NULL
+
+-- COMMAND ----------
+
+-- MAGIC %md  
+-- MAGIC ## Deduplicate Based on Specific Columns
+-- MAGIC 
+-- MAGIC Recall that `user_id` and `user_first_touch_timestamp` should form unique tuples, as they are both generated when a given user is first encountered.
+-- MAGIC 
+-- MAGIC We can see that we have some null values in each of these fields; exclude nulls counting the distinct number of pairs for these fields will get us the correct count for distinct values in our table.
+
+-- COMMAND ----------
+
+SELECT COUNT(DISTINCT(user_id, user_first_touch_timestamp))
+FROM users_dirty
+WHERE user_id IS NOT NULL
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC Here, we'll use these distinct pairs to remove unwanted rows from our data.
+-- MAGIC 
+-- MAGIC The code below uses `GROUP BY` to remove duplicate records based on `user_id` and `user_first_touch_timestamp`.
+-- MAGIC 
+-- MAGIC The `max()` aggregate function is used on the `email` column as a hack to capture non-null emails when multiple records are present; in this batch, all `updated` values were equivalent, but we need to use an aggregate function to keep this value in the result of our group by.
 
 -- COMMAND ----------
 
 CREATE OR REPLACE TEMP VIEW deduped_users AS
 SELECT user_id, user_first_touch_timestamp, max(email) email, max(updated) updated
-FROM users_update
+FROM users_dirty
+WHERE user_id IS NOT NULL
 GROUP BY user_id, user_first_touch_timestamp;
 
 SELECT count(*) FROM deduped_users
 
 -- COMMAND ----------
 
--- MAGIC %md ## Validate Datasets
--- MAGIC Let's check our datasets for expected counts, missing values, and duplicate records.  
--- MAGIC Validation can be performed with simple filters and `WHERE` clauses (and `COUNT_IF` statements).
-
--- COMMAND ----------
-
--- MAGIC %md Validate that the `user_id` for each row is unique.
+-- MAGIC %md 
+-- MAGIC ## Validate Datasets
+-- MAGIC We've visually confirmed that our counts are as expected, based our manual review.
+-- MAGIC  
+-- MAGIC Below, we programmatically do some validation using simple filters and `WHERE` clauses.
+-- MAGIC 
+-- MAGIC Validate that the `user_id` for each row is unique.
 
 -- COMMAND ----------
 
@@ -144,16 +249,21 @@ SELECT max(user_id_count) <= 1 at_most_one_id FROM (
 
 -- COMMAND ----------
 
--- MAGIC %md ## Date Format and Regex
--- MAGIC - Format datetimes as strings
--- MAGIC - Use `regexp_extract` to extract domains from the email column using regex
+-- MAGIC %md 
+-- MAGIC ## Date Format and Regex
+-- MAGIC Now that we've removed null fields and eliminated duplicates, we may wish to extract further value out of the data.
+-- MAGIC 
+-- MAGIC The code below:
+-- MAGIC - Correctly scales and casts the `user_first_touch_timestamp` to a valid timestamp
+-- MAGIC - Extracts the calendar data and clock time for this timestamp in human readable format
+-- MAGIC - Uses `regexp_extract` to extract the domains from the email column using regex
 
 -- COMMAND ----------
 
 SELECT *,
   date_format(first_touch, "MMM d, yyyy") first_touch_date,
   date_format(first_touch, "HH:mm:ss") first_touch_time,
-  regexp_extract(email, "(?<=@)[^.]+(?=\.)", 0) email_domain
+  regexp_extract(email, "(?<=@).+", 0) email_domain
 FROM (
   SELECT *,
     CAST(user_first_touch_timestamp / 1e6 AS timestamp) first_touch 

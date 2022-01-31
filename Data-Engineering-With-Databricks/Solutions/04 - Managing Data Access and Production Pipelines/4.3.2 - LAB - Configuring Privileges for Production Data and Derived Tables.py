@@ -188,11 +188,21 @@ generate_query("acls_lab")
 # MAGIC 
 # MAGIC Using the Data Explorer, add the `MODIFY` permission for your `beans` table for your partner.
 # MAGIC 
-# MAGIC Again, attempt to drop your partner's `beans` table. This time, it should succeed.
+# MAGIC Again, attempt to drop your partner's `beans` table. It should again fail. **Only the owner of a table should be able to issue this statement**. (Note that ownership can be transferred from an individual to a group, if desired).
+# MAGIC 
+# MAGIC Instead, execute a query to
+# MAGIC 
+# MAGIC ```
+# MAGIC DELETE FROM <partner_db>.beans
+# MAGIC ```
+# MAGIC 
+# MAGIC This query should successfully drop all records from the target table.
 # MAGIC 
 # MAGIC Try to re-execute queries against any of the views of tables you'd previously queried in this lab.
 # MAGIC 
-# MAGIC **NOTE**: If steps were completed successfully, none of your previous queries should work, as the data referenced by your views has been permanently deleted. This demonstrates the risks associated with providing `MODIFY` privileges to users on data that will be used in production applications and dashboards.
+# MAGIC **NOTE**: If steps were completed successfully, none of your previous queries should return results, as the data referenced by your views has been deleted. This demonstrates the risks associated with providing `MODIFY` privileges to users on data that will be used in production applications and dashboards.
+# MAGIC 
+# MAGIC If you have additional time, see if you can use the Delta methods `DESCRIBE HISTORY` and `RESTORE` to revert the records in your table.
 
 # COMMAND ----------
 

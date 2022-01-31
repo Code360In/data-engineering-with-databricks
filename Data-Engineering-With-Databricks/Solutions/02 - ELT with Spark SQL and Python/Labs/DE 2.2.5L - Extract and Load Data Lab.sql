@@ -58,20 +58,20 @@
 -- ANSWER
 CREATE TABLE IF NOT EXISTS events_json
 (key BINARY, offset BIGINT, partition INT, timestamp BIGINT, topic STRING, value BINARY)
-USING JSON OPTIONS (path = "${c.source}/events/events-kafka.json")
+USING JSON OPTIONS (path = "${c.source}/events-kafka")
 
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC **NOTE**: We'll use Python to run checks occasionally throughout the lab. The following cell will return as error with a message on what needs to change if you have not followed instructions. No output from cell execution means that you have completed this step.
+-- MAGIC **NOTE**: We'll use Python to run checks occasionally throughout the lab. The following cell will return an error with a message on what needs to change if you have not followed instructions. No output from cell execution means that you have completed this step.
 
 -- COMMAND ----------
 
 -- MAGIC %python
 -- MAGIC assert spark.table("events_json"), "Table named `events_json` does not exist"
 -- MAGIC assert spark.table("events_json").columns == ['key', 'offset', 'partition', 'timestamp', 'topic', 'value'], "Please name the columns in the order provided above"
--- MAGIC assert spark.table("events_json").dtypes == [('key', 'binary'), ('offset', 'int'), ('partition', 'bigint'), ('timestamp', 'bigint'), ('topic', 'string'), ('value', 'binary')], "Please make sure the column types are identical to those provided above"
--- MAGIC assert spark.table("events_json").count() == 45105, "The table should have 45105 records"
+-- MAGIC assert spark.table("events_json").dtypes == [('key', 'binary'), ('offset', 'bigint'), ('partition', 'int'), ('timestamp', 'bigint'), ('topic', 'string'), ('value', 'binary')], "Please make sure the column types are identical to those provided above"
+-- MAGIC assert spark.table("events_json").count() == 2252, "The table should have 2252 records"
 
 -- COMMAND ----------
 
@@ -91,7 +91,7 @@ CREATE OR REPLACE TABLE events_raw
 -- COMMAND ----------
 
 -- MAGIC %python
--- MAGIC assert spark.table("events_raw"), "Table named `events_json` does not exist"
+-- MAGIC assert spark.table("events_raw"), "Table named `events_raw` does not exist"
 -- MAGIC assert spark.table("events_raw").columns == ['key', 'offset', 'partition', 'timestamp', 'topic', 'value'], "Please name the columns in the order provided above"
 -- MAGIC assert spark.table("events_raw").dtypes == [('key', 'binary'), ('offset', 'bigint'), ('partition', 'int'), ('timestamp', 'bigint'), ('topic', 'string'), ('value', 'binary')], "Please make sure the column types are identical to those provided above"
 -- MAGIC assert spark.table("events_raw").count() == 0, "The table should have 0 records"
@@ -124,8 +124,8 @@ SELECT * FROM events_raw
 -- COMMAND ----------
 
 -- MAGIC %python
--- MAGIC assert spark.table("events_raw").count() == 45105, "The table should have 45105 records"
--- MAGIC assert set(row['timestamp'] for row in spark.table("events_raw").select("timestamp").limit(5).collect()) == {1593879300053, 1593879300372, 1593879300607, 1593879300739, 1593879300821}, "Make sure you have not modified the data provided"
+-- MAGIC assert spark.table("events_raw").count() == 2252, "The table should have 2252 records"
+-- MAGIC assert set(row['timestamp'] for row in spark.table("events_raw").select("timestamp").limit(5).collect()) == {1593880885085, 1593880892303, 1593880889174, 1593880886106, 1593880889725}, "Make sure you have not modified the data provided"
 
 -- COMMAND ----------
 
@@ -137,7 +137,7 @@ SELECT * FROM events_raw
 
 -- ANSWER
 CREATE OR REPLACE TABLE item_lookup AS
-SELECT * FROM parquet.`${c.source}/products/products.parquet`
+SELECT * FROM parquet.`${c.source}/item-lookup`
 
 -- COMMAND ----------
 
