@@ -35,7 +35,7 @@
 # MAGIC 
 # MAGIC Directly below the name of this notebook at the top of your screen, use the drop-down list to connect this notebook to your cluster.
 # MAGIC 
-# MAGIC **NOTE**: Deploying a cluster can take several minutes. A green arrow will appear to the right of the cluster name once resources have been deployed. If your cluster has a solid gray circle to the left, you will need to follow instructions to [start a cluster](https://docs.databricks.com/clusters/clusters-manage.html#start-a-cluster).
+# MAGIC **NOTE**: Deploying a cluster can take several minutes. A green arrow will appear to the right of the cluster name once resources have been deployed. If your cluster has a solid gray circle to the left, you will need to follow instructions to <a href="https://docs.databricks.com/clusters/clusters-manage.html#start-a-cluster" target="_blank">start a cluster</a>.
 
 # COMMAND ----------
 
@@ -88,11 +88,10 @@ print("I'm running Python!")
 # MAGIC * Highlight this cell and press the **B** button on the keyboard to create a new cell below
 # MAGIC * Copy the following code into the cell below and then run the cell
 # MAGIC 
-# MAGIC ```
-# MAGIC SELECT "I'm running SQL!"
-# MAGIC ```
+# MAGIC **`%sql`**<br/>
+# MAGIC **`SELECT "I'm running SQL!"`**
 # MAGIC 
-# MAGIC **NOTE**: There are a number of different methods for adding, moving, and deleting cells including GUI options and keyboard shortcuts. Refer to the [docs](https://docs.databricks.com/notebooks/notebooks-use.html#develop-notebooks) for details.
+# MAGIC **NOTE**: There are a number of different methods for adding, moving, and deleting cells including GUI options and keyboard shortcuts. Refer to the <a href="https://docs.databricks.com/notebooks/notebooks-use.html#develop-notebooks" target="_blank">docs</a> for details.
 
 # COMMAND ----------
 
@@ -132,11 +131,11 @@ print("Hello Python!")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ### `%md`
+# MAGIC ### %md
 # MAGIC 
 # MAGIC The magic command **&percnt;md** allows us to render Markdown in a cell:
 # MAGIC * Double click this cell to begin editing it
-# MAGIC * Then hit `Esc` to stop editing
+# MAGIC * Then hit **`Esc`** to stop editing
 # MAGIC 
 # MAGIC # Title One
 # MAGIC ## Title Two
@@ -174,17 +173,20 @@ print("Hello Python!")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ### `%run`
+# MAGIC ### %run
 # MAGIC * You can run a notebook from another notebook by using the magic command **%run**
 # MAGIC * Notebooks to be run are specified with relative paths
 # MAGIC * The referenced notebook executes as if it were part of the current notebook, so temporary views and other local declarations will be available from the calling notebook
-# MAGIC 
-# MAGIC When you execute the following cell, you'll get an error: `Error in SQL statement: AnalysisException: Table or view not found: demo_tmp_vw`
 
 # COMMAND ----------
 
-# MAGIC %sql 
-# MAGIC SELECT * FROM demo_tmp_vw
+# MAGIC %md Uncommenting and executing the following cell will generate the following error:<br/>
+# MAGIC **`Error in SQL statement: AnalysisException: Table or view not found: demo_tmp_vw`**
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC -- SELECT * FROM demo_tmp_vw
 
 # COMMAND ----------
 
@@ -193,12 +195,12 @@ print("Hello Python!")
 
 # COMMAND ----------
 
-# MAGIC %run ../Includes/workspace-setup
+# MAGIC %run ../Includes/classroom-setup-1.2.2-workspace-setup
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC The `../Includes/workspace-setup` notebook we referenced includes logic to create and `USE` a database, as well as creating the temp view `demo_temp_vw`.
+# MAGIC The **`../Includes/classroom-setup-1.2.2-workspace-setup`** notebook we referenced includes logic to create and **`USE`** a database, as well as creating the temp view **`demo_temp_vw`**.
 # MAGIC 
 # MAGIC We can see this temp view is now available in our current notebook session with the following query.
 
@@ -212,16 +214,35 @@ print("Hello Python!")
 # MAGIC %md
 # MAGIC We'll use this pattern of "setup" notebooks throughout the course to help configure the environment for lessons and labs.
 # MAGIC 
-# MAGIC Note that most lessons will use variables derived from your username to organize files and databases. This pattern allows us to avoid collision with other users in shared workspaces.
+# MAGIC These "provided" variables, functions and other objects should be easily identifiable in that they are part of the **`DA`** object which is an instance of **`DBAcademyHelper`**.
 # MAGIC 
-# MAGIC The cell below uses Python to print the variables used in this notebook's setup script.
+# MAGIC With that in mind, most lessons will use variables derived from your username to organize files and databases. 
+# MAGIC 
+# MAGIC This pattern allows us to avoid collision with other users in shared a workspace.
+# MAGIC 
+# MAGIC The cell below uses Python to print some of those variables previously defined in this notebook's setup script:
 
 # COMMAND ----------
 
-print(f"""
-username: {username}
-userhome: {userhome}
-database: {database}""")
+print(f"DA:                   {DA}")
+print(f"DA.username:          {DA.username}")
+print(f"DA.paths.working_dir: {DA.paths.working_dir}")
+print(f"DA.db_name:           {DA.db_name}")
+
+# COMMAND ----------
+
+# MAGIC %md In addition to this, these same variables are "injected" into the SQL context so that we can use them in SQL statements.
+# MAGIC 
+# MAGIC We will talk more about this later, but you can see a quick example in the following cell.
+# MAGIC 
+# MAGIC <img src="https://files.training.databricks.com/images/icon_note_32.png"> Note the subtle but important difference in the casing of the word **`da`** and **`DA`** in these two examples.
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC SELECT '${da.username}' AS current_username,
+# MAGIC        '${da.paths.working_dir}' AS working_directory,
+# MAGIC        '${da.db_name}' as database_name
 
 # COMMAND ----------
 
@@ -229,7 +250,7 @@ database: {database}""")
 # MAGIC ## Databricks Utilities
 # MAGIC Databricks notebooks provide a number of utility commands for configuring and interacting with the environment: <a href="https://docs.databricks.com/user-guide/dev-tools/dbutils.html" target="_blank">dbutils docs</a>
 # MAGIC 
-# MAGIC Throughout this course, we'll occasionally use `dbutils.fs.ls()` to list out directories of files from Python cells.
+# MAGIC Throughout this course, we'll occasionally use **`dbutils.fs.ls()`** to list out directories of files from Python cells.
 
 # COMMAND ----------
 
@@ -238,13 +259,13 @@ dbutils.fs.ls("/databricks-datasets")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## `display()`
+# MAGIC ## display()
 # MAGIC 
 # MAGIC When running SQL queries from cells, results will always be displayed in a rendered tabular format.
 # MAGIC 
-# MAGIC When we have tabular data returned by a Python cell, we can call `display` to get the same type of preview.
+# MAGIC When we have tabular data returned by a Python cell, we can call **`display`** to get the same type of preview.
 # MAGIC 
-# MAGIC Here, we'll wrap the previous list command on our file system with `display`.
+# MAGIC Here, we'll wrap the previous list command on our file system with **`display`**.
 
 # COMMAND ----------
 
@@ -253,14 +274,14 @@ display(dbutils.fs.ls("/databricks-datasets"))
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC The `display()` command has the following capabilities and limitations:
+# MAGIC The **`display()`** command has the following capabilities and limitations:
 # MAGIC * Preview of results limited to 1000 records
 # MAGIC * Provides button to download results data as CSV
 # MAGIC * Allows rendering plots
 
 # COMMAND ----------
 
-# MAGIC %md
+# MAGIC %md-sandbox
 # MAGIC ## Downloading Notebooks
 # MAGIC 
 # MAGIC There are a number of options for downloading either individual notebooks or collections of notebooks.
@@ -307,6 +328,21 @@ display(dbutils.fs.ls("/databricks-datasets"))
 # MAGIC * <a href="https://docs.databricks.com/user-guide/clusters/index.html" target="_blank">Cluster Configuration</a>
 # MAGIC * <a href="https://docs.databricks.com/api/latest/index.html#rest-api-2-0" target="_blank">REST API</a>
 # MAGIC * <a href="https://docs.databricks.com/release-notes/index.html#release-notes" target="_blank">Release Notes</a>
+
+# COMMAND ----------
+
+# MAGIC %md 
+# MAGIC ## One more note! 
+# MAGIC 
+# MAGIC At the end of each lesson you will see the following command, **`DA.cleanup()`**.
+# MAGIC 
+# MAGIC This method drops lesson-specific databases and working directories in an attempt to keep your workspace clean and maintain the immutability of each lesson.
+# MAGIC 
+# MAGIC Run the following cell to delete the tables and files associated with this lesson.
+
+# COMMAND ----------
+
+DA.cleanup()
 
 # COMMAND ----------
 

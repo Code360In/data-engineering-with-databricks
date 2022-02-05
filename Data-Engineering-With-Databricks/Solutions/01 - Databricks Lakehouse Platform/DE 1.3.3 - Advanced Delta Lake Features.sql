@@ -16,12 +16,12 @@
 -- MAGIC 
 -- MAGIC ## Learning Objectives
 -- MAGIC By the end of this lesson, students should feel confident:
--- MAGIC * Using `OPTIMIZE` to compact small files
--- MAGIC * Using `ZORDER` to index tables
+-- MAGIC * Using **`OPTIMIZE`** to compact small files
+-- MAGIC * Using **`ZORDER`** to index tables
 -- MAGIC * Describing the directory structure of Delta Lake files
 -- MAGIC * Reviewing a history of table transactions
 -- MAGIC * Querying and rolling back to previous table version
--- MAGIC * Cleaning up stale data files with `VACUUM`
+-- MAGIC * Cleaning up stale data files with **`VACUUM`**
 
 -- COMMAND ----------
 
@@ -31,14 +31,14 @@
 
 -- COMMAND ----------
 
--- MAGIC %run ../Includes/sql-setup $mode="reset"
+-- MAGIC %run ../Includes/classroom-setup-1.3.3-sql-setup
 
 -- COMMAND ----------
 
 -- MAGIC %md
 -- MAGIC ## Creating a Delta Table with History
 -- MAGIC 
--- MAGIC The cell below condenses all the transactions from the previous lesson into a single cell. (Except for the `DROP TABLE`!)
+-- MAGIC The cell below condenses all the transactions from the previous lesson into a single cell. (Except for the **`DROP TABLE`**!)
 -- MAGIC 
 -- MAGIC As you're waiting for this query to run, see if you can identify the total number of transactions being executed.
 
@@ -87,7 +87,7 @@ WHEN NOT MATCHED AND u.type = "insert"
 -- MAGIC 
 -- MAGIC Databricks uses a Hive metastore by default to register databases, tables, and views.
 -- MAGIC 
--- MAGIC Using `DESCRIBE EXTENDED` allows us to see important metadata about our table.
+-- MAGIC Using **`DESCRIBE EXTENDED`** allows us to see important metadata about our table.
 
 -- COMMAND ----------
 
@@ -96,7 +96,7 @@ DESCRIBE EXTENDED students
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC Note the `Location` field.
+-- MAGIC Note the **`Location`** row.
 -- MAGIC 
 -- MAGIC While we've so far been thinking about our table as just a relational entity within a database, a Delta Lake table is actually backed by a collection of files stored in cloud object storage.
 
@@ -112,23 +112,23 @@ DESCRIBE EXTENDED students
 -- COMMAND ----------
 
 -- MAGIC %python
--- MAGIC display(dbutils.fs.ls(f"{userhome}/students"))
+-- MAGIC display(dbutils.fs.ls(f"{DA.paths.user_db}/students"))
 
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC Note that our directory contains a number of Parquet data files and a directory named `_delta_log`.
+-- MAGIC Note that our directory contains a number of Parquet data files and a directory named **`_delta_log`**.
 -- MAGIC 
 -- MAGIC Records in Delta Lake tables are stored as data in Parquet files.
 -- MAGIC 
--- MAGIC Transactions to Delta Lake tables are recorded in the `_delta_log`.
+-- MAGIC Transactions to Delta Lake tables are recorded in the **`_delta_log`**.
 -- MAGIC 
--- MAGIC We can peak inside the `_delta_log` to see more.
+-- MAGIC We can peek inside the **`_delta_log`** to see more.
 
 -- COMMAND ----------
 
 -- MAGIC %python
--- MAGIC display(dbutils.fs.ls(f"{userhome}/students/_delta_log"))
+-- MAGIC display(dbutils.fs.ls(f"{DA.paths.user_db}/students/_delta_log"))
 
 -- COMMAND ----------
 
@@ -142,7 +142,7 @@ DESCRIBE EXTENDED students
 -- MAGIC 
 -- MAGIC We just saw a lot of data files for what is obviously a very small table.
 -- MAGIC 
--- MAGIC `DESCRIBE DETAIL` allows us to see some other details about our Delta table, including the number of files.
+-- MAGIC **`DESCRIBE DETAIL`** allows us to see some other details about our Delta table, including the number of files.
 
 -- COMMAND ----------
 
@@ -155,17 +155,17 @@ DESCRIBE DETAIL students
 -- MAGIC 
 -- MAGIC Rather than overwriting or immediately deleting files containing changed data, Delta Lake uses the transaction log to indicate whether or not files are valid in a current version of the table.
 -- MAGIC 
--- MAGIC Here, we'll look at the transaction log corresponding the `MERGE` statement above, where records were inserted, updated, and deleted.
+-- MAGIC Here, we'll look at the transaction log corresponding the **`MERGE`** statement above, where records were inserted, updated, and deleted.
 
 -- COMMAND ----------
 
 -- MAGIC %python
--- MAGIC display(spark.sql(f"SELECT * FROM json.`{userhome}/students/_delta_log/00000000000000000007.json`"))
+-- MAGIC display(spark.sql(f"SELECT * FROM json.`{DA.paths.user_db}/students/_delta_log/00000000000000000007.json`"))
 
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC The `add` column contains a list of all the new files written to our table; the `remove` column indicates those files that no longer should be included in our table.
+-- MAGIC The **`add`** column contains a list of all the new files written to our table; the **`remove`** column indicates those files that no longer should be included in our table.
 -- MAGIC 
 -- MAGIC When we query a Delta Lake table, the query engine uses the transaction logs to resolve all the files that are valid in the current version, and ignores all other data files.
 
@@ -176,11 +176,11 @@ DESCRIBE DETAIL students
 -- MAGIC 
 -- MAGIC Small files can occur for a variety of reasons; in our case, we performed a number of operations where only one or several records were inserted.
 -- MAGIC 
--- MAGIC Files will be combined toward an optimal size (scaled based on the size of the table) by using the `OPTIMIZE` command.
+-- MAGIC Files will be combined toward an optimal size (scaled based on the size of the table) by using the **`OPTIMIZE`** command.
 -- MAGIC 
--- MAGIC `OPTIMIZE` will replace existing data files by combining records and rewriting the results.
+-- MAGIC **`OPTIMIZE`** will replace existing data files by combining records and rewriting the results.
 -- MAGIC 
--- MAGIC When executing `OPTIMIZE`, users can optionally specify one or several fields for `ZORDER` indexing. While the specific math of Z-order is unimportant, it speeds up data retrieval when filtering on provided fields by collocating data with similar values within data files.
+-- MAGIC When executing **`OPTIMIZE`**, users can optionally specify one or several fields for **`ZORDER`** indexing. While the specific math of Z-order is unimportant, it speeds up data retrieval when filtering on provided fields by colocating data with similar values within data files.
 
 -- COMMAND ----------
 
@@ -190,7 +190,7 @@ ZORDER BY id
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC Given how small our data is, `ZORDER` does not provide any benefit, but we can see all of the metrics that result from this operation.
+-- MAGIC Given how small our data is, **`ZORDER`** does not provide any benefit, but we can see all of the metrics that result from this operation.
 
 -- COMMAND ----------
 
@@ -206,7 +206,7 @@ DESCRIBE HISTORY students
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC As expected, `OPTIMIZE` created another version of our table, meaning that version 8 is our most current version.
+-- MAGIC As expected, **`OPTIMIZE`** created another version of our table, meaning that version 8 is our most current version.
 -- MAGIC 
 -- MAGIC Remember all of those extra data files that had been marked as removed in our transaction log? These provide us with the ability to query previous versions of our table.
 -- MAGIC 
@@ -238,7 +238,7 @@ DELETE FROM students
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC Note that when we see a `-1` for number of rows affected by a delete, this means an entire directory of data has been removed.
+-- MAGIC Note that when we see a **`-1`** for number of rows affected by a delete, this means an entire directory of data has been removed.
 -- MAGIC 
 -- MAGIC Let's confirm this below.
 
@@ -258,7 +258,7 @@ RESTORE TABLE students TO VERSION AS OF 8
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC Note that a `RESTORE` command is recorded as a transaction; you won't be able to completely hide the fact that you accidentally deleted all the records in the table, but you will be able to undo the operation and bring your table back to a desired state.
+-- MAGIC Note that a **`RESTORE`** command is recorded as a transaction; you won't be able to completely hide the fact that you accidentally deleted all the records in the table, but you will be able to undo the operation and bring your table back to a desired state.
 
 -- COMMAND ----------
 
@@ -269,27 +269,27 @@ RESTORE TABLE students TO VERSION AS OF 8
 -- MAGIC 
 -- MAGIC While Delta Lake versioning and time travel are great for querying recent versions and rolling back queries, keeping the data files for all versions of large production tables around indefinitely is very expensive (and can lead to compliance issues if PII is present).
 -- MAGIC 
--- MAGIC If you wish to manually purge old data files, this can be performed with the `VACUUM` operation.
+-- MAGIC If you wish to manually purge old data files, this can be performed with the **`VACUUM`** operation.
 -- MAGIC 
--- MAGIC Let's do this below with a retention of `0 HOURS` to only keep our current version.
+-- MAGIC Uncomment the following cell and execute it with a retention of **`0 HOURS`** to keep only the current version:
 
 -- COMMAND ----------
 
-VACUUM students RETAIN 0 HOURS
+-- VACUUM students RETAIN 0 HOURS
 
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC By default, `VACUUM` will prevent you from deleting files less than 7 days old, just to ensure that no long-running operations are still referencing any of the files to be deleted. We turned off the setting that prese
+-- MAGIC By default, **`VACUUM`** will prevent you from deleting files less than 7 days old, just to ensure that no long-running operations are still referencing any of the files to be deleted. 
 -- MAGIC 
--- MAGIC In our demos, you may see Databricks executing code that specifies a retention of `0 HOURS`. This is almost exclusively for demo purposes. There are some instances where a power user of Databricks may need to perform this operation, **you should probably never do this on a production table.**
+-- MAGIC In our demos, you may see Databricks executing code that specifies a retention of **`0 HOURS`**. This is almost exclusively for demo purposes. There are some instances where a power user of Databricks may need to perform this operation, **you should probably never do this on a production table.**
 -- MAGIC 
 -- MAGIC That being said, let's do it here.
 -- MAGIC 
 -- MAGIC In the following cell, we:
 -- MAGIC * Turn off a check to prevent premature deletion of data files
--- MAGIC * Make sure that logging of `VACUUM` commands is enabled
--- MAGIC * Use the `DRY RUN` version of vacuum to print out all records to be deleted
+-- MAGIC * Make sure that logging of **`VACUUM`** commands is enabled
+-- MAGIC * Use the **`DRY RUN`** version of vacuum to print out all records to be deleted
 
 -- COMMAND ----------
 
@@ -301,7 +301,7 @@ VACUUM students RETAIN 0 HOURS DRY RUN
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC By running `VACUUM` and deleting the 9 files above, we will permanently remove access to versions of the table that require these files to materialize.
+-- MAGIC By running **`VACUUM`** and deleting the 9 files above, we will permanently remove access to versions of the table that require these files to materialize.
 
 -- COMMAND ----------
 
@@ -315,7 +315,17 @@ VACUUM students RETAIN 0 HOURS
 -- COMMAND ----------
 
 -- MAGIC %python
--- MAGIC display(dbutils.fs.ls(f"{userhome}/students"))
+-- MAGIC display(dbutils.fs.ls(f"{DA.paths.user_db}/students"))
+
+-- COMMAND ----------
+
+-- MAGIC %md 
+-- MAGIC Run the following cell to delete the tables and files associated with this lesson.
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC DA.cleanup()
 
 -- COMMAND ----------
 

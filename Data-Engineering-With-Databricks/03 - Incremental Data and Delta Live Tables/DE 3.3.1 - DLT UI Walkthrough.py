@@ -26,7 +26,7 @@
 
 # COMMAND ----------
 
-# MAGIC %run ../Includes/dlt-setup $course="dlt_demo" $mode="reset"
+# MAGIC %run ../Includes/classroom-setup-dlt-demo
 
 # COMMAND ----------
 
@@ -35,8 +35,8 @@
 
 # COMMAND ----------
 
-print(f"Target: {database}")
-print(f"Storage location: {userhome.split(':')[1]}")
+print(f"Target: {DA.db_name}")
+print(f"Storage location: {DA.paths.storage_location}")
 
 # COMMAND ----------
 
@@ -51,12 +51,14 @@ print(f"Storage location: {userhome.split(':')[1]}")
 # MAGIC 1. Fill in a **Pipeline Name** of your choosing.
 # MAGIC 1. For **Notebook Libraries**, use the navigator to locate and select the companion notebook called **3.3.2 - SQL for Delta Live Tables**.   
 # MAGIC    * Though this document is a standard Databricks Notebook, the SQL syntax is specialized to DLT table declarations. We will be exploring the syntax in the exercise that follows.
-# MAGIC 1. In the **Target** field, specify the database name printed out next to **Target** in the cell above. (This should follow the pattern `dbacademy_<username>_dlt_demo`)
+# MAGIC 1. In the **Target** field, specify the database name printed out next to **Target** in the cell above. (This should follow the pattern **`dbacademy_<username>_dlt_demo`**)
 # MAGIC    * This field is optional; if not specified, then tables will not be registered to a metastore, but will still be available in the DBFS. Refer to the <a href="https://docs.databricks.com/data-engineering/delta-live-tables/delta-live-tables-user-guide.html#publish-tables" target="_blank">documentation</a> for more information on this option.
 # MAGIC 1. In the **Storage location** field, copy the directory as printed above.
 # MAGIC    * This optional field allows the user to specify a location to store logs, tables, and other information related to pipeline execution. If not specified, DLT will automatically generate a directory.
 # MAGIC 1. For **Pipeline Mode**, select **Triggered**
-# MAGIC    * This field specifies how the pipeline will be run. **Triggered** pipelines run once and then shut down until the next manual or scheduled update. **Continuous** pipelines run continuously, ingesting new data as it arrives. Choose the mode based on latency and cost requirements.
+# MAGIC    * This field specifies how the pipeline will be run.
+# MAGIC    * **Triggered** pipelines run once and then shut down until the next manual or scheduled update.
+# MAGIC    * **Continuous** pipelines run continuously, ingesting new data as it arrives. Choose the mode based on latency and cost requirements.
 # MAGIC 1. Uncheck the **Enable autoscaling** box, and set the number of workers to 1.,
 # MAGIC    * **Enable autoscaling**, **Min Workers** and **Max Workers** control the worker configuration for the underlying cluster processing the pipeline. Notice the DBU estimate provided, similar to that provided when configuring interactive clusters.
 # MAGIC 1. Click **Create**.
@@ -78,7 +80,9 @@ print(f"Storage location: {userhome.split(':')[1]}")
 # MAGIC %md
 # MAGIC ## Exploring the DAG
 # MAGIC 
-# MAGIC As the pipeline completes, the execution flow is graphed. Select the tables review the details.
+# MAGIC As the pipeline completes, the execution flow is graphed. 
+# MAGIC 
+# MAGIC Selecting the tables reviews the details.
 # MAGIC 
 # MAGIC Select **sales_orders_cleaned**. Notice the results reported in the **Data Quality** section. Because this flow has data expectations declared, those metrics are tracked here. No records are dropped because the constraint is declared in a way that allows violating records to be included in the output. This will be covered in more details in the next exercise.
 

@@ -6,24 +6,22 @@
 
 # COMMAND ----------
 
-# MAGIC %run ../Includes/dlt-setup $course="dlt_demo"
+# MAGIC %run ../Includes/classroom-setup-dlt-demo
 
 # COMMAND ----------
 
-storage_location = userhome
-
-# COMMAND ----------
-
-dbutils.fs.ls(storage_location)
+files = dbutils.fs.ls(DA.paths.storage_location)
+display(files)
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC The `system` directory captures events associated with the pipeline.
+# MAGIC The **`system`** directory captures events associated with the pipeline.
 
 # COMMAND ----------
 
-dbutils.fs.ls(f"{storage_location}/system/events")
+files = dbutils.fs.ls(f"{DA.paths.storage_location}/system/events")
+display(files)
 
 # COMMAND ----------
 
@@ -32,7 +30,8 @@ dbutils.fs.ls(f"{storage_location}/system/events")
 
 # COMMAND ----------
 
-display(spark.sql(f"SELECT * FROM delta.`{storage_location}/system/events`"))
+# MAGIC %sql
+# MAGIC SELECT * FROM delta.`${da.paths.storage_location}/system/events`
 
 # COMMAND ----------
 
@@ -41,7 +40,8 @@ display(spark.sql(f"SELECT * FROM delta.`{storage_location}/system/events`"))
 
 # COMMAND ----------
 
-dbutils.fs.ls(f"{storage_location}/tables")
+files = dbutils.fs.ls(f"{DA.paths.storage_location}/tables")
+display(files)
 
 # COMMAND ----------
 
@@ -50,5 +50,15 @@ dbutils.fs.ls(f"{storage_location}/tables")
 
 # COMMAND ----------
 
-display(spark.sql(f"SELECT * FROM {database}.sales_order_in_la"))
+# MAGIC %sql
+# MAGIC SELECT * FROM ${da.db_name}.sales_order_in_la
+
+# COMMAND ----------
+
+# MAGIC %md 
+# MAGIC Run the following cell to delete the tables and files associated with this lesson.
+
+# COMMAND ----------
+
+DA.cleanup()
 

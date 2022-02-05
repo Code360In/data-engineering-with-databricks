@@ -17,7 +17,7 @@
 -- MAGIC ## Learning Objectives
 -- MAGIC By the end of this lesson, students should feel confident:
 -- MAGIC - Using Spark SQL to directly query data files
--- MAGIC - Leveraging `text` and `binaryFile` methods to review raw file contents
+-- MAGIC - Leveraging **`text`** and **`binaryFile`** methods to review raw file contents
 
 -- COMMAND ----------
 
@@ -28,20 +28,22 @@
 
 -- COMMAND ----------
 
--- MAGIC %run ../Includes/setup $mode="reset"
+-- MAGIC %run ../Includes/classroom-setup-2.2.1-setup
 
 -- COMMAND ----------
 
 -- MAGIC %md
 -- MAGIC ## Data Overview
 -- MAGIC 
--- MAGIC In this example, we'll work with a sample of raw Kafka data written as JSON files. Each file contains all records consumed during a 5-second interval, stored with the full Kafka schema as a multiple-record JSON file.
+-- MAGIC In this example, we'll work with a sample of raw Kafka data written as JSON files. 
+-- MAGIC 
+-- MAGIC Each file contains all records consumed during a 5-second interval, stored with the full Kafka schema as a multiple-record JSON file.
 -- MAGIC 
 -- MAGIC | field | type | description |
 -- MAGIC | --- | --- | --- |
--- MAGIC | key | BINARY | The `user_id` field is used as the key; this is a unique alphanumeric field that corresponds to session/cookie information |
+-- MAGIC | key | BINARY | The **`user_id`** field is used as the key; this is a unique alphanumeric field that corresponds to session/cookie information |
 -- MAGIC | value | BINARY | This is the full data payload (to be discussed later), sent as JSON |
--- MAGIC | topic | STRING | While the Kafka service hosts multiple topics, only those records from the `clickstream` topic are included here |
+-- MAGIC | topic | STRING | While the Kafka service hosts multiple topics, only those records from the **`clickstream`** topic are included here |
 -- MAGIC | partition | INTEGER | Our current Kafka implementation uses only 2 partitions (0 and 1) |
 -- MAGIC | offset | LONG | This is a unique value, monotonically increasing for each partition |
 -- MAGIC | timestamp | LONG | This timestamp is recorded as milliseconds since epoch, and represents the time at which the producer appends a record to a partition |
@@ -54,14 +56,22 @@
 -- COMMAND ----------
 
 -- MAGIC %python
--- MAGIC len(dbutils.fs.ls(f"{source}/events-kafka/"))
+-- MAGIC dataset_path = f"{DA.paths.datasets}/raw/events-kafka"
+-- MAGIC print(dataset_path)
+-- MAGIC 
+-- MAGIC files = dbutils.fs.ls(dataset_path)
+-- MAGIC display(files)
 
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC Here, we'll be using relative file paths to data that's been written to the DBFS root. Most workflows will require users to access data from external cloud storage locations. In most companies, a workspace administrative will be responsible for configuring access to these storage locations.
+-- MAGIC Here, we'll be using relative file paths to data that's been written to the DBFS root. 
 -- MAGIC 
--- MAGIC Instructions for configuring and accessing these locations can be found in the cloud-vendor specific courses titled "Cloud Architecture & Systems Integrations".
+-- MAGIC Most workflows will require users to access data from external cloud storage locations. 
+-- MAGIC 
+-- MAGIC In most companies, a workspace administrator will be responsible for configuring access to these storage locations.
+-- MAGIC 
+-- MAGIC Instructions for configuring and accessing these locations can be found in the cloud-vendor specific self-paced courses titled "Cloud Architecture & Systems Integrations".
 
 -- COMMAND ----------
 
@@ -70,13 +80,13 @@
 -- MAGIC 
 -- MAGIC To query the data contained in a single file, execute the query with the following pattern:
 -- MAGIC 
--- MAGIC ```
--- MAGIC SELECT * FROM file_format.`/path/to/file`
--- MAGIC ```
+-- MAGIC <strong><code>SELECT * FROM file_format.&#x60;/path/to/file&#x60;</code></strong>
+-- MAGIC 
+-- MAGIC Make special note of the use of back-ticks (not single quotes) around the path.
 
 -- COMMAND ----------
 
-SELECT * FROM json.`${c.source}/events-kafka/001.json`
+SELECT * FROM json.`${da.paths.datasets}/raw/events-kafka/001.json`
 
 -- COMMAND ----------
 
@@ -92,7 +102,7 @@ SELECT * FROM json.`${c.source}/events-kafka/001.json`
 
 -- COMMAND ----------
 
-SELECT * FROM json.`${c.source}/events-kafka/`
+SELECT * FROM json.`${da.paths.datasets}/raw/events-kafka`
 
 -- COMMAND ----------
 
@@ -110,7 +120,7 @@ SELECT * FROM json.`${c.source}/events-kafka/`
 -- COMMAND ----------
 
 CREATE OR REPLACE TEMP VIEW events_temp_view
-AS SELECT * FROM json.`${c.source}/events-kafka/`;
+AS SELECT * FROM json.`${da.paths.datasets}/raw/events-kafka/`;
 
 SELECT * FROM events_temp_view
 
@@ -119,24 +129,34 @@ SELECT * FROM events_temp_view
 -- MAGIC %md
 -- MAGIC ## Extract Text Files as Raw Strings
 -- MAGIC 
--- MAGIC When working with text-based files (which include JSON, CSV, TSV, and TXT formats), you can use the `text` format to load each line of the file as a row with one string column named `value`. This can be useful when data sources are prone to corruption and custom text parsing functions will be used to extract value from text fields.
+-- MAGIC When working with text-based files (which include JSON, CSV, TSV, and TXT formats), you can use the **`text`** format to load each line of the file as a row with one string column named **`value`**. This can be useful when data sources are prone to corruption and custom text parsing functions will be used to extract value from text fields.
 
 -- COMMAND ----------
 
-SELECT * FROM text.`${c.source}/events-kafka/`
+SELECT * FROM text.`${da.paths.datasets}/raw/events-kafka/`
 
 -- COMMAND ----------
 
 -- MAGIC %md
 -- MAGIC ## Extract the Raw Bytes and Metadata of a File
 -- MAGIC 
--- MAGIC Some workflows may require working with entire files, such as when dealing with images or unstructured data. Using `binaryFile` to query a directory will provide file metadata alongside the binary representation of the file contents.
+-- MAGIC Some workflows may require working with entire files, such as when dealing with images or unstructured data. Using **`binaryFile`** to query a directory will provide file metadata alongside the binary representation of the file contents.
 -- MAGIC 
--- MAGIC Specifically, the fields created will indicate the `path`, `modificationTime`, `length`, and `content`.
+-- MAGIC Specifically, the fields created will indicate the **`path`**, **`modificationTime`**, **`length`**, and **`content`**.
 
 -- COMMAND ----------
 
-SELECT * FROM binaryFile.`${c.source}/events-kafka/`
+SELECT * FROM binaryFile.`${da.paths.datasets}/raw/events-kafka/`
+
+-- COMMAND ----------
+
+-- MAGIC %md 
+-- MAGIC Run the following cell to delete the tables and files associated with this lesson.
+
+-- COMMAND ----------
+
+-- MAGIC %python 
+-- MAGIC DA.cleanup()
 
 -- COMMAND ----------
 

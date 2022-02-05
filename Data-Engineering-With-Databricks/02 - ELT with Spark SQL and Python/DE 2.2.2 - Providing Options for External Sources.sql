@@ -28,7 +28,7 @@
 
 -- COMMAND ----------
 
--- MAGIC %run ../Includes/setup-external
+-- MAGIC %run ../Includes/classroom-setup-2.2.2-setup-external
 
 -- COMMAND ----------
 
@@ -41,7 +41,7 @@
 
 -- COMMAND ----------
 
-SELECT * FROM csv.`${c.source}/sales-csv/`
+SELECT * FROM csv.`${da.paths.working_dir}/sales-csv`
 
 -- COMMAND ----------
 
@@ -49,7 +49,7 @@ SELECT * FROM csv.`${c.source}/sales-csv/`
 -- MAGIC We can see from the above that:
 -- MAGIC 1. The header row is being extracted as a table row
 -- MAGIC 1. All columns are being loaded as a single column
--- MAGIC 1. The file is pipe-delimited (`|`)
+-- MAGIC 1. The file is pipe-delimited (**`|`**)
 -- MAGIC 1. The final column appears to contain nested data that is being truncated
 
 -- COMMAND ----------
@@ -59,19 +59,18 @@ SELECT * FROM csv.`${c.source}/sales-csv/`
 -- MAGIC 
 -- MAGIC While Spark will extract some self-describing data sources efficiently using default settings, many formats will require declaration of schema or other options.
 -- MAGIC 
--- MAGIC While there are many [additional configurations](https://docs.databricks.com/spark/latest/spark-sql/language-manual/sql-ref-syntax-ddl-create-table-datasource.html) you can set while creating tables against external sources, the syntax below demonstrates the essentials required to extract data from most formats.
+-- MAGIC While there are many <a href="https://docs.databricks.com/spark/latest/spark-sql/language-manual/sql-ref-syntax-ddl-create-table-using.html" target="_blank">additional configurations</a> you can set while creating tables against external sources, the syntax below demonstrates the essentials required to extract data from most formats.
 -- MAGIC 
--- MAGIC ```
--- MAGIC CREATE TABLE table_identifier
--- MAGIC (col_name1 col_type1, ...)
--- MAGIC USING data_source
--- MAGIC OPTIONS (key1 = val1, key2 = val2, ...)
--- MAGIC LOCATION path
--- MAGIC ```
+-- MAGIC <strong><code>
+-- MAGIC CREATE TABLE table_identifier (col_name1 col_type1, ...)<br/>
+-- MAGIC USING data_source<br/>
+-- MAGIC OPTIONS (key1 = val1, key2 = val2, ...)<br/>
+-- MAGIC LOCATION path<br/>
+-- MAGIC </code></strong>
 -- MAGIC 
--- MAGIC Note that options are passed with keys as unquoted text and values in quotes. Spark supports many [data sources](https://docs.databricks.com/data/data-sources/index.html) with custom options, and additional systems may have unofficial support through external [libraries](https://docs.databricks.com/libraries/index.html). 
+-- MAGIC Note that options are passed with keys as unquoted text and values in quotes. Spark supports many <a href="https://docs.databricks.com/data/data-sources/index.html" target="_blank">data sources</a> with custom options, and additional systems may have unofficial support through external <a href="https://docs.databricks.com/libraries/index.html" target="_blank">libraries</a>. 
 -- MAGIC 
--- MAGIC **NOTE**: Depending on your workspace settings, you may need adminstrator assistance to load libraries and configure the requisite security settings for some data sources.
+-- MAGIC **NOTE**: Depending on your workspace settings, you may need administrator assistance to load libraries and configure the requisite security settings for some data sources.
 
 -- COMMAND ----------
 
@@ -85,7 +84,12 @@ SELECT * FROM csv.`${c.source}/sales-csv/`
 
 -- COMMAND ----------
 
-DROP TABLE IF EXISTS sales_csv;
+-- MAGIC %python
+-- MAGIC # SOURCE-ONLY
+-- MAGIC files = dbutils.fs.ls(f"{DA.paths.working_dir}/sales-csv")
+-- MAGIC display(files)
+
+-- COMMAND ----------
 
 CREATE TABLE sales_csv
   (order_id LONG, email STRING, transactions_timestamp LONG, total_item_quantity INTEGER, purchase_revenue_in_usd DOUBLE, unique_items INTEGER, items STRING)
@@ -94,7 +98,7 @@ OPTIONS (
   header = "true",
   delimiter = "|"
 )
-LOCATION "${c.source}/sales-csv/"
+LOCATION "${da.paths.working_dir}/sales-csv"
 
 -- COMMAND ----------
 
@@ -113,12 +117,19 @@ SELECT COUNT(*) FROM sales_csv
 
 -- COMMAND ----------
 
+-- MAGIC %python
+-- MAGIC # SOURCE-ONLY
+-- MAGIC # Refactor to test-only
+-- MAGIC assert spark.read.table("sales_csv").count() == 10510
+
+-- COMMAND ----------
+
 -- MAGIC %md
 -- MAGIC All the metadata and options passed during table declaration will be persisted to the metastore, ensuring that data in the location will always be read with these options.
 -- MAGIC 
 -- MAGIC **NOTE**: When working with CSVs as a data source, it's important to ensure that column order does not change if additional data files will be added to the source directory. Because the data format does not have strong schema enforcement, Spark will load columns and apply column names and data types in the order specified during table declaration.
 -- MAGIC 
--- MAGIC Running `DESCRIBE EXTENDED` on a table will show all of the metadata associated with the table definition.
+-- MAGIC Running **`DESCRIBE EXTENDED`** on a table will show all of the metadata associated with the table definition.
 
 -- COMMAND ----------
 
@@ -138,7 +149,10 @@ DESCRIBE EXTENDED sales_csv
 -- COMMAND ----------
 
 -- MAGIC %python
--- MAGIC spark.table("sales_csv").write.mode("append").format("csv").save(f"{source}/sales-csv")
+-- MAGIC (spark.table("sales_csv")
+-- MAGIC       .write.mode("append")
+-- MAGIC       .format("csv")
+-- MAGIC       .save(f"{DA.paths.working_dir}/sales-csv"))
 
 -- COMMAND ----------
 
@@ -151,10 +165,19 @@ SELECT COUNT(*) FROM sales_csv
 
 -- COMMAND ----------
 
+-- MAGIC %python
+-- MAGIC # SOURCE-ONLY
+-- MAGIC # Refactor to test-only
+-- MAGIC assert spark.read.table("sales_csv").count() == 10510
+
+-- COMMAND ----------
+
 -- MAGIC %md
 -- MAGIC At the time we previously queried this data source, Spark automatically cached the underlying data in local storage. This ensures that on subsequent queries, Spark will provide the optimal performance by just querying this local cache.
 -- MAGIC 
--- MAGIC Our external data source is not configured to tell Spark is should refresh this data. We **can** manually refresh the cache of our data by running the `REFRESH TABLE` command.
+-- MAGIC Our external data source is not configured to tell Spark that it should refresh this data. 
+-- MAGIC 
+-- MAGIC We **can** manually refresh the cache of our data by running the **`REFRESH TABLE`** command.
 
 -- COMMAND ----------
 
@@ -163,11 +186,20 @@ REFRESH TABLE sales_csv
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC Note that refreshing our table will invalidate our cache, meaning that we'll need to rescan our original data source and pull all data back into memory. For very large datasets, this may take a significant amount of time.
+-- MAGIC Note that refreshing our table will invalidate our cache, meaning that we'll need to rescan our original data source and pull all data back into memory. 
+-- MAGIC 
+-- MAGIC For very large datasets, this may take a significant amount of time.
 
 -- COMMAND ----------
 
 SELECT COUNT(*) FROM sales_csv
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC # SOURCE-ONLY
+-- MAGIC # Refactor to test-only
+-- MAGIC assert spark.read.table("sales_csv").count() == 21016
 
 -- COMMAND ----------
 
@@ -176,16 +208,17 @@ SELECT COUNT(*) FROM sales_csv
 -- MAGIC SQL databases are an extremely common data source, and Databricks has a standard JDBC driver for connecting with many flavors of SQL.
 -- MAGIC 
 -- MAGIC The general syntax for creating these connections is:
--- MAGIC ```
--- MAGIC CREATE TABLE <jdbcTable>
--- MAGIC USING org.apache.spark.sql.jdbc
--- MAGIC OPTIONS (
--- MAGIC   url "jdbc:<databaseServerType>://<jdbcHostname>:<jdbcPort>",
--- MAGIC   dbtable "<jdbcDatabase>.table",
--- MAGIC   user "<jdbcUsername>",
--- MAGIC   password "<jdbcPassword>"
+-- MAGIC 
+-- MAGIC <strong><code>
+-- MAGIC CREATE TABLE <jdbcTable><br/>
+-- MAGIC USING org.apache.spark.sql.jdbc<br/>
+-- MAGIC OPTIONS (<br/>
+-- MAGIC &nbsp; &nbsp; url "jdbc:{databaseServerType}://{jdbcHostname}:{jdbcPort}",<br/>
+-- MAGIC &nbsp; &nbsp; dbtable "{jdbcDatabase}.table",<br/>
+-- MAGIC &nbsp; &nbsp; user "{jdbcUsername}",<br/>
+-- MAGIC &nbsp; &nbsp; password "{jdbcPassword}"<br/>
 -- MAGIC )
--- MAGIC ```
+-- MAGIC </code></strong>
 -- MAGIC 
 -- MAGIC In the code sample below, we'll connect with SQLite (which uses a local file to store a database, and doesn't have users and passwords).
 
@@ -196,7 +229,7 @@ DROP TABLE IF EXISTS users_jdbc;
 CREATE TABLE users_jdbc
 USING org.apache.spark.sql.jdbc
 OPTIONS (
-  url "jdbc:sqlite:/${c.username}_ecommerce.db",
+  url "jdbc:sqlite:/${da.username}_ecommerce.db",
   dbtable "users"
 )
 
@@ -221,12 +254,12 @@ DESCRIBE EXTENDED users_jdbc
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC While the table is listed as `MANAGED`, listing the contents of the specified location confirms that no data is being persisted locally.
+-- MAGIC While the table is listed as **`MANAGED`**, listing the contents of the specified location confirms that no data is being persisted locally.
 
 -- COMMAND ----------
 
 -- MAGIC %python
--- MAGIC jdbc_users_path = f"{database_location}/users_jdbc/"
+-- MAGIC jdbc_users_path = f"{DA.paths.user_db}/users_jdbc/"
 -- MAGIC print(jdbc_users_path)
 -- MAGIC 
 -- MAGIC files = dbutils.fs.ls(jdbc_users_path)
@@ -242,6 +275,16 @@ DESCRIBE EXTENDED users_jdbc
 -- MAGIC In either case, working with very large datasets in external SQL databases can incur significant overhead because of either:
 -- MAGIC 1. Network transfer latency associated with moving all data over the public internet
 -- MAGIC 1. Execution of query logic in source systems not optimized for big data queries
+
+-- COMMAND ----------
+
+-- MAGIC %md 
+-- MAGIC Run the following cell to delete the tables and files associated with this lesson.
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC DA.cleanup()
 
 -- COMMAND ----------
 

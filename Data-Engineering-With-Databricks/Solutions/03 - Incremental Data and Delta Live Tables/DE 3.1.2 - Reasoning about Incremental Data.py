@@ -42,7 +42,7 @@
 
 # COMMAND ----------
 
-# MAGIC %run ../Includes/incremental-setup $mode="reset"
+# MAGIC %run ../Includes/classroom-setup-3.1.2-incremental-setup
 
 # COMMAND ----------
 
@@ -80,7 +80,7 @@
 # MAGIC <img src="http://spark.apache.org/docs/latest/img/structured-streaming-model.png" width="800"/>
 # MAGIC 
 # MAGIC 
-# MAGIC For more information, see the analogous section in the [Structured Streaming Programming Guide](http://spark.apache.org/docs/latest/structured-streaming-programming-guide.html#basic-concepts) (from which several images have been borrowed).
+# MAGIC For more information, see the analogous section in the <a href="http://spark.apache.org/docs/latest/structured-streaming-programming-guide.html#basic-concepts" target="_blank">Structured Streaming Programming Guide</a> (from which several images have been borrowed).
 
 # COMMAND ----------
 
@@ -107,13 +107,13 @@
 # MAGIC 
 # MAGIC ## Reading a Stream
 # MAGIC 
-# MAGIC The `spark.readStream()` method returns a `DataStreamReader` used to configure and query the stream.
+# MAGIC The **`spark.readStream()`** method returns a **`DataStreamReader`** used to configure and query the stream.
 # MAGIC 
 # MAGIC In the previous lesson, we saw code configured for incrementally reading with Auto Loader. Here, we'll show how easy it is to incrementally read a Delta Lake table.
 # MAGIC 
-# MAGIC The code uses the PySpark API to incrementally read a Delta Lake table named `bronze` and register a streaming temp view named `streaming_tmp_vw`.
+# MAGIC The code uses the PySpark API to incrementally read a Delta Lake table named **`bronze`** and register a streaming temp view named **`streaming_tmp_vw`**.
 # MAGIC 
-# MAGIC **NOTE**: A number of optional configurations (not shown here) can be set when configuring incremental reads, the most important of which allows you to [limit the input rate](https://docs.databricks.com/delta/delta-streaming.html#limit-input-rate).
+# MAGIC **NOTE**: A number of optional configurations (not shown here) can be set when configuring incremental reads, the most important of which allows you to <a href="https://docs.databricks.com/delta/delta-streaming.html#limit-input-rate" target="_blank">limit the input rate</a>.
 
 # COMMAND ----------
 
@@ -141,19 +141,20 @@
 # MAGIC %md
 # MAGIC You will recognize the data as being the same as the Delta table written out in our previous lesson.
 # MAGIC 
-# MAGIC Before continuing, click `Stop Execution` at the top of the notebook, `Cancel` immediately under the cell, or run the following cell to stop all active streaming queries.
+# MAGIC Before continuing, click **`Stop Execution`** at the top of the notebook, **`Cancel`** immediately under the cell, or run the following cell to stop all active streaming queries.
 
 # COMMAND ----------
 
 for s in spark.streams.active:
     print("Stopping " + s.id)
     s.stop()
+    s.awaitTermination()
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC ## Working with Streaming Data
-# MAGIC We can execute most transformation against streaming temp views the same way we would with static data. Here, we'll run a simple aggregation to get counts of records for each `device_id`.
+# MAGIC We can execute most transformation against streaming temp views the same way we would with static data. Here, we'll run a simple aggregation to get counts of records for each **`device_id`**.
 # MAGIC 
 # MAGIC Because we are querying a streaming temp view, this becomes a streaming query that executes indefinitely, rather than completing after retrieving a single set of results. For streaming queries like this, Databricks Notebooks include interactive dashboards that allow users to monitor streaming performance. Explore this below.
 # MAGIC 
@@ -169,13 +170,14 @@ for s in spark.streams.active:
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Before continuing, click `Stop Execution` at the top of the notebook, `Cancel` immediately under the cell, or run the following cell to stop all active streaming queries.
+# MAGIC Before continuing, click **`Stop Execution`** at the top of the notebook, **`Cancel`** immediately under the cell, or run the following cell to stop all active streaming queries.
 
 # COMMAND ----------
 
 for s in spark.streams.active:
     print("Stopping " + s.id)
     s.stop()
+    s.awaitTermination()
 
 # COMMAND ----------
 
@@ -187,13 +189,15 @@ for s in spark.streams.active:
 # MAGIC Consider the model of the data as a constantly appending table. Sorting is one of a handful of operations that is either too complex or logically not possible to do when working with streaming data.
 # MAGIC 
 # MAGIC A full discussion of these exceptions is out of scope for this course. Note that advanced streaming methods like windowing and watermarking can be used to add additional functionality to incremental workloads.
+# MAGIC 
+# MAGIC Uncomment and run the following cell how this failure may appear:
 
 # COMMAND ----------
 
-# MAGIC %sql
-# MAGIC SELECT * 
-# MAGIC FROM streaming_tmp_vw
-# MAGIC ORDER BY time
+# %sql
+# SELECT * 
+# FROM streaming_tmp_vw
+# ORDER BY time
 
 # COMMAND ----------
 
@@ -219,7 +223,7 @@ for s in spark.streams.active:
 # MAGIC 
 # MAGIC ## Writing a Stream
 # MAGIC 
-# MAGIC To persist the results of a streaming query, we must write them out to durable storage. The `DataFrame.writeStream` method returns a `DataStreamWriter` used to configure the output.
+# MAGIC To persist the results of a streaming query, we must write them out to durable storage. The **`DataFrame.writeStream`** method returns a **`DataStreamWriter`** used to configure the output.
 # MAGIC 
 # MAGIC When writing to Delta Lake tables, we typically will only need to worry about 3 settings, discussed here.
 # MAGIC 
@@ -233,23 +237,23 @@ for s in spark.streams.active:
 # MAGIC 
 # MAGIC ### Output Modes
 # MAGIC 
-# MAGIC Streaming jobs have output modes similar to static/batch workloads. [More details here](https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html#output-modes).
+# MAGIC Streaming jobs have output modes similar to static/batch workloads. <a href="https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html#output-modes" target="_blank">More details here</a>.
 # MAGIC 
 # MAGIC | Mode   | Example | Notes |
 # MAGIC | ------------- | ----------- | --- |
-# MAGIC | **Append** | `.outputMode("append")`     | **This is the default.** Only newly appended rows are incrementally appended to the target table with each batch |
-# MAGIC | **Complete** | `.outputMode("complete")` | The Results Table is recalculated each time a write is triggered; the target table is overwritten with each batch |
+# MAGIC | **Append** | **`.outputMode("append")`**     | **This is the default.** Only newly appended rows are incrementally appended to the target table with each batch |
+# MAGIC | **Complete** | **`.outputMode("complete")`** | The Results Table is recalculated each time a write is triggered; the target table is overwritten with each batch |
 # MAGIC 
 # MAGIC 
 # MAGIC ### Trigger Intervals
 # MAGIC 
-# MAGIC When defining a streaming write, the `trigger` method specifies when the system should process the next set of data..
+# MAGIC When defining a streaming write, the **`trigger`** method specifies when the system should process the next set of data..
 # MAGIC 
 # MAGIC | Trigger Type                           | Example | Notes |
 # MAGIC |----------------------------------------|-----------|-------------|
-# MAGIC | Unspecified                            |  | **This is the default.** This is equivalent to using `processingTime="500ms"` |
-# MAGIC | Fixed interval micro-batches           | `.trigger(processingTime="2 minutes")` | The query will be executed in micro-batches and kicked off at the user-specified intervals |
-# MAGIC | One-time micro-batch                   | `.trigger(once=True)` | The query will execute a single micro-batch to process all the available data and then stop on its own |
+# MAGIC | Unspecified                            |  | **This is the default.** This is equivalent to using **`processingTime="500ms"`** |
+# MAGIC | Fixed interval micro-batches           | **`.trigger(processingTime="2 minutes")`** | The query will be executed in micro-batches and kicked off at the user-specified intervals |
+# MAGIC | One-time micro-batch                   | **`.trigger(once=True)`** | The query will execute a single micro-batch to process all the available data and then stop on its own |
 # MAGIC 
 # MAGIC Note that triggers are specified when defining how data will be written to a sink and control the frequency of micro-batches. By default, Spark will automatically detect and process all data in the source that has been added since the last trigger.
 
@@ -258,15 +262,15 @@ for s in spark.streams.active:
 # MAGIC %md
 # MAGIC ## Pulling It All Together
 # MAGIC 
-# MAGIC The code below demonstrates using `spark.table()` to load data from a streaming temp view back to a DataFrame. Note that Spark will always load streaming views as a streaming DataFrame and static views as static DataFrames (meaning that incremental processing must be defined with read logic to support incremental writing).
+# MAGIC The code below demonstrates using **`spark.table()`** to load data from a streaming temp view back to a DataFrame. Note that Spark will always load streaming views as a streaming DataFrame and static views as static DataFrames (meaning that incremental processing must be defined with read logic to support incremental writing).
 # MAGIC 
-# MAGIC In this first query, we'll demonstrate using `trigger(once=True)` to perform incremental batch processing.
+# MAGIC In this first query, we'll demonstrate using **`trigger(once=True)`** to perform incremental batch processing.
 
 # COMMAND ----------
 
 (spark.table("device_counts_tmp_vw")                               
     .writeStream                                                
-    .option("checkpointLocation", silver_checkpoint)
+    .option("checkpointLocation", f"{DA.paths.checkpoints}/silver")
     .outputMode("complete")
     .trigger(once=True)
     .table("device_counts")
@@ -282,13 +286,15 @@ for s in spark.streams.active:
 
 # COMMAND ----------
 
-(spark.table("device_counts_tmp_vw")                               
-  .writeStream                                                
-  .option("checkpointLocation", silver_checkpoint)
-  .outputMode("complete")
-  .trigger(processingTime='4 seconds')
-  .table("device_counts")
-)
+query = (spark.table("device_counts_tmp_vw")                               
+              .writeStream                                                
+              .option("checkpointLocation", f"{DA.paths.checkpoints}/silver")
+              .outputMode("complete")
+              .trigger(processingTime='4 seconds')
+              .table("device_counts"))
+
+# Like before, wait until our stream has processed some data
+DA.block_until_stream_is_ready(query)
 
 # COMMAND ----------
 
@@ -315,12 +321,12 @@ for s in spark.streams.active:
 
 # COMMAND ----------
 
-File.newData()
+DA.data_factory.load()
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Query the target table again to see the updated counts for each `device_id`.
+# MAGIC Query the target table again to see the updated counts for each **`device_id`**.
 
 # COMMAND ----------
 
@@ -338,7 +344,7 @@ File.newData()
 
 # COMMAND ----------
 
-# MAGIC %run ../Includes/classic-setup $mode="clean"
+DA.cleanup()
 
 # COMMAND ----------
 

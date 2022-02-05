@@ -14,10 +14,10 @@
 -- MAGIC In this notebook, we'll explore SQL syntax to process updates with Delta Lake. While many operations are standard SQL, slight variations exist to accommodate Spark and Delta Lake execution.
 -- MAGIC 
 -- MAGIC ## Learning Objectives
--- MAGIC - Overwrite data tables using `INSERT OVERWRITE`
--- MAGIC - Append to a table using `INSERT INTO`
--- MAGIC - Append, update, and delete from a table using `MERGE INTO`
--- MAGIC - Ingest data incrementally into tables using `COPY INTO`
+-- MAGIC - Overwrite data tables using **`INSERT OVERWRITE`**
+-- MAGIC - Append to a table using **`INSERT INTO`**
+-- MAGIC - Append, update, and delete from a table using **`MERGE INTO`**
+-- MAGIC - Ingest data incrementally into tables using **`COPY INTO`**
 
 -- COMMAND ----------
 
@@ -28,7 +28,7 @@
 
 -- COMMAND ----------
 
--- MAGIC %run ../Includes/setup-updates
+-- MAGIC %run ../Includes/classroom-setup-2.2.4-setup-updates
 
 -- COMMAND ----------
 
@@ -45,12 +45,12 @@
 -- MAGIC 
 -- MAGIC Some students may have noticed previous lesson on CTAS statements actually used CRAS statements (to avoid potential errors if a cell was run multiple times).
 -- MAGIC 
--- MAGIC `CREATE OR REPLACE TABLE` (CRAS) statements fully replace the contents of a table each time they execute.
+-- MAGIC **`CREATE OR REPLACE TABLE`** (CRAS) statements fully replace the contents of a table each time they execute.
 
 -- COMMAND ----------
 
 CREATE OR REPLACE TABLE events AS
-SELECT * FROM parquet.`${c.source}/events-historical/`
+SELECT * FROM parquet.`${da.paths.datasets}/raw/events-historical`
 
 -- COMMAND ----------
 
@@ -64,12 +64,12 @@ DESCRIBE HISTORY events
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC `INSERT OVERWRITE` provides a nearly identical outcome: data in the target table will be replaced by data from the query.
+-- MAGIC **`INSERT OVERWRITE`** provides a nearly identical outcome: data in the target table will be replaced by data from the query.
 
 -- COMMAND ----------
 
 INSERT OVERWRITE sales
-SELECT * FROM parquet.`${c.source}/sales-historical/`
+SELECT * FROM parquet.`${da.paths.datasets}/raw/sales-historical/`
 
 -- COMMAND ----------
 
@@ -85,59 +85,65 @@ DESCRIBE HISTORY sales
 -- MAGIC %md
 -- MAGIC A primary difference here has to do with how Delta Lake enforces schema on write.
 -- MAGIC 
--- MAGIC Whereas a CRAS statement will allow us to completely redefine the contents of our target table, `INSERT OVERWRITE` will fail if we try to change our schema (unless we provide optional settings). Run the cell below to generated an expected error message.
+-- MAGIC Whereas a CRAS statement will allow us to completely redefine the contents of our target table, **`INSERT OVERWRITE`** will fail if we try to change our schema (unless we provide optional settings). 
+-- MAGIC 
+-- MAGIC Uncomment and run the cell below to generated an expected error message.
 
 -- COMMAND ----------
 
-INSERT OVERWRITE sales
-SELECT *, current_timestamp() FROM parquet.`${c.source}/sales-historical/`
+-- INSERT OVERWRITE sales
+-- SELECT *, current_timestamp() FROM parquet.`${da.paths.datasets}/raw/sales-historical`
 
 -- COMMAND ----------
 
 -- MAGIC %md ## Append Rows
 -- MAGIC 
--- MAGIC We can use `INSERT INTO` to atomically append new rows to an existing Delta table. This allows for incremental updates to existing tables, which is much more efficient than overwriting each time.
+-- MAGIC We can use **`INSERT INTO`** to atomically append new rows to an existing Delta table. This allows for incremental updates to existing tables, which is much more efficient than overwriting each time.
 -- MAGIC 
--- MAGIC Append new sale records to the `sales` table using `INSERT INTO`.
+-- MAGIC Append new sale records to the **`sales`** table using **`INSERT INTO`**.
 
 -- COMMAND ----------
 
 INSERT INTO sales
-SELECT * FROM parquet.`${c.source}/sales-30m/`
+SELECT * FROM parquet.`${da.paths.datasets}/raw/sales-30m`
 
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC Note that `INSERT INTO` does not have any built-in guarantees to prevent inserting the same records multiple times. Re-executing the above cell would write the same records to the target table, resulting in duplicate records.
+-- MAGIC Note that **`INSERT INTO`** does not have any built-in guarantees to prevent inserting the same records multiple times. Re-executing the above cell would write the same records to the target table, resulting in duplicate records.
 
 -- COMMAND ----------
 
 -- MAGIC %md ## Merge Updates
 -- MAGIC 
--- MAGIC You can upsert data from a source table, view, or DataFrame into a target Delta table using the `MERGE` SQL operation. Delta Lake supports inserts, updates and deletes in `MERGE`, and supports extended syntax beyond the SQL standards to facilitate advanced use cases.
--- MAGIC ```
--- MAGIC MERGE INTO target a
--- MAGIC USING source b
--- MAGIC ON <merge_condition>
--- MAGIC WHEN MATCHED THEN <matched_action>
--- MAGIC WHEN NOT MATCHED THEN <not_matched_action>
--- MAGIC ```
--- MAGIC We will use the `MERGE` operation to update historic users data with updated emails and new users.
+-- MAGIC You can upsert data from a source table, view, or DataFrame into a target Delta table using the **`MERGE`** SQL operation. Delta Lake supports inserts, updates and deletes in **`MERGE`**, and supports extended syntax beyond the SQL standards to facilitate advanced use cases.
+-- MAGIC 
+-- MAGIC <strong><code>
+-- MAGIC MERGE INTO target a<br/>
+-- MAGIC USING source b<br/>
+-- MAGIC ON {merge_condition}<br/>
+-- MAGIC WHEN MATCHED THEN {matched_action}<br/>
+-- MAGIC WHEN NOT MATCHED THEN {not_matched_action}<br/>
+-- MAGIC </code></strong>
+-- MAGIC 
+-- MAGIC We will use the **`MERGE`** operation to update historic users data with updated emails and new users.
 
 -- COMMAND ----------
 
 CREATE OR REPLACE TEMP VIEW users_update AS 
-SELECT *, current_timestamp() updated FROM parquet.`${c.source}/users-30m/`
+SELECT *, current_timestamp() updated FROM parquet.`${da.paths.datasets}/raw/users-30m`
 
 -- COMMAND ----------
 
 -- MAGIC %md 
--- MAGIC The main benefits of `MERGE`:
+-- MAGIC The main benefits of **`MERGE`**:
 -- MAGIC * updates, inserts, and deletes are completed as a single transaction
 -- MAGIC * multiple conditionals can be added in addition to matching fields
 -- MAGIC * provides extensive options for implementing custom logic
 -- MAGIC 
--- MAGIC Below, we'll only only update records if the current row has a `NULL` email and the new row does not. All unmatched records from the new batch will be inserted.
+-- MAGIC Below, we'll only update records if the current row has a **`NULL`** email and the new row does not. 
+-- MAGIC 
+-- MAGIC All unmatched records from the new batch will be inserted.
 
 -- COMMAND ----------
 
@@ -151,7 +157,7 @@ WHEN NOT MATCHED THEN INSERT *
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC Note that we explicitly specify the behavior of this function for both the `MATCHED` and `NOT MATCHED` conditions; the example demonstrated here is just an example of logic that can be applied, rather than indicative of all `MERGE` behavior.
+-- MAGIC Note that we explicitly specify the behavior of this function for both the **`MATCHED`** and **`NOT MATCHED`** conditions; the example demonstrated here is just an example of logic that can be applied, rather than indicative of all **`MERGE`** behavior.
 
 -- COMMAND ----------
 
@@ -162,9 +168,9 @@ WHEN NOT MATCHED THEN INSERT *
 -- MAGIC 
 -- MAGIC Many source systems can generate duplicate records. With merge, you can avoid inserting the duplicate records by performing an insert-only merge.
 -- MAGIC 
--- MAGIC This optimized command uses the same `MERGE` syntax but only provided a `WHEN NOT MATCHED` clause.
+-- MAGIC This optimized command uses the same **`MERGE`** syntax but only provided a **`WHEN NOT MATCHED`** clause.
 -- MAGIC 
--- MAGIC Below, we use this to confirm that records with the same `user_id` and `event_timestamp` aren't already in the `events` table.
+-- MAGIC Below, we use this to confirm that records with the same **`user_id`** and **`event_timestamp`** aren't already in the **`events`** table.
 
 -- COMMAND ----------
 
@@ -179,7 +185,7 @@ WHEN NOT MATCHED AND b.traffic_source = 'email' THEN
 -- MAGIC %md 
 -- MAGIC ## Load Incrementally
 -- MAGIC 
--- MAGIC `COPY INTO` provides SQL engineers an idempotent option to incrementally ingest data from external systems.
+-- MAGIC **`COPY INTO`** provides SQL engineers an idempotent option to incrementally ingest data from external systems.
 -- MAGIC 
 -- MAGIC Note that this operation does have some expectations:
 -- MAGIC - Data schema should be consistent
@@ -192,8 +198,18 @@ WHEN NOT MATCHED AND b.traffic_source = 'email' THEN
 -- COMMAND ----------
 
 COPY INTO sales
-FROM "${c.source}/sales-30m"
+FROM "${da.paths.datasets}/raw/sales-30m"
 FILEFORMAT = PARQUET
+
+-- COMMAND ----------
+
+-- MAGIC %md 
+-- MAGIC Run the following cell to delete the tables and files associated with this lesson.
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC DA.cleanup()
 
 -- COMMAND ----------
 

@@ -19,8 +19,8 @@
 -- MAGIC 
 -- MAGIC 
 -- MAGIC **Resources**
--- MAGIC * [Create View - Databricks Docs](https://docs.databricks.com/spark/latest/spark-sql/language-manual/sql-ref-syntax-ddl-create-view.html)
--- MAGIC * [Common Table Expressions - Databricks Docs](https://docs.databricks.com/spark/latest/spark-sql/language-manual/sql-ref-syntax-qry-select-cte.html)
+-- MAGIC * <a href="https://docs.databricks.com/spark/latest/spark-sql/language-manual/sql-ref-syntax-ddl-create-view.html" target="_blank">Create View - Databricks Docs</a>
+-- MAGIC * <a href="https://docs.databricks.com/spark/latest/spark-sql/language-manual/sql-ref-syntax-qry-select-cte.html" target="_blank">Common Table Expressions - Databricks Docs</a>
 
 -- COMMAND ----------
 
@@ -30,7 +30,7 @@
 
 -- COMMAND ----------
 
--- MAGIC %run ../Includes/setup-meta
+-- MAGIC %run ../Includes/classroom-setup-2.1.2-setup-meta-1
 
 -- COMMAND ----------
 
@@ -39,54 +39,76 @@
 
 -- COMMAND ----------
 
-CREATE DATABASE IF NOT EXISTS ${c.database};
-USE ${c.database};
+CREATE DATABASE IF NOT EXISTS ${da.db_name};
+USE ${da.db_name};
 
 -- mode "FAILFAST" will abort file parsing with a RuntimeException if any malformed lines are encountered
 CREATE OR REPLACE TEMPORARY VIEW temp_delays USING CSV OPTIONS (
-  path '${c.userhome}/datasets/flights/departuredelays.csv',
+  path '${da.paths.datasets}/flights/departuredelays.csv',
   header "true",
   mode "FAILFAST"
 );
-CREATE OR REPLACE TABLE external_table LOCATION '${c.userhome}/external_table' AS
-  SELECT * FROM temp_delays;
+
+CREATE OR REPLACE TABLE external_table 
+LOCATION '${da.paths.working_dir}/external_table' 
+AS SELECT * FROM temp_delays;
 
 SELECT * FROM external_table;
 
 -- COMMAND ----------
 
 -- MAGIC %md ## Views
--- MAGIC Let's create a view that contains only the data where the origin is 'ABQ' and the destination is 'LAX'.
+-- MAGIC Let's create a view that contains only the data where the origin is "ABQ" and the destination is "LAX".
 
 -- COMMAND ----------
 
 CREATE OR REPLACE VIEW view_delays_ABQ_LAX AS
-SELECT * FROM external_table WHERE origin = 'ABQ' AND destination = 'LAX';
+
+SELECT * 
+FROM external_table 
+WHERE origin = 'ABQ' AND destination = 'LAX';
+
 SELECT * FROM view_delays_ABQ_LAX;
 
 -- COMMAND ----------
 
 -- MAGIC %md 
--- MAGIC To show a list of tables (and views), we use the `SHOW TABLES` command.  
+-- MAGIC To show a list of tables (and views), we use the **`SHOW TABLES`** command.  
 -- MAGIC   
--- MAGIC Note that the `view_delays_abq_lax` view is in the list. If we detach from, and reattach to, the cluster and reload the list of tables, view_delays_abq_lax persists. This is because View metadata (name, location, etc.) are stored in the metastore.
+-- MAGIC Note that the **`view_delays_abq_lax`** view is in the list. 
 -- MAGIC 
--- MAGIC (The command `USE ${c.database};` is used after reattaching to the cluster because state is lost when the SparkSession is deleted)
+-- MAGIC Open the drop down menu for your cluster and select **Detach & Re-attach**
+-- MAGIC 
+-- MAGIC Once reattached, rerun the following command to initialize this lessons helper functions and basic setup.
 
 -- COMMAND ----------
 
-USE ${c.database};
+-- MAGIC %run ../Includes/classroom-setup-2.1.2-setup-meta-2
+
+-- COMMAND ----------
+
+-- MAGIC %md 
+-- MAGIC Now, if reload the list of tables, **`view_delays_abq_lax`** persists. 
+-- MAGIC 
+-- MAGIC This is because view metadata (name, location, etc.) are stored in the metastore.
+-- MAGIC 
+-- MAGIC (The command **`USE ${da.db_name};`** is used after reattaching to the cluster because state is lost when the SparkSession is deleted.)
+
+-- COMMAND ----------
+
+USE ${da.db_name};
 SHOW tables;
 
 -- COMMAND ----------
 
 -- MAGIC %md 
--- MAGIC Now, let's create a temporary view. The syntax is very similar but adds `TEMPORARY` to the command. 
+-- MAGIC Now, let's create a temporary view. The syntax is very similar but adds **`TEMPORARY`** to the command. 
 
 -- COMMAND ----------
 
-CREATE OR REPLACE TEMPORARY VIEW temp_view AS
-SELECT * FROM external_table WHERE delay > 120 ORDER BY delay ASC;
+CREATE OR REPLACE TEMPORARY VIEW temp_view 
+AS SELECT * FROM external_table WHERE delay > 120 ORDER BY delay ASC;
+
 SELECT * FROM temp_view;
 
 -- COMMAND ----------
@@ -94,26 +116,27 @@ SELECT * FROM temp_view;
 -- MAGIC %md 
 -- MAGIC Let's again show list of tables (and views).  
 -- MAGIC   
--- MAGIC Two things we note are that the `temp_view` view is in the list and that `temp_view` is marked `isTemporary`.  
+-- MAGIC Two things we note are that the **`temp_view`** view is in the list and that **`temp_view`** is marked **`isTemporary`**.  
 -- MAGIC   
--- MAGIC If we detach from, and reattach to, the cluster and reload the list of tables, `temp_view` is deleted. This is because temporary view metadata (name, location, etc.) are not stored in the metastore. When we detach from the cluster, the Spark session is deleted, which deletes the temporary view.
+-- MAGIC If we detach from, and reattach to, the cluster and reload the list of tables, **`temp_view`** is deleted. This is because temporary view metadata (name, location, etc.) are not stored in the metastore. When we detach from the cluster, the Spark session is deleted, which deletes the temporary view.
 
 -- COMMAND ----------
 
-USE ${c.database};
+USE ${da.db_name};
 SHOW TABLES;
 
 -- COMMAND ----------
 
 -- MAGIC %md 
--- MAGIC Let's now create a global temporary view. We add `GLOBAL` to the command. This view is just like the temporary view above, but it is different in one important way. It is added to the `global_temp` database that exists on the cluster. As long as the cluster is running, this database persists, and any notebooks attached to the cluster can access its global temporary views.  
+-- MAGIC Let's now create a global temporary view. We add **`GLOBAL`** to the command. This view is just like the temporary view above, but it is different in one important way. It is added to the **`global_temp`** database that exists on the cluster. As long as the cluster is running, this database persists, and any notebooks attached to the cluster can access its global temporary views.  
 -- MAGIC   
--- MAGIC Note when we use global temporary views, we have to prefix them with `global_temp.` since we are accessing the `global_temp` database. 
+-- MAGIC Note when we use global temporary views, we have to prefix them with **`global_temp.`** as we are accessing the **`global_temp`** database. 
 
 -- COMMAND ----------
 
-CREATE OR REPLACE GLOBAL TEMPORARY VIEW global_temp_view_distance AS
-SELECT * FROM external_table WHERE distance > 1000;
+CREATE OR REPLACE GLOBAL TEMPORARY VIEW global_temp_view_distance 
+AS SELECT * FROM external_table WHERE distance > 1000;
+
 SELECT * FROM global_temp.global_temp_view_distance;
 
 -- COMMAND ----------
@@ -134,7 +157,7 @@ SELECT * FROM global_temp.global_temp_view_distance;
 
 -- COMMAND ----------
 
-USE ${c.database};
+USE ${da.db_name};
 SHOW TABLES;
 
 -- COMMAND ----------
@@ -178,7 +201,7 @@ WITH lax_bos AS (
     SELECT
       origin,
       destination
-    from
+    FROM
       external_table
   )
   SELECT
@@ -208,7 +231,7 @@ FROM
     WITH delayed_flights(total_delay) AS (
       SELECT
         delay
-      from
+      FROM
         external_table
     )
     SELECT
@@ -238,15 +261,16 @@ SELECT
 -- COMMAND ----------
 
 -- MAGIC %md 
--- MAGIC Finally, here is a CTE in a CREATE VIEW statement.
+-- MAGIC Finally, here is a CTE in a **`CREATE VIEW`** statement.
 
 -- COMMAND ----------
 
-CREATE OR REPLACE VIEW BOS_LAX AS
-WITH origin_destination(origin_airport, destination_airport) AS 
-(SELECT origin, destination FROM external_table)
+CREATE OR REPLACE VIEW BOS_LAX 
+AS WITH origin_destination(origin_airport, destination_airport) 
+AS (SELECT origin, destination FROM external_table)
 SELECT * FROM origin_destination
 WHERE origin_airport = 'BOS' AND destination_airport = 'LAX';
+
 SELECT count(origin_airport) AS `Number of Delayed Flights from BOS to LAX` FROM BOS_LAX;
 
 -- COMMAND ----------
@@ -257,17 +281,17 @@ SELECT count(origin_airport) AS `Number of Delayed Flights from BOS to LAX` FROM
 
 -- COMMAND ----------
 
-DROP DATABASE ${c.database} CASCADE;
+DROP DATABASE ${da.db_name} CASCADE;
 
 -- COMMAND ----------
 
--- MAGIC %md
--- MAGIC Finally, we delete the working directory.
+-- MAGIC %md 
+-- MAGIC Run the following cell to delete the tables and files associated with this lesson.
 
 -- COMMAND ----------
 
 -- MAGIC %python 
--- MAGIC dbutils.fs.rm(userhome, True)
+-- MAGIC DA.cleanup()
 
 -- COMMAND ----------
 

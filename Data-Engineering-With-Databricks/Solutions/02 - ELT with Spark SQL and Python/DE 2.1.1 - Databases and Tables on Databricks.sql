@@ -14,16 +14,16 @@
 -- MAGIC ## Learning Objectives
 -- MAGIC By the end of this lesson, you will be able to:
 -- MAGIC * Use Spark SQL DDL to define databases and tables
--- MAGIC * Describe how the `LOCATION` keyword impacts the default storage directory
+-- MAGIC * Describe how the **`LOCATION`** keyword impacts the default storage directory
 -- MAGIC 
 -- MAGIC 
 -- MAGIC 
 -- MAGIC **Resources**
--- MAGIC * [Databases and Tables - Databricks Docs](https://docs.databricks.com/user-guide/tables.html)
--- MAGIC * [Managed and Unmanaged Tables](https://docs.databricks.com/user-guide/tables.html#managed-and-unmanaged-tables)
--- MAGIC * [Creating a Table with the UI](https://docs.databricks.com/user-guide/tables.html#create-a-table-using-the-ui)
--- MAGIC * [Create a Local Table](https://docs.databricks.com/user-guide/tables.html#create-a-local-table)
--- MAGIC * [Saving to Persistent Tables](https://spark.apache.org/docs/latest/sql-data-sources-load-save-functions.html#saving-to-persistent-tables)
+-- MAGIC * <a href="https://docs.databricks.com/user-guide/tables.html" target="_blank">Databases and Tables - Databricks Docs</a>
+-- MAGIC * <a href="https://docs.databricks.com/user-guide/tables.html#managed-and-unmanaged-tables" target="_blank">Managed and Unmanaged Tables</a>
+-- MAGIC * <a href="https://docs.databricks.com/user-guide/tables.html#create-a-table-using-the-ui" target="_blank">Creating a Table with the UI</a>
+-- MAGIC * <a href="https://docs.databricks.com/user-guide/tables.html#create-a-local-table" target="_blank">Create a Local Table</a>
+-- MAGIC * <a href="https://spark.apache.org/docs/latest/sql-data-sources-load-save-functions.html#saving-to-persistent-tables" target="_blank">Saving to Persistent Tables</a>
 
 -- COMMAND ----------
 
@@ -33,7 +33,7 @@
 
 -- COMMAND ----------
 
--- MAGIC %run ../Includes/setup-meta
+-- MAGIC %run ../Includes/classroom-setup-2.1.1-setup-meta
 
 -- COMMAND ----------
 
@@ -46,7 +46,8 @@
 
 -- COMMAND ----------
 
-SELECT "${c.database}";
+SELECT "${da.db_name}" AS db_name,
+       "${da.paths.working_dir}" AS working_dir
 
 -- COMMAND ----------
 
@@ -58,42 +59,46 @@ SELECT "${c.database}";
 -- MAGIC %md 
 -- MAGIC ## Databases
 -- MAGIC Let's start by creating two databases:
--- MAGIC - One with no LOCATION specified
--- MAGIC - One with LOCATION specified 
+-- MAGIC - One with no **`LOCATION`** specified
+-- MAGIC - One with **`LOCATION`** specified 
 
 -- COMMAND ----------
 
-CREATE DATABASE IF NOT EXISTS ${c.database}_default_location;
-CREATE DATABASE IF NOT EXISTS ${c.database}_custom_location LOCATION '${c.userhome}';
+CREATE DATABASE IF NOT EXISTS ${da.db_name}_default_location;
+CREATE DATABASE IF NOT EXISTS ${da.db_name}_custom_location LOCATION '${da.paths.working_dir}/_custom_location.db';
 
 -- COMMAND ----------
 
 -- MAGIC %md 
--- MAGIC Note that the location of the first database is in the default location under `dbfs:/user/hive/warehouse/`
+-- MAGIC Note that the location of the first database is in the default location under **`dbfs:/user/hive/warehouse/`** and that the database directory is the name of the database with the **`.db`** extension
 
 -- COMMAND ----------
 
-DESCRIBE DATABASE EXTENDED ${c.database}_default_location;
+DESCRIBE DATABASE EXTENDED ${da.db_name}_default_location;
 
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC Note that the location of the second database is in the directory specified after the `LOCATION` keyword.
+-- MAGIC Note that the location of the second database is in the directory specified after the **`LOCATION`** keyword.
 
 -- COMMAND ----------
 
-DESCRIBE DATABASE EXTENDED ${c.database}_custom_location;
+DESCRIBE DATABASE EXTENDED ${da.db_name}_custom_location;
 
 -- COMMAND ----------
 
 -- MAGIC %md 
--- MAGIC We will create a table in the database with default location and insert data. Note that the schema must be provided because there are no data from which to infer the schema.
+-- MAGIC We will create a table in the database with default location and insert data. 
+-- MAGIC 
+-- MAGIC Note that the schema must be provided because there is no data from which to infer the schema.
 
 -- COMMAND ----------
 
-USE ${c.database}_default_location;
+USE ${da.db_name}_default_location;
+
 CREATE OR REPLACE TABLE managed_table_in_db_with_default_location (width INT, length INT, height INT);
-INSERT INTO managed_table_in_db_with_default_location VALUES (3, 2, 1);
+INSERT INTO managed_table_in_db_with_default_location 
+VALUES (3, 2, 1);
 SELECT * FROM managed_table_in_db_with_default_location;
 
 -- COMMAND ----------
@@ -108,14 +113,22 @@ DESCRIBE EXTENDED managed_table_in_db_with_default_location;
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC By default, managed tables in a database without the location specified will be created in the `dbfs:/user/hive/warehouse/<database_name>.db/` directory.
+-- MAGIC By default, managed tables in a database without the location specified will be created in the **`dbfs:/user/hive/warehouse/<database_name>.db/`** directory.
 -- MAGIC 
 -- MAGIC We can see that, as expected, the data and metadata for our Delta Table are stored in that location.
 
 -- COMMAND ----------
 
 -- MAGIC %python 
--- MAGIC display(dbutils.fs.ls(f"dbfs:/user/hive/warehouse/{database}_default_location.db/managed_table_in_db_with_default_location"))
+-- MAGIC hive_root =  f"dbfs:/user/hive/warehouse"
+-- MAGIC db_name =    f"{DA.db_name}_default_location.db"
+-- MAGIC table_name = f"managed_table_in_db_with_default_location"
+-- MAGIC 
+-- MAGIC tbl_location = f"{hive_root}/{db_name}/{table_name}"
+-- MAGIC print(tbl_location)
+-- MAGIC 
+-- MAGIC files = dbutils.fs.ls(tbl_location)
+-- MAGIC display(files)
 
 -- COMMAND ----------
 
@@ -129,21 +142,27 @@ DROP TABLE managed_table_in_db_with_default_location;
 -- COMMAND ----------
 
 -- MAGIC %md 
--- MAGIC Note the table's folder and its log and data file are deleted.
+-- MAGIC Note the table's directory and its log and data files are deleted. Only the database directory remains.
 
 -- COMMAND ----------
 
 -- MAGIC %python 
--- MAGIC dbutils.fs.ls(f"dbfs:/user/hive/warehouse/{database}_default_location.db")
+-- MAGIC 
+-- MAGIC db_location = f"{hive_root}/{db_name}"
+-- MAGIC print(db_location)
+-- MAGIC dbutils.fs.ls(db_location)
 
 -- COMMAND ----------
 
 -- MAGIC %md 
--- MAGIC We now create a table in  the database with custom location and insert data. Note that the schema must be provided because there are no data from which to infer the schema.
+-- MAGIC We now create a table in  the database with custom location and insert data. 
+-- MAGIC 
+-- MAGIC Note that the schema must be provided because there is no data from which to infer the schema.
 
 -- COMMAND ----------
 
-USE ${c.database}_custom_location;
+USE ${da.db_name}_custom_location;
+
 CREATE OR REPLACE TABLE managed_table_in_db_with_custom_location (width INT, length INT, height INT);
 INSERT INTO managed_table_in_db_with_custom_location VALUES (3, 2, 1);
 SELECT * FROM managed_table_in_db_with_custom_location;
@@ -160,12 +179,18 @@ DESCRIBE EXTENDED managed_table_in_db_with_custom_location;
 -- COMMAND ----------
 
 -- MAGIC %md 
--- MAGIC As expected, this managed table is created in the path specified with the `LOCATION` keyword during database creation. As such, the data and metadata for the table are persisted in a directory here.
+-- MAGIC As expected, this managed table is created in the path specified with the **`LOCATION`** keyword during database creation. As such, the data and metadata for the table are persisted in a directory here.
 
 -- COMMAND ----------
 
 -- MAGIC %python 
--- MAGIC display(dbutils.fs.ls(f"{userhome}/managed_table_in_db_with_custom_location"))
+-- MAGIC 
+-- MAGIC table_name = f"managed_table_in_db_with_custom_location"
+-- MAGIC tbl_location =   f"{DA.paths.working_dir}/_custom_location.db/{table_name}"
+-- MAGIC print(tbl_location)
+-- MAGIC 
+-- MAGIC files = dbutils.fs.ls(tbl_location)
+-- MAGIC display(files)
 
 -- COMMAND ----------
 
@@ -181,30 +206,35 @@ DROP TABLE managed_table_in_db_with_custom_location;
 -- MAGIC %md 
 -- MAGIC Note the table's folder and the log file and data file are deleted.  
 -- MAGIC   
--- MAGIC Only the "datasets" folder remains.
+-- MAGIC Only the database location remains
 
 -- COMMAND ----------
 
 -- MAGIC %python 
--- MAGIC dbutils.fs.ls(userhome)
+-- MAGIC 
+-- MAGIC db_location =   f"{DA.paths.working_dir}/_custom_location.db"
+-- MAGIC print(db_location)
+-- MAGIC 
+-- MAGIC dbutils.fs.ls(db_location)
 
 -- COMMAND ----------
 
 -- MAGIC %md 
 -- MAGIC ## Tables
--- MAGIC We will create an external (unmanaged) table from sample data. The data we are going to use are in csv format. We want to create a Delta table with a LOCATION provided in the directory of our choice.
+-- MAGIC We will create an external (unmanaged) table from sample data. 
+-- MAGIC 
+-- MAGIC The data we are going to use are in CSV format. We want to create a Delta table with a **`LOCATION`** provided in the directory of our choice.
 
 -- COMMAND ----------
 
-USE ${c.database}_default_location;
+USE ${da.db_name}_default_location;
 
--- mode "FAILFAST" will abort file parsing with a RuntimeException if any malformed lines are encountered
 CREATE OR REPLACE TEMPORARY VIEW temp_delays USING CSV OPTIONS (
-  path '${c.userhome}/datasets/flights/departuredelays.csv',
+  path '${da.paths.working_dir}/flights/departuredelays.csv',
   header "true",
-  mode "FAILFAST"
+  mode "FAILFAST" -- abort file parsing with a RuntimeException if any malformed lines are encountered
 );
-CREATE OR REPLACE TABLE external_table LOCATION '${c.userhome}/external_table' AS
+CREATE OR REPLACE TABLE external_table LOCATION '${da.paths.working_dir}/external_table' AS
   SELECT * FROM temp_delays;
 
 SELECT * FROM external_table;
@@ -235,7 +265,9 @@ DROP TABLE external_table;
 -- COMMAND ----------
 
 -- MAGIC %python 
--- MAGIC display(dbutils.fs.ls(f"{userhome}/external_table"))
+-- MAGIC tbl_path = f"{DA.paths.working_dir}/external_table"
+-- MAGIC files = dbutils.fs.ls(tbl_path)
+-- MAGIC display(files)
 
 -- COMMAND ----------
 
@@ -245,18 +277,18 @@ DROP TABLE external_table;
 
 -- COMMAND ----------
 
-DROP DATABASE ${c.database}_default_location CASCADE;
-DROP DATABASE ${c.database}_custom_location CASCADE;
+DROP DATABASE ${da.db_name}_default_location CASCADE;
+DROP DATABASE ${da.db_name}_custom_location CASCADE;
 
 -- COMMAND ----------
 
--- MAGIC %md
--- MAGIC Delete the working directory and its contents.
+-- MAGIC %md 
+-- MAGIC Run the following cell to delete the tables and files associated with this lesson.
 
 -- COMMAND ----------
 
 -- MAGIC %python 
--- MAGIC dbutils.fs.rm(userhome, True)
+-- MAGIC DA.cleanup()
 
 -- COMMAND ----------
 

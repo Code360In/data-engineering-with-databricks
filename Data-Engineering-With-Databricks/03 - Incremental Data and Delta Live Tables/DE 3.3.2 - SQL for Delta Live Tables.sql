@@ -14,7 +14,7 @@
 -- MAGIC 
 -- MAGIC This notebook uses SQL to declare Delta Live Tables that together implement a simple multi-hop architecture based on a Databricks-provided example dataset loaded by default into Databricks workspaces.
 -- MAGIC 
--- MAGIC At its simplest, you can think of DLT SQL as a slight modification to traditional CTAS statements. DLT tables and views will always be preceded by the `LIVE` keyword.
+-- MAGIC At its simplest, you can think of DLT SQL as a slight modification to traditional CTAS statements. DLT tables and views will always be preceded by the **`LIVE`** keyword.
 -- MAGIC 
 -- MAGIC ## Learning Objectives
 -- MAGIC 
@@ -34,14 +34,14 @@
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC ### `sales_orders_raw`
+-- MAGIC ### sales_orders_raw
 -- MAGIC 
--- MAGIC `sales_orders_raw` ingests JSON data incrementally from the example dataset found in  */databricks-datasets/retail-org/sales_orders/*.
+-- MAGIC **`sales_orders_raw`** ingests JSON data incrementally from the example dataset found in  */databricks-datasets/retail-org/sales_orders/*.
 -- MAGIC 
--- MAGIC Incremental processing via <a herf="https://docs.databricks.com/spark/latest/structured-streaming/auto-loader.html" target="_bland">Auto Loader</a> (which uses the same processing model as Structured Streaming), requires the addition of the `INCREMENTAL` keyword in the declaration as seen below. The `cloud_files()` method enables Auto Loader to be used natively with SQL. This method takes the following positional parameters:
+-- MAGIC Incremental processing via <a herf="https://docs.databricks.com/spark/latest/structured-streaming/auto-loader.html" target="_blank">Auto Loader</a> (which uses the same processing model as Structured Streaming), requires the addition of the **`INCREMENTAL`** keyword in the declaration as seen below. The **`cloud_files()`** method enables Auto Loader to be used natively with SQL. This method takes the following positional parameters:
 -- MAGIC * The source location, as mentioned above
 -- MAGIC * The source data format, which is JSON in this case
--- MAGIC * An arbitrarily sized array of optional reader options. In this case, we set `cloudFiles.inferColumnTypes` to `true`
+-- MAGIC * An arbitrarily sized array of optional reader options. In this case, we set **`cloudFiles.inferColumnTypes`** to **`true`**
 -- MAGIC 
 -- MAGIC The following declaration also demonstrates the declaration of additional table metadata (a comment and properties in this case) that would be visible to anyone exploring the data catalog.
 
@@ -55,9 +55,9 @@ SELECT * FROM cloud_files("/databricks-datasets/retail-org/sales_orders/", "json
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC ### `customers`
+-- MAGIC ### customers
 -- MAGIC 
--- MAGIC `customers` presents a **view** into CSV customer data found in */databricks-datasets/retail-org/customers/*. A view differs from a table in that there is no actual data bound to the view; it can be thought of as a stored query.
+-- MAGIC **`customers`** presents a **view** into CSV customer data found in */databricks-datasets/retail-org/customers/*. A view differs from a table in that there is no actual data bound to the view; it can be thought of as a stored query.
 -- MAGIC 
 -- MAGIC This view will soon be used in a join operation to look up customer data based on sales records.
 
@@ -78,7 +78,7 @@ AS SELECT * FROM cloud_files("/databricks-datasets/retail-org/customers/", "csv"
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC ### `sales_orders_cleaned`
+-- MAGIC ### sales_orders_cleaned
 -- MAGIC 
 -- MAGIC Here we declare our first silver table, which enriches the sales transaction data with customer information in addition to implementing quality control by rejecting records with a null order number.
 -- MAGIC 
@@ -86,20 +86,20 @@ AS SELECT * FROM cloud_files("/databricks-datasets/retail-org/customers/", "csv"
 -- MAGIC 
 -- MAGIC #### Quality Control
 -- MAGIC 
--- MAGIC The `CONSTRAINT` keyword introduces quality control. Similar in function to a traditional `WHERE` clause, `CONSTRAINT` integrates with DLT, enabling it to collect metrics on constraint violations. Constraints provide an optional `ON VIOLATION` clause, specifying an action to take on records that violate the constraint. The three modes currently supported by DLT include:
+-- MAGIC The **`CONSTRAINT`** keyword introduces quality control. Similar in function to a traditional **`WHERE`** clause, **`CONSTRAINT`** integrates with DLT, enabling it to collect metrics on constraint violations. Constraints provide an optional **`ON VIOLATION`** clause, specifying an action to take on records that violate the constraint. The three modes currently supported by DLT include:
 -- MAGIC 
--- MAGIC | `ON VIOLATION` | Behavior |
+-- MAGIC | **`ON VIOLATION`** | Behavior |
 -- MAGIC | --- | --- |
--- MAGIC | `FAIL UPDATE` | Pipeline failure when constraint is violated |
--- MAGIC | `DROP ROW` | Discard records that violate constraints |
+-- MAGIC | **`FAIL UPDATE`** | Pipeline failure when constraint is violated |
+-- MAGIC | **`DROP ROW`** | Discard records that violate constraints |
 -- MAGIC | Omitted | Records violating constraints will be included (but violations will be reported in metrics) |
 -- MAGIC 
 -- MAGIC #### References to DLT Tables and Views
--- MAGIC References to other DLT tables and views will always include the `live.` prefix. A target database name will automatically be substituted at runtime, allowing for easily migration of pipelines between DEV/QA/PROD environments.
+-- MAGIC References to other DLT tables and views will always include the **`live.`** prefix. A target database name will automatically be substituted at runtime, allowing for easily migration of pipelines between DEV/QA/PROD environments.
 -- MAGIC 
 -- MAGIC #### References to Streaming Tables
 -- MAGIC 
--- MAGIC References to streaming DLT tables use the `STREAM()`, supplying the table name as an argument.
+-- MAGIC References to streaming DLT tables use the **`STREAM()`**, supplying the table name as an argument.
 
 -- COMMAND ----------
 
@@ -155,7 +155,7 @@ GROUP BY order_date, city, customer_id, customer_name, ordered_products_explode.
 -- MAGIC %md
 -- MAGIC ## Update Pipeline
 -- MAGIC 
--- MAGIC Uncomment the following cell to declare another gold table. Similar to the previous gold table declaration, this filters for the `city` of Chicago. 
+-- MAGIC Uncomment the following cell to declare another gold table. Similar to the previous gold table declaration, this filters for the **`city`** of Chicago. 
 -- MAGIC 
 -- MAGIC Re-run your pipeline to examine the updated results. 
 -- MAGIC 

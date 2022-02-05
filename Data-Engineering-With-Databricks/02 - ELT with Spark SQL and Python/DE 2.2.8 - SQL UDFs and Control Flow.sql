@@ -14,14 +14,14 @@
 -- MAGIC 
 -- MAGIC This feature allows users to register custom combinations of SQL logic as functions in a database, making these methods reusable anywhere SQL can be run on Databricks. These functions leverage Spark SQL directly, maintaining all of the optimizations of Spark when applying your custom logic to large datasets.
 -- MAGIC 
--- MAGIC In this notebook, we'll first have a simple introduction to these methods, and then explore how this logic can be combined with `CASE/WHEN` clauses to provide reusable custom control flow logic.
+-- MAGIC In this notebook, we'll first have a simple introduction to these methods, and then explore how this logic can be combined with **`CASE`** / **`WHEN`** clauses to provide reusable custom control flow logic.
 -- MAGIC 
 -- MAGIC ## Learning Objectives
 -- MAGIC By the end of this lesson, students will be confident:
 -- MAGIC * Defining and registering SQL UDFs
 -- MAGIC * Describing the security model used for sharing SQL UDFs
--- MAGIC * Using `CASE/WHEN` statements in SQL code
--- MAGIC * Leveraging `CASE/WHEN` statements in SQL UDFs for custom control flow
+-- MAGIC * Using **`CASE`** / **`WHEN`** statements in SQL code
+-- MAGIC * Leveraging **`CASE`** / **`WHEN`** statements in SQL UDFs for custom control flow
 
 -- COMMAND ----------
 
@@ -31,7 +31,7 @@
 
 -- COMMAND ----------
 
--- MAGIC %run ../Includes/sql-setup $mode="reset"
+-- MAGIC %run ../Includes/classroom-setup-2.2.8-sql-setup
 
 -- COMMAND ----------
 
@@ -52,15 +52,11 @@ SELECT * FROM foods
 
 -- COMMAND ----------
 
-SELECT "${c.database}"
-
--- COMMAND ----------
-
 -- MAGIC %md
 -- MAGIC ## SQL UDFs
 -- MAGIC At minimum, a SQL UDF requires a function name, optional parameters, the type to be returned, and some custom logic.
 -- MAGIC 
--- MAGIC Below, a simple function named `yelling` takes one parameter named `text`. It returns a string that will be in all uppercase letters with three exclamation points added to the end.
+-- MAGIC Below, a simple function named **`yelling`** takes one parameter named **`text`**. It returns a string that will be in all uppercase letters with three exclamation points added to the end.
 
 -- COMMAND ----------
 
@@ -93,7 +89,9 @@ DESCRIBE FUNCTION yelling
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC By describing extended, we can get even more information. Note that the `Body` field at the bottom of the function description shows the SQL logic used in the function itself.
+-- MAGIC By describing extended, we can get even more information. 
+-- MAGIC 
+-- MAGIC Note that the **`Body`** field at the bottom of the function description shows the SQL logic used in the function itself.
 
 -- COMMAND ----------
 
@@ -104,14 +102,14 @@ DESCRIBE FUNCTION EXTENDED yelling
 -- MAGIC %md
 -- MAGIC SQL UDFs exist as objects in the metastore and are governed by the same Table ACLs as databases, tables, or views.
 -- MAGIC 
--- MAGIC In order to use a SQL UDF, a user must have `USAGE` and `SELECT` permissions on the function.
+-- MAGIC In order to use a SQL UDF, a user must have **`USAGE`** and **`SELECT`** permissions on the function.
 
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC ## `CASE/WHEN`
+-- MAGIC ## CASE/WHEN
 -- MAGIC 
--- MAGIC The standard SQL syntactic construct `CASE/WHEN` allows the evaluation of multiple conditional statements with alternative outcomes based on table contents.
+-- MAGIC The standard SQL syntactic construct **`CASE`** / **`WHEN`** allows the evaluation of multiple conditional statements with alternative outcomes based on table contents.
 -- MAGIC 
 -- MAGIC Again, everything is evaluated natively in Spark, and so is optimized for parallel execution.
 
@@ -131,7 +129,7 @@ FROM foods
 -- MAGIC %md
 -- MAGIC ## Simple Control Flow Functions
 -- MAGIC 
--- MAGIC Combining SQL UDFs with control flow in the form of `CASE/WHEN` clauses provides optimized execution for control flows within SQL workloads.
+-- MAGIC Combining SQL UDFs with control flow in the form of **`CASE`** / **`WHEN`** clauses provides optimized execution for control flows within SQL workloads.
 -- MAGIC 
 -- MAGIC Here, we demonstrate wrapping the previous logic in a function that will be reusable anywhere we can execute SQL.
 
@@ -161,6 +159,16 @@ SELECT foods_i_like(food) FROM foods
 -- MAGIC While the example provided here are simple string methods, these same basic principles can be used to add custom computations and logic for native execution in Spark SQL. 
 -- MAGIC 
 -- MAGIC Especially for enterprises that might be migrating users from systems with many defined procedures or custom-defined formulas, SQL UDFs can allow a handful of users to define the complex logic needed for common reporting and analytic queries.
+
+-- COMMAND ----------
+
+-- MAGIC %md 
+-- MAGIC Run the following cell to delete the tables and files associated with this lesson.
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC DA.cleanup()
 
 -- COMMAND ----------
 

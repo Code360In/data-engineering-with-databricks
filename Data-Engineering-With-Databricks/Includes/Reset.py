@@ -1,21 +1,26 @@
 # Databricks notebook source
-import pyspark.sql.functions as F
-import re
+# MAGIC %run ./_databricks-academy-helper $lesson="reset"
 
-course_name = "eltsql"
+# COMMAND ----------
 
-username = spark.sql("SELECT current_user()").first()[0]
-clean_username = re.sub("[^a-zA-Z0-9]", "_", username)
-database = f"""{clean_username}_dbacademy_{course_name}"""
-userhome = f"dbfs:/user/{username}/dbacademy/{course_name}"
+DA.init()
 
-print(f"username:       {username}")
-print(f"clean_username: {clean_username}")
-print(f"database:       {database}")
-print(f"userhome:       {userhome}")
+# COMMAND ----------
 
-dbutils.fs.rm(userhome, True)
+rows = spark.sql(f"show databases").collect()
+for row in rows:
+    db_name = row[0]
+    if db_name.startswith(DA.db_name_prefix):
+        print(db_name)
+        spark.sql(f"DROP DATABASE {db_name} CASCADE")
 
-print(f"Dropping the database {database}")
-spark.sql(f"DROP DATABASE IF EXISTS {database} CASCADE")
+# COMMAND ----------
+
+if DA.paths.exists(DA.working_dir_prefix):
+    print(DA.working_dir_prefix)
+    dbutils.fs.rm(DA.working_dir_prefix, True)
+
+# COMMAND ----------
+
+# Create the source database, install the datasets, whatever, so that we can run the other notebooks asyncronously
 

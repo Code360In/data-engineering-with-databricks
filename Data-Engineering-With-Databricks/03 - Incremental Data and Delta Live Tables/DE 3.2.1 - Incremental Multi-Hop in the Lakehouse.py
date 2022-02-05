@@ -74,17 +74,19 @@
 
 # COMMAND ----------
 
-# MAGIC %run "../Includes/multi-hop-setup" $mode="reset"
+# MAGIC %run ../Includes/classroom-setup-3.2.1-multi-hop-setup
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC ## Data Simulator
-# MAGIC Databricks Auto Loader can automatically process files as they land in your cloud object stores. To simulate this process, you will be asked to run the following operation several times throughout the course.
+# MAGIC Databricks Auto Loader can automatically process files as they land in your cloud object stores. 
+# MAGIC 
+# MAGIC To simulate this process, you will be asked to run the following operation several times throughout the course.
 
 # COMMAND ----------
 
-File.newData()
+DA.data_factory.load()
 
 # COMMAND ----------
 
@@ -95,7 +97,7 @@ File.newData()
 # MAGIC 
 # MAGIC Note that while you need to use the Spark DataFrame API to set up an incremental read, once configured you can immediately register a temp view to leverage Spark SQL for streaming transformations on your data.
 # MAGIC 
-# MAGIC **NOTE**: For a JSON data source, Auto Loader will default to inferring each column as a string. Here, we demonstrate specifying the data type for the `time` column using the `cloudFiles.schemaHints` option. Note that specifying improper types for a field will result in null values.
+# MAGIC **NOTE**: For a JSON data source, Auto Loader will default to inferring each column as a string. Here, we demonstrate specifying the data type for the **`time`** column using the **`cloudFiles.schemaHints`** option. Note that specifying improper types for a field will result in null values.
 
 # COMMAND ----------
 
@@ -103,8 +105,8 @@ File.newData()
     .format("cloudFiles")
     .option("cloudFiles.format", "json")
     .option("cloudFiles.schemaHints", "time DOUBLE")
-    .option("cloudFiles.schemaLocation", bronzeCheckpoint)
-    .load(dataLandingLocation)
+    .option("cloudFiles.schemaLocation", f"{DA.paths.checkpoints}/bronze")
+    .load(DA.paths.data_landing_location)
     .createOrReplaceTempView("recordings_raw_temp"))
 
 # COMMAND ----------
@@ -128,11 +130,11 @@ File.newData()
 # COMMAND ----------
 
 (spark.table("recordings_bronze_temp")
-  .writeStream
-  .format("delta")
-  .option("checkpointLocation", bronzeCheckpoint)
-  .outputMode("append")
-  .table("bronze"))
+      .writeStream
+      .format("delta")
+      .option("checkpointLocation", f"{DA.paths.checkpoints}/bronze")
+      .outputMode("append")
+      .table("bronze"))
 
 # COMMAND ----------
 
@@ -141,7 +143,7 @@ File.newData()
 
 # COMMAND ----------
 
-File.newData()
+DA.data_factory.load()
 
 # COMMAND ----------
 
@@ -153,13 +155,12 @@ File.newData()
 
 # COMMAND ----------
 
-(spark
-  .read
-  .format("csv")
-  .schema("mrn STRING, name STRING")
-  .option("header", True)
-  .load(f"{dataSource}/patient/patient_info.csv")
-  .createOrReplaceTempView("pii"))
+(spark.read
+      .format("csv")
+      .schema("mrn STRING, name STRING")
+      .option("header", True)
+      .load(f"{DA.paths.data_source}/patient/patient_info.csv")
+      .createOrReplaceTempView("pii"))
 
 # COMMAND ----------
 
@@ -172,7 +173,7 @@ File.newData()
 # MAGIC ## Silver Table: Enriched Recording Data
 # MAGIC As a second hop in our silver level, we will do the follow enrichments and checks:
 # MAGIC - Our recordings data will be joined with the PII to add patient names
-# MAGIC - The time for our recordings will be parsed to the format `'yyyy-MM-dd HH:mm:ss'` to be human-readable
+# MAGIC - The time for our recordings will be parsed to the format **`'yyyy-MM-dd HH:mm:ss'`** to be human-readable
 # MAGIC - We will exclude heart rates that are <= 0, as we know that these either represent the absence of the patient or an error in transmission
 
 # COMMAND ----------
@@ -194,11 +195,11 @@ File.newData()
 # COMMAND ----------
 
 (spark.table("recordings_w_pii")
-  .writeStream
-  .format("delta")
-  .option("checkpointLocation", recordingsEnrichedCheckpoint)
-  .outputMode("append")
-  .table("recordings_enriched"))
+      .writeStream
+      .format("delta")
+      .option("checkpointLocation", f"{DA.paths.checkpoints}/recordings_enriched")
+      .outputMode("append")
+      .table("recordings_enriched"))
 
 # COMMAND ----------
 
@@ -212,14 +213,14 @@ File.newData()
 
 # COMMAND ----------
 
-File.newData()
+DA.data_factory.load()
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC ## Gold Table: Daily Averages
 # MAGIC 
-# MAGIC Here we read a stream of data from `recordingsEnrichedPath` and write another stream to create an aggregate gold table of daily averages for each patient.
+# MAGIC Here we read a stream of data from **`recordings_enriched`** and write another stream to create an aggregate gold table of daily averages for each patient.
 
 # COMMAND ----------
 
@@ -238,7 +239,7 @@ File.newData()
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Note that we're using `.trigger(once=True)` below. This provides us the ability to continue to use the strengths of structured streaming while trigger this job as a single batch. To recap, these strengths include:
+# MAGIC Note that we're using **`.trigger(once=True)`** below. This provides us the ability to continue to use the strengths of structured streaming while trigger this job as a single batch. To recap, these strengths include:
 # MAGIC - exactly once end-to-end fault tolerant processing
 # MAGIC - automatic detection of changes in upstream data sources
 # MAGIC 
@@ -249,22 +250,21 @@ File.newData()
 # COMMAND ----------
 
 (spark.table("patient_avg")
-  .writeStream
-  .format("delta")
-  .outputMode("complete")
-  .option("checkpointLocation", dailyAvgCheckpoint)
-  .trigger(once=True)
-  .table("daily_patient_avg")
-)
+      .writeStream
+      .format("delta")
+      .outputMode("complete")
+      .option("checkpointLocation", f"{DA.paths.checkpoints}/daily_avg")
+      .trigger(once=True)
+      .table("daily_patient_avg"))
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC #### Important Considerations for `complete` Output with Delta
+# MAGIC #### Important Considerations for complete Output with Delta
 # MAGIC 
-# MAGIC When using `complete` output mode, we rewrite the entire state of our table each time our logic runs. While this is ideal for calculating aggregates, we **cannot** read a stream from this directory, as Structured Streaming assumes data is only being appended in the upstream logic.
+# MAGIC When using **`complete`** output mode, we rewrite the entire state of our table each time our logic runs. While this is ideal for calculating aggregates, we **cannot** read a stream from this directory, as Structured Streaming assumes data is only being appended in the upstream logic.
 # MAGIC 
-# MAGIC **NOTE**: Certain options can be set to change this behavior, but have other limitations attached. For more details, refer to [Delta Streaming: Ignoring Updates and Deletes](https://docs.databricks.com/delta/delta-streaming.html#ignoring-updates-and-deletes).
+# MAGIC **NOTE**: Certain options can be set to change this behavior, but have other limitations attached. For more details, refer to <a href="https://docs.databricks.com/delta/delta-streaming.html#ignoring-updates-and-deletes" target="_blank">Delta Streaming: Ignoring Updates and Deletes</a>.
 # MAGIC 
 # MAGIC The gold Delta table we have just registered will perform a static read of the current state of the data each time we run the following query.
 
@@ -289,11 +289,11 @@ File.newData()
 
 # MAGIC %md
 # MAGIC ## Process Remaining Records
-# MAGIC The following cell will land additional files for the rest of 2020 in your source directory. You'll be able to see these process through the first 3 tables in your Delta Lake, but will need to re-run your final query to update your `daily_patient_avg` table, since this query uses the trigger once syntax.
+# MAGIC The following cell will land additional files for the rest of 2020 in your source directory. You'll be able to see these process through the first 3 tables in your Delta Lake, but will need to re-run your final query to update your **`daily_patient_avg`** table, since this query uses the trigger once syntax.
 
 # COMMAND ----------
 
-File.newData(continuous=True)
+DA.data_factory.load(continuous=True)
 
 # COMMAND ----------
 
@@ -304,7 +304,7 @@ File.newData(continuous=True)
 
 # COMMAND ----------
 
-# MAGIC %run "../Includes/multi-hop-setup" $mode="clean"
+DA.cleanup()
 
 # COMMAND ----------
 

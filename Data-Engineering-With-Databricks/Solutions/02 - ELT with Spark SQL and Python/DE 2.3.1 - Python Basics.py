@@ -26,7 +26,7 @@
 
 # MAGIC %md
 # MAGIC ## Strings
-# MAGIC Characters enclosed in single (`'`) or double (`"`) quotes are considered strings.
+# MAGIC Characters enclosed in single (**`'`**) or double (**`"`**) quotes are considered strings.
 
 # COMMAND ----------
 
@@ -35,7 +35,7 @@
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC To preview how a string will render, we can call `print()`.
+# MAGIC To preview how a string will render, we can call **`print()`**.
 
 # COMMAND ----------
 
@@ -44,7 +44,7 @@ print("This is a string")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC By wrapping a string in triple quotes (`"""`), it's possible to use multiple lines.
+# MAGIC By wrapping a string in triple quotes (**`"""`**), it's possible to use multiple lines.
 
 # COMMAND ----------
 
@@ -71,7 +71,7 @@ FROM test_table
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC When we execute SQL from a Python cell, we will pass a string as an argument to `spark.sql()`.
+# MAGIC When we execute SQL from a Python cell, we will pass a string as an argument to **`spark.sql()`**.
 
 # COMMAND ----------
 
@@ -80,7 +80,7 @@ spark.sql("SELECT 1 AS test")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC To render a query the way it would appear in a normal SQL notebook, we call `display()` on this function.
+# MAGIC To render a query the way it would appear in a normal SQL notebook, we call **`display()`** on this function.
 
 # COMMAND ----------
 
@@ -89,21 +89,21 @@ display(spark.sql("SELECT 1 AS test"))
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC **NOTE**: Executing a cell with only a Python string in it will just print the string. Using `print()` with a string just renders it back to the notebook.
+# MAGIC **NOTE**: Executing a cell with only a Python string in it will just print the string. Using **`print()`** with a string just renders it back to the notebook.
 # MAGIC 
-# MAGIC To execute a string that contains SQL using Python, it must be passed within a call to `spark.sql()`.
+# MAGIC To execute a string that contains SQL using Python, it must be passed within a call to **`spark.sql()`**.
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC ## Variables
-# MAGIC Python variables are assigned using the `=`.
+# MAGIC Python variables are assigned using the **`=`**.
 # MAGIC 
 # MAGIC Python variable names need to start with a letter, and can only contain letters, numbers, hyphens, and underscores.
 # MAGIC 
 # MAGIC Many Python programmers favor snake casing, which uses only lowercase letters and underscores for all variables.
 # MAGIC 
-# MAGIC The cell below creates the variable `my_string`.
+# MAGIC The cell below creates the variable **`my_string`**.
 
 # COMMAND ----------
 
@@ -121,7 +121,7 @@ my_string
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC The output here is the same as if we typed `"This is a string"` into the cell and ran it.
+# MAGIC The output here is the same as if we typed **`"This is a string"`** into the cell and ran it.
 # MAGIC 
 # MAGIC Note that the quotation marks aren't part of the string, as shown when we print it.
 
@@ -134,7 +134,7 @@ print(my_string)
 # MAGIC %md
 # MAGIC This variable can be used the same way a string would be.
 # MAGIC 
-# MAGIC String concatenation (joining to strings together) can be performed with a `+`.
+# MAGIC String concatenation (joining to strings together) can be performed with a **`+`**.
 
 # COMMAND ----------
 
@@ -154,11 +154,11 @@ print(new_string + my_string)
 
 # MAGIC %md
 # MAGIC ## Functions
-# MAGIC Functions allow you to specify local variables as arguments and then apply custom logic. We define a function using the keyword `def` followed by the function name and, enclosed in parentheses, any variable arguments we wish to pass into the function. Finally, the function header has a `:` at the end.
+# MAGIC Functions allow you to specify local variables as arguments and then apply custom logic. We define a function using the keyword **`def`** followed by the function name and, enclosed in parentheses, any variable arguments we wish to pass into the function. Finally, the function header has a **`:`** at the end.
 # MAGIC 
 # MAGIC Note: In Python, indentation matters. You can see in the cell below that the logic of the function is indented in from the left margin. Any code that is indented to this level is part of the function.
 # MAGIC 
-# MAGIC The function below takes one argument (`arg`) and then prints it.
+# MAGIC The function below takes one argument (**`arg`**) and then prints it.
 
 # COMMAND ----------
 
@@ -186,7 +186,7 @@ print_string(my_string)
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Oftentimes we want to return the results of our function for use elsewhere. For this we use the `return` keyword.
+# MAGIC Oftentimes we want to return the results of our function for use elsewhere. For this we use the **`return`** keyword.
 # MAGIC 
 # MAGIC The function below constructs a new string by concatenating our argument. Note that both functions and arguments can have arbitrary names, just like variables (and follow the same rules).
 
@@ -226,7 +226,7 @@ function_output
 
 # MAGIC %md
 # MAGIC ## F-strings
-# MAGIC By adding the letter `f` before a Python string, you can inject variables or evaluated Python code by inserted them inside curly braces (`{}`).
+# MAGIC By adding the letter **`f`** before a Python string, you can inject variables or evaluated Python code by inserted them inside curly braces (**`{}`**).
 # MAGIC 
 # MAGIC Evaluate the cell below to see string variable substitution.
 

@@ -18,7 +18,7 @@
 # MAGIC 
 # MAGIC Databricks Auto Loader provides an easy-to-use mechanism for incrementally and efficiently processing new data files as they arrive in cloud file storage. In this notebook, you'll see Auto Loader in action.
 # MAGIC 
-# MAGIC **NOTE**: Due to the benefits and scalability that Auto Loader delivers, Databricks recommends its use as general best practice when ingesting data from cloud object storage.
+# MAGIC Due to the benefits and scalability that Auto Loader delivers, Databricks recommends its use as general **best practice** when ingesting data from cloud object storage.
 # MAGIC 
 # MAGIC ## Learning Objectives
 # MAGIC By the end of this lesson, you should be able to:
@@ -46,7 +46,7 @@
 
 # COMMAND ----------
 
-# MAGIC %run ../Includes/auto-loader-setup $mode="reset"
+# MAGIC %run ../Includes/classroom-setup-3.1.1-auto-loader-setup
 
 # COMMAND ----------
 
@@ -57,30 +57,30 @@
 # MAGIC 
 # MAGIC The following notebook will provide a more robust overview of Structured Streaming. If you wish to learn more about Auto Loader options, refer to the <a href="https://docs.databricks.com/spark/latest/structured-streaming/auto-loader.html" target="_blank">documentation</a>.
 # MAGIC 
-# MAGIC Note that when using Auto Loader with automatic [schema inference and evolution](https://docs.databricks.com/spark/latest/structured-streaming/auto-loader-schema.html), the 4 arguments shown here should allow ingestion of most datasets. These arguments are explained below.
+# MAGIC Note that when using Auto Loader with automatic <a href="https://docs.databricks.com/spark/latest/structured-streaming/auto-loader-schema.html" target="_blank">schema inference and evolution</a>, the 4 arguments shown here should allow ingestion of most datasets. These arguments are explained below.
 # MAGIC 
 # MAGIC | argument | what it is | how it's used |
 # MAGIC | --- | --- | --- |
-# MAGIC | `data_source` | The directory of the source data | Auto Loader will detect new files as they arrive in this location and queue them for ingestion; passed to the `.load()` method |
-# MAGIC | `source_format` | The format of the source data |  While the format for all Auto Loader queries will be `cloudFiles`, the format of the source data should always be specified for the `cloudFiles.format` option |
-# MAGIC | `table_name` | The name of the target table | Spark Structured Streaming supports writing directly to Delta Lake tables by passing a table name as a string to the `.table()` method. Note that you can either append to an existing table or create a new table |
-# MAGIC | `checkpoint_directory` | The location for storing metadata about the stream | This argument is pass to the `checkpointLocation` and `cloudFiles.schemaLocation` options. Checkpoints keep track of streaming progress, while the schema location tracks updates to the fields in the source dataset |
+# MAGIC | **`data_source`** | The directory of the source data | Auto Loader will detect new files as they arrive in this location and queue them for ingestion; passed to the **`.load()`** method |
+# MAGIC | **`source_format`** | The format of the source data |  While the format for all Auto Loader queries will be **`cloudFiles`**, the format of the source data should always be specified for the **`cloudFiles.format`** option |
+# MAGIC | **`table_name`** | The name of the target table | Spark Structured Streaming supports writing directly to Delta Lake tables by passing a table name as a string to the **`.table()`** method. Note that you can either append to an existing table or create a new table |
+# MAGIC | **`checkpoint_directory`** | The location for storing metadata about the stream | This argument is pass to the **`checkpointLocation`** and **`cloudFiles.schemaLocation`** options. Checkpoints keep track of streaming progress, while the schema location tracks updates to the fields in the source dataset |
 # MAGIC 
 # MAGIC **NOTE**: The code below has been streamlined to demonstrate Auto Loader functionality. We'll see in later lessons that additional transformations can be applied to source data before saving them to Delta Lake.
 
 # COMMAND ----------
 
 def autoload_to_table(data_source, source_format, table_name, checkpoint_directory):
-    (spark.readStream
-        .format("cloudFiles")
-        .option("cloudFiles.format", source_format)
-        .option("cloudFiles.schemaLocation", checkpoint_directory)
-        .load(data_source)
-        .writeStream
-        .option("checkpointLocation", checkpoint_directory)
-        .option("mergeSchema", "true")
-        .table(table_name)
-    )
+    query = (spark.readStream
+                  .format("cloudFiles")
+                  .option("cloudFiles.format", source_format)
+                  .option("cloudFiles.schemaLocation", checkpoint_directory)
+                  .load(data_source)
+                  .writeStream
+                  .option("checkpointLocation", checkpoint_directory)
+                  .option("mergeSchema", "true")
+                  .table(table_name))
+    return query
 
 # COMMAND ----------
 
@@ -91,17 +91,38 @@ def autoload_to_table(data_source, source_format, table_name, checkpoint_directo
 
 # COMMAND ----------
 
-autoload_to_table(data_source = source_path,
-                  source_format = "json",
-                  table_name = "target_table",
-                  checkpoint_directory = checkpoint_path)
+query = autoload_to_table(data_source = f"{DA.paths.working_dir}/tracker",
+                          source_format = "json",
+                          table_name = "target_table",
+                          checkpoint_directory = f"{DA.paths.checkpoints}/target_table")
+
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC Because Auto Loader uses Spark Structured Streaming to load data incrementally, the code above doesn't appear to finish executing.
 # MAGIC 
-# MAGIC We can think of this as a **continuously active query**. This means that as soon as new data arrives in our data source, it will be processed through our logic and loaded into our target table. We'll explore this below.
+# MAGIC We can think of this as a **continuously active query**. This means that as soon as new data arrives in our data source, it will be processed through our logic and loaded into our target table. We'll explore this in just a second.
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC Before moving forward, it's important to note that it is possible to start the stream and begin consuming the data before it is ready.
+# MAGIC 
+# MAGIC This happens a lot in our demo/eductional environment, but also can occur when streams are part of a scheduled job.
+# MAGIC 
+# MAGIC For that reason, we just need block just long enough to ensure new data is available before moving on.
+
+# COMMAND ----------
+
+def block_until_stream_is_ready(query, min_batches=2):
+    import time
+    while len(query.recentProgress) < min_batches:
+        time.sleep(5) # Give it a couple of seconds
+
+    print(f"The stream has processed {len(query.recentProgress)} batchs")
+
+block_until_stream_is_ready(query)
 
 # COMMAND ----------
 
@@ -118,9 +139,9 @@ autoload_to_table(data_source = source_path,
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Note that the `_rescued_data` column is added by Auto Loader automatically to capture any data that might be malformed and not fit into the table otherwise.
+# MAGIC Note that the **`_rescued_data`** column is added by Auto Loader automatically to capture any data that might be malformed and not fit into the table otherwise.
 # MAGIC 
-# MAGIC While Auto Loader captured the field names for our data correctly, note that it encoded all fields as `STRING` type. Because JSON is a text-based format, this is the safest and most permissive type, ensuring that the least amount of data is dropped or ignored at ingestion due to type mismatch.
+# MAGIC While Auto Loader captured the field names for our data correctly, note that it encoded all fields as **`STRING`** type. Because JSON is a text-based format, this is the safest and most permissive type, ensuring that the least amount of data is dropped or ignored at ingestion due to type mismatch.
 
 # COMMAND ----------
 
@@ -151,38 +172,40 @@ autoload_to_table(data_source = source_path,
 # MAGIC 
 # MAGIC As mentioned previously, Auto Loader is configured to incrementally process files from a directory in cloud object storage into a Delta Lake table.
 # MAGIC 
-# MAGIC We have configured and are currently executing a query to process JSON files from the location specified by `source_path` into a table named `target_table`. Let's review the contents of the `source_path` directory.
+# MAGIC We have configured and are currently executing a query to process JSON files from the location specified by **`source_path`** into a table named **`target_table`**. Let's review the contents of the **`source_path`** directory.
 
 # COMMAND ----------
 
-dbutils.fs.ls(source_path)
+files = dbutils.fs.ls(f"{DA.paths.working_dir}/tracker")
+display(files)
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC At present, you should see a single JSON file listed in this location.
 # MAGIC 
-# MAGIC The method in the cell below was configured in our setup script to allow us to model an external system writing data to this directory. Each time you execute the cell below, a new file will land in the `source_path` directory.
+# MAGIC The method in the cell below was configured in our setup script to allow us to model an external system writing data to this directory. Each time you execute the cell below, a new file will land in the **`source_path`** directory.
 
 # COMMAND ----------
 
-File.newData()
+DA.data_factory.load()
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC List the contents of the `source_path` again using the cell below. You should see an additional JSON file for each time you ran the previous cell.
+# MAGIC List the contents of the **`source_path`** again using the cell below. You should see an additional JSON file for each time you ran the previous cell.
 
 # COMMAND ----------
 
-dbutils.fs.ls(source_path)
+files = dbutils.fs.ls(f"{DA.paths.working_dir}/tracker")
+display(files)
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC ## Tracking Ingestion Progress
 # MAGIC 
-# MAGIC Historically, many systems have been configured to either reprocess all records in a source directory to caculate current results or require data engineers to implement custom logic to identify new data that's arrived since the last time a table was updated.
+# MAGIC Historically, many systems have been configured to either reprocess all records in a source directory to calculate current results or require data engineers to implement custom logic to identify new data that's arrived since the last time a table was updated.
 # MAGIC 
 # MAGIC With Auto Loader, your table has already been updated.
 # MAGIC 
@@ -198,7 +221,7 @@ dbutils.fs.ls(source_path)
 # MAGIC %md
 # MAGIC The Auto Loader query we configured earlier automatically detects and processes records from the source directory into the target table. There is a slight delay as records are ingested, but an Auto Loader query executing with default streaming configuration should update results in near real time.
 # MAGIC 
-# MAGIC The query below shows the table history. A new table version should be indicated for each `STREAMING UPDATE`. These update events coincide with new batches of data arriving at the source.
+# MAGIC The query below shows the table history. A new table version should be indicated for each **`STREAMING UPDATE`**. These update events coincide with new batches of data arriving at the source.
 
 # COMMAND ----------
 
@@ -215,7 +238,7 @@ dbutils.fs.ls(source_path)
 
 # COMMAND ----------
 
-# MAGIC %run ../Includes/auto-loader-setup $mode="clean"
+DA.cleanup()
 
 # COMMAND ----------
 
