@@ -319,7 +319,7 @@ SELECT * FROM beans
 -- MAGIC Restarting the cluster will ensure that these cached data files are permanently purged.
 -- MAGIC 
 -- MAGIC You can see an example of this by uncommenting and running the following cell that may, or may not, fail
--- MAGIC (depending on the state of teh cache)
+-- MAGIC (depending on the state of the cache).
 
 -- COMMAND ----------
 

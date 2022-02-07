@@ -73,10 +73,10 @@ FROM users_dirty
 -- COMMAND ----------
 
 SELECT
-  count_if(user_id IS NULL) missing_user_ids, 
-  count_if(user_first_touch_timestamp IS NULL) missing_timestamps, 
-  count_if(email IS NULL) missing_emails,
-  count_if(updated IS NULL) missing_updates
+  count_if(user_id IS NULL) AS missing_user_ids, 
+  count_if(user_first_touch_timestamp IS NULL) AS missing_timestamps, 
+  count_if(email IS NULL) AS missing_emails,
+  count_if(updated IS NULL) AS missing_updates
 FROM users_dirty
 
 -- COMMAND ----------
@@ -128,10 +128,14 @@ FROM users_dirty
 -- COMMAND ----------
 
 SELECT 
-  count(user_id) total_ids, count(DISTINCT user_id) unique_ids,
-  count(email) total_emails, count(DISTINCT email) unique_emails,
-  count(updated) total_updates, count(DISTINCT(updated)) unique_updates,
-  count(*) total_rows, count(DISTINCT(*)) unique_non_null_rows
+  count(user_id) AS total_ids,
+  count(DISTINCT user_id) AS unique_ids,
+  count(email) AS total_emails,
+  count(DISTINCT email) AS unique_emails,
+  count(updated) AS total_updates,
+  count(DISTINCT(updated)) AS unique_updates,
+  count(*) AS total_rows, 
+  count(DISTINCT(*)) AS unique_non_null_rows
 FROM users_dirty
 
 -- COMMAND ----------
@@ -231,7 +235,7 @@ SELECT count(*) FROM deduped_users
 -- COMMAND ----------
 
 SELECT max(row_count) <= 1 no_duplicate_ids FROM (
-  SELECT user_id, count(*) row_count
+  SELECT user_id, count(*) AS row_count
   FROM deduped_users
   GROUP BY user_id)
 
@@ -242,7 +246,7 @@ SELECT max(row_count) <= 1 no_duplicate_ids FROM (
 -- COMMAND ----------
 
 SELECT max(user_id_count) <= 1 at_most_one_id FROM (
-  SELECT email, count(user_id) user_id_count
+  SELECT email, count(user_id) AS user_id_count
   FROM deduped_users
   WHERE email IS NOT NULL
   GROUP BY email)
@@ -261,12 +265,12 @@ SELECT max(user_id_count) <= 1 at_most_one_id FROM (
 -- COMMAND ----------
 
 SELECT *,
-  date_format(first_touch, "MMM d, yyyy") first_touch_date,
-  date_format(first_touch, "HH:mm:ss") first_touch_time,
-  regexp_extract(email, "(?<=@).+", 0) email_domain
+  date_format(first_touch, "MMM d, yyyy") AS first_touch_date,
+  date_format(first_touch, "HH:mm:ss") AS first_touch_time,
+  regexp_extract(email, "(?<=@).+", 0) AS email_domain
 FROM (
   SELECT *,
-    CAST(user_first_touch_timestamp / 1e6 AS timestamp) first_touch 
+    CAST(user_first_touch_timestamp / 1e6 AS timestamp) AS first_touch 
   FROM deduped_users
 )
 

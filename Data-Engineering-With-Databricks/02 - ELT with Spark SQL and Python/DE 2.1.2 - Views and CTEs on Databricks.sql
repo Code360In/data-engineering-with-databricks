@@ -76,10 +76,17 @@ SELECT * FROM view_delays_ABQ_LAX;
 -- MAGIC To show a list of tables (and views), we use the **`SHOW TABLES`** command.  
 -- MAGIC   
 -- MAGIC Note that the **`view_delays_abq_lax`** view is in the list. 
+
+-- COMMAND ----------
+
+SHOW TABLES;
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC Now open the drop down menu for your cluster and select **Detach & Re-attach**
 -- MAGIC 
--- MAGIC Open the drop down menu for your cluster and select **Detach & Re-attach**
--- MAGIC 
--- MAGIC Once reattached, rerun the following command to initialize this lessons helper functions and basic setup.
+-- MAGIC Once reattached, rerun the following command to initialize this lesson's helper functions and basic setup.
 
 -- COMMAND ----------
 
@@ -88,7 +95,7 @@ SELECT * FROM view_delays_ABQ_LAX;
 -- COMMAND ----------
 
 -- MAGIC %md 
--- MAGIC Now, if reload the list of tables, **`view_delays_abq_lax`** persists. 
+-- MAGIC Now, if we reload the list of tables, **`view_delays_abq_lax`** persists. 
 -- MAGIC 
 -- MAGIC This is because view metadata (name, location, etc.) are stored in the metastore.
 -- MAGIC 
@@ -97,7 +104,7 @@ SELECT * FROM view_delays_ABQ_LAX;
 -- COMMAND ----------
 
 USE ${da.db_name};
-SHOW tables;
+SHOW TABLES;
 
 -- COMMAND ----------
 
@@ -114,11 +121,22 @@ SELECT * FROM temp_view;
 -- COMMAND ----------
 
 -- MAGIC %md 
--- MAGIC Let's again show list of tables (and views).  
+-- MAGIC Let's again show a list of tables (and views).
 -- MAGIC   
--- MAGIC Two things we note are that the **`temp_view`** view is in the list and that **`temp_view`** is marked **`isTemporary`**.  
--- MAGIC   
+-- MAGIC Two things we note are that the **`temp_view`** view is in the list and that **`temp_view`** is marked **`isTemporary`**.
+
+-- COMMAND ----------
+
+SHOW TABLES;
+
+-- COMMAND ----------
+
+-- MAGIC %md
 -- MAGIC If we detach from, and reattach to, the cluster and reload the list of tables, **`temp_view`** is deleted. This is because temporary view metadata (name, location, etc.) are not stored in the metastore. When we detach from the cluster, the Spark session is deleted, which deletes the temporary view.
+
+-- COMMAND ----------
+
+-- MAGIC %run ../Includes/classroom-setup-2.1.2-setup-meta-2
 
 -- COMMAND ----------
 
@@ -145,6 +163,10 @@ SELECT * FROM global_temp.global_temp_view_distance;
 -- MAGIC Again, global temporary views are available to any notebook attached to the cluster, including
 -- MAGIC - New notebooks
 -- MAGIC - This notebook, even if it is detached from, and reattached to, the cluster
+
+-- COMMAND ----------
+
+-- MAGIC %run ../Includes/classroom-setup-2.1.2-setup-meta-2
 
 -- COMMAND ----------
 

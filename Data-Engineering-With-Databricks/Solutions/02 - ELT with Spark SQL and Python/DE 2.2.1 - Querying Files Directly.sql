@@ -91,7 +91,7 @@ SELECT * FROM json.`${da.paths.datasets}/raw/events-kafka/001.json`
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC Note that our preview displays all 94 rows of our source file.
+-- MAGIC Note that our preview displays all 321 rows of our source file.
 
 -- COMMAND ----------
 

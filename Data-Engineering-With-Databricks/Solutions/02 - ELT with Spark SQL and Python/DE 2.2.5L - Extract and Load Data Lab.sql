@@ -81,7 +81,7 @@ OPTIONS (path = "${da.paths.datasets}/raw/events-kafka")
 -- COMMAND ----------
 
 -- MAGIC %md ## Insert Raw Events Into Delta Table
--- MAGIC Create a managed Delta table named **`events_raw`** using the same schema - we'll load the data extracted above into this empty table.
+-- MAGIC Create an empty managed Delta table named **`events_raw`** using the same schema.
 
 -- COMMAND ----------
 

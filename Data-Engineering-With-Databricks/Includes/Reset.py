@@ -3,6 +3,10 @@
 
 # COMMAND ----------
 
+# MAGIC %run ./_utility-methods
+
+# COMMAND ----------
+
 DA.init()
 
 # COMMAND ----------
@@ -23,4 +27,9 @@ if DA.paths.exists(DA.working_dir_prefix):
 # COMMAND ----------
 
 # Create the source database, install the datasets, whatever, so that we can run the other notebooks asyncronously
+install_dtavod_datasets()
+install_eltwss_datasets()
 
+# COMMAND ----------
+
+# MAGIC %run ./mount-datasets

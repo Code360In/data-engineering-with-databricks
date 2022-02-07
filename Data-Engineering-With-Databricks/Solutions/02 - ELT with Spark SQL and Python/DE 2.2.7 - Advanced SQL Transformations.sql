@@ -12,12 +12,12 @@
 -- MAGIC 
 -- MAGIC Querying tabular data stored in the data lakehouse with Spark SQL is easy, efficient, and fast.
 -- MAGIC 
--- MAGIC This gets more complicated as the data structure becomes less regular, when many tables need to be used in a single query, or when the shape of data needs to be changes dramatically. This notebook introduces a number of functions present in Spark SQL to help engineers complete even the most complicated transformations.
+-- MAGIC This gets more complicated as the data structure becomes less regular, when many tables need to be used in a single query, or when the shape of data needs to be changed dramatically. This notebook introduces a number of functions present in Spark SQL to help engineers complete even the most complicated transformations.
 -- MAGIC 
 -- MAGIC ## Learning Objectives
 -- MAGIC By the end of this lesson, students should feel confident:
 -- MAGIC - Using **`.`** and **`:`** syntax to query nested data
--- MAGIC - Working with JSONs
+-- MAGIC - Working with JSON
 -- MAGIC - Flattening and unpacking arrays and structs
 -- MAGIC - Combining datasets using joins and set operators
 -- MAGIC - Reshaping data using pivot tables
@@ -64,7 +64,7 @@ SELECT value:device, value:geo:city FROM events_strings
 -- MAGIC %md
 -- MAGIC Spark SQL also has the ability to parse JSON objects into struct types (a native Spark type with nested attributes).
 -- MAGIC 
--- MAGIC However, the **`from_json`** method requires a schema. To derive the schema of our current data, we'll start by executing a query we know will return a JSON value with no null fields.
+-- MAGIC However, the **`from_json`** function requires a schema. To derive the schema of our current data, we'll start by executing a query we know will return a JSON value with no null fields.
 
 -- COMMAND ----------
 
@@ -77,12 +77,12 @@ LIMIT 1
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC Spark SQL also has a **`schema_of_json`** method to derive the JSON schema from an example. Here, we copy and paste an example JSON to the method and chain it into the **`from_json`** method to cast our **`value`** field to a struct type.
+-- MAGIC Spark SQL also has a **`schema_of_json`** function to derive the JSON schema from an example. Here, we copy and paste an example JSON to the function and chain it into the **`from_json`** function to cast our **`value`** field to a struct type.
 
 -- COMMAND ----------
 
 CREATE OR REPLACE TEMP VIEW parsed_events AS
-  SELECT from_json(value, schema_of_json('{"device":"Linux","ecommerce":{"purchase_revenue_in_usd":1075.5,"total_item_quantity":1,"unique_items":1},"event_name":"finalize","event_previous_timestamp":1593879231210816,"event_timestamp":1593879335779563,"geo":{"city":"Houston","state":"TX"},"items":[{"coupon":"NEWBED10","item_id":"M_STAN_K","item_name":"Standard King Mattress","item_revenue_in_usd":1075.5,"price_in_usd":1195.0,"quantity":1}],"traffic_source":"email","user_first_touch_timestamp":1593454417513109,"user_id":"UA000000106116176"}')) json 
+  SELECT from_json(value, schema_of_json('{"device":"Linux","ecommerce":{"purchase_revenue_in_usd":1075.5,"total_item_quantity":1,"unique_items":1},"event_name":"finalize","event_previous_timestamp":1593879231210816,"event_timestamp":1593879335779563,"geo":{"city":"Houston","state":"TX"},"items":[{"coupon":"NEWBED10","item_id":"M_STAN_K","item_name":"Standard King Mattress","item_revenue_in_usd":1075.5,"price_in_usd":1195.0,"quantity":1}],"traffic_source":"email","user_first_touch_timestamp":1593454417513109,"user_id":"UA000000106116176"}')) AS json 
   FROM events_strings;
   
 SELECT * FROM parsed_events
@@ -131,9 +131,9 @@ WHERE ecommerce.purchase_revenue_in_usd IS NOT NULL
 -- MAGIC ## Explode Arrays
 -- MAGIC The **`items`** field in the **`events`** table is an array of structs.
 -- MAGIC 
--- MAGIC Spark SQL has a number of methods specifically to deal with arrays.
+-- MAGIC Spark SQL has a number of functions specifically to deal with arrays.
 -- MAGIC 
--- MAGIC The **`explode`** method let's us put each element in an array on it's own row.
+-- MAGIC The **`explode`** function lets us put each element in an array on its own row.
 
 -- COMMAND ----------
 
@@ -144,9 +144,11 @@ SELECT user_id, event_timestamp, event_name, explode(items) AS item FROM events
 -- MAGIC %md 
 -- MAGIC ## Collect Arrays
 -- MAGIC 
--- MAGIC The **`collect_set`** method allows can collect unique values for a field, including fields within arrays.
+-- MAGIC The **`collect_set`** function allows can collect unique values for a field, including fields within arrays.
 -- MAGIC 
--- MAGIC The **`flatten`** method allows multiple arrays to be combined into a single array.
+-- MAGIC The **`flatten`** function allows multiple arrays to be combined into a single array.
+-- MAGIC 
+-- MAGIC The **`array_distinct`** functions removes duplicate elements from an array.
 -- MAGIC 
 -- MAGIC Here, we combine these queries to create a simple table that shows the unique collection of actions and the items in a user's cart.
 
@@ -154,7 +156,7 @@ SELECT user_id, event_timestamp, event_name, explode(items) AS item FROM events
 
 SELECT user_id,
   collect_set(event_name) AS event_history,
-  collect_set(items.item_id) AS cart_history
+  array_distinct(flatten(collect_set(items.item_id))) AS cart_history
 FROM events
 GROUP BY user_id
 
@@ -353,7 +355,7 @@ SELECT * FROM king_item_revenues
 -- MAGIC ## Summary
 -- MAGIC Spark SQL offers a comprehensive set of native functionality for interacting with and manipulating highly nested data.
 -- MAGIC 
--- MAGIC While some syntax for this functionality may be unfamiliar to SQL users, leveraging built-in methods like higher order functions can prevent SQL engineers from needing to rely on custom logic when dealing with highly complex data structures.
+-- MAGIC While some syntax for this functionality may be unfamiliar to SQL users, leveraging built-in functions like higher order functions can prevent SQL engineers from needing to rely on custom logic when dealing with highly complex data structures.
 
 -- COMMAND ----------
 
