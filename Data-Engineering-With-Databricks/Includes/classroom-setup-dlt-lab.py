@@ -1,5 +1,5 @@
 # Databricks notebook source
-# MAGIC %run ./_databricks-academy-helper $lesson="dlt_lab"
+# MAGIC %run ./_utility-methods $lesson="dlt_lab"
 
 # COMMAND ----------
 

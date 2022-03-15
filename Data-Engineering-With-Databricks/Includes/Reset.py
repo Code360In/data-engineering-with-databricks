@@ -1,9 +1,9 @@
 # Databricks notebook source
-# MAGIC %run ./_databricks-academy-helper $lesson="reset"
+# MAGIC %run ./_utility-methods $lesson="reset"
 
 # COMMAND ----------
 
-# MAGIC %run ./_utility-methods
+# MAGIC %run ./mount-datasets
 
 # COMMAND ----------
 
@@ -27,8 +27,8 @@ if DA.paths.exists(DA.working_dir_prefix):
 # COMMAND ----------
 
 # Create the source database, install the datasets, whatever, so that we can run the other notebooks asyncronously
-install_dtavod_datasets()
-install_eltwss_datasets()
+install_dtavod_datasets(reinstall=True)
+install_eltwss_datasets(reinstall=True)
 
 # COMMAND ----------
 
