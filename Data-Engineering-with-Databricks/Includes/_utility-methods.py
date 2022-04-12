@@ -1,9 +1,8 @@
 # Databricks notebook source
-# Debugging
-# username = spark.sql("SELECT current_user()").first()[0]
-# path = f"dbfs:/user/{username}/dbacademy/dewd/"
-# print(f"Nuking {path}")
-# dbutils.fs.rm(path, True)
+# MAGIC %pip install \
+# MAGIC git+https://github.com/databricks-academy/dbacademy-gems \
+# MAGIC git+https://github.com/databricks-academy/dbacademy-rest \
+# MAGIC --quiet --disable-pip-version-check
 
 # COMMAND ----------
 

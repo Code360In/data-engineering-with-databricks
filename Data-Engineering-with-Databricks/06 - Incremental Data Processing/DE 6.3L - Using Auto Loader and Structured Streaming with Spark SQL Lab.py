@@ -8,6 +8,8 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC # Using Auto Loader and Structured Streaming with Spark SQL
 # MAGIC 
 # MAGIC ## Learning Objectives
@@ -19,22 +21,26 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Setup
 # MAGIC Run the following script to setup necessary variables and clear out past runs of this notebook. Note that re-executing this cell will allow you to start the lab over.
 
 # COMMAND ----------
 
-# MAGIC %run ../Includes/classroom-setup-6.3L-classic-setup
+# MAGIC %run ../Includes/Classroom-Setup-6.3L
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC 
+# MAGIC 
+# MAGIC 
 # MAGIC ## Configure Streaming Read
 # MAGIC 
 # MAGIC This lab uses a collection of customer-related CSV data from DBFS found in */databricks-datasets/retail-org/customers/*.
 # MAGIC 
-# MAGIC Read this data using Auto Loader using its schema inference (use **`customersCheckpointPath`** to store the schema info). Create a streaming temporary view called **`customers_raw_temp`**.
+# MAGIC Read this data using <a href="https://docs.databricks.com/spark/latest/structured-streaming/auto-loader.html" target="_blank">Auto Loader</a> using its schema inference (use **`customers_checkpoint_path`** to store the schema info). Create a streaming temporary view called **`customers_raw_temp`**.
 
 # COMMAND ----------
 
@@ -50,6 +56,8 @@ customers_checkpoint_path = f"{DA.paths.checkpoints}/customers"
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC 
 # MAGIC ## Define a streaming aggregation
 # MAGIC 
@@ -67,6 +75,8 @@ customers_checkpoint_path = f"{DA.paths.checkpoints}/customers"
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC 
 # MAGIC ## Write aggregated data to a Delta table
 # MAGIC 
@@ -88,6 +98,8 @@ DA.block_until_stream_is_ready(query)
 
 # MAGIC %md
 # MAGIC 
+# MAGIC 
+# MAGIC 
 # MAGIC ## Query the results
 # MAGIC 
 # MAGIC Query the **`customer_count_by_state`** table (this will not be a streaming query). Plot the results as a bar graph and also using the map plot.
@@ -100,6 +112,8 @@ DA.block_until_stream_is_ready(query)
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Wrapping Up
 # MAGIC 
 # MAGIC Run the following cell to remove the database and all data associated with this lab.
@@ -111,6 +125,8 @@ DA.cleanup()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC By completing this lab, you should now feel comfortable:
 # MAGIC * Using PySpark to configure Auto Loader for incremental data ingestion
 # MAGIC * Using Spark SQL to aggregate streaming data

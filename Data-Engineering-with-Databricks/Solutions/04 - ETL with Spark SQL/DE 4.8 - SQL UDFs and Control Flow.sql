@@ -8,6 +8,8 @@
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC # SQL UDFs and Control Flow
 -- MAGIC 
 -- MAGIC Databricks added support for User Defined Functions (UDFs) registered natively in SQL starting in DBR 9.1.
@@ -26,16 +28,20 @@
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Setup
 -- MAGIC Run the following cell to setup your environment.
 
 -- COMMAND ----------
 
--- MAGIC %run ../Includes/classroom-setup-4.8-sql-setup
+-- MAGIC %run ../Includes/Classroom-Setup-4.8
 
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Create a Simple Dataset
 -- MAGIC 
 -- MAGIC For this notebook, we'll consider the following dataset, registered here as a temporary view.
@@ -53,6 +59,8 @@ SELECT * FROM foods
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## SQL UDFs
 -- MAGIC At minimum, a SQL UDF requires a function name, optional parameters, the type to be returned, and some custom logic.
 -- MAGIC 
@@ -67,6 +75,8 @@ RETURN concat(upper(text), "!!!")
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Note that this function is applied to all values of the column in a parallel fashion within the Spark processing engine. SQL UDFs are an efficient way to define custom logic that is optimized for execution on Databricks.
 
 -- COMMAND ----------
@@ -76,6 +86,8 @@ SELECT yelling(food) FROM foods
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Scoping and Permissions of SQL UDFs
 -- MAGIC 
 -- MAGIC Note that SQL UDFs will persist between execution environments (which can include notebooks, DBSQL queries, and jobs).
@@ -89,6 +101,8 @@ DESCRIBE FUNCTION yelling
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC By describing extended, we can get even more information. 
 -- MAGIC 
 -- MAGIC Note that the **`Body`** field at the bottom of the function description shows the SQL logic used in the function itself.
@@ -100,6 +114,8 @@ DESCRIBE FUNCTION EXTENDED yelling
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC SQL UDFs exist as objects in the metastore and are governed by the same Table ACLs as databases, tables, or views.
 -- MAGIC 
 -- MAGIC In order to use a SQL UDF, a user must have **`USAGE`** and **`SELECT`** permissions on the function.
@@ -107,6 +123,8 @@ DESCRIBE FUNCTION EXTENDED yelling
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## CASE/WHEN
 -- MAGIC 
 -- MAGIC The standard SQL syntactic construct **`CASE`** / **`WHEN`** allows the evaluation of multiple conditional statements with alternative outcomes based on table contents.
@@ -127,6 +145,8 @@ FROM foods
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Simple Control Flow Functions
 -- MAGIC 
 -- MAGIC Combining SQL UDFs with control flow in the form of **`CASE`** / **`WHEN`** clauses provides optimized execution for control flows within SQL workloads.
@@ -147,6 +167,8 @@ END;
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Using this method on our data provides the desired outcome.
 
 -- COMMAND ----------
@@ -156,13 +178,17 @@ SELECT foods_i_like(food) FROM foods
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC While the example provided here are simple string methods, these same basic principles can be used to add custom computations and logic for native execution in Spark SQL. 
 -- MAGIC 
 -- MAGIC Especially for enterprises that might be migrating users from systems with many defined procedures or custom-defined formulas, SQL UDFs can allow a handful of users to define the complex logic needed for common reporting and analytic queries.
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC Run the following cell to delete the tables and files associated with this lesson.
 
 -- COMMAND ----------

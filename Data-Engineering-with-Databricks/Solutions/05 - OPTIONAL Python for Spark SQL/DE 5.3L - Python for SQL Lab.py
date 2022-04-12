@@ -8,6 +8,8 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC # Just Enough Python for Databricks SQL Lab
 # MAGIC 
 # MAGIC ## Learning Objectives
@@ -18,11 +20,13 @@
 
 # COMMAND ----------
 
-# MAGIC %run ../Includes/classroom-setup-5.3L
+# MAGIC %run ../Includes/Classroom-Setup-5.3L
 
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC # Reviewing Python Basics
 # MAGIC 
 # MAGIC In the previous notebook, we briefly explored using **`spark.sql()`** to execute arbitrary SQL commands from Python.
@@ -50,6 +54,8 @@ display(df)
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC 1. **Cmd 5** assigns a string to a variable. When a variable assignment is successful, no output is displayed to the notebook. A new variable is added to the current execution environment.
 # MAGIC 1. **Cmd 6** executes a SQL query and displays the schema for the DataFrame alongside the word **`DataFrame`**. In this case, the SQL query is just to select a string, so no changes to our environment occur. 
 # MAGIC 1. **Cmd 7** executes the same SQL query and displays the output of the DataFrame. This combination of **`display()`** and **`spark.sql()`** most closely mirrors executing logic in a **`%sql`** cell; the results will always be printed in a formatted table, assuming results are returned by the query; some queries will instead manipulate tables or databases, in which case the work **`OK`** will print to show successful execution. In this case, no changes to our environment occur from running this code.
@@ -57,6 +63,8 @@ display(df)
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Setting Up a Development Environment
 # MAGIC 
 # MAGIC Throughout this course, we use logic similar to the follow cell to capture information about the user currently executing the notebook and create an isolated development database.
@@ -83,6 +91,8 @@ print(f"working_dir: {working_dir}")
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC Below, we add a simple control flow statement to this logic to create and use this user-specific database. 
 # MAGIC 
 # MAGIC Optionally, we will reset this database and drop all of the contents on repeat execution. (Note the the default value for the parameter **`reset`** is **`True`**).
@@ -113,11 +123,15 @@ create_database(course)
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC While this logic as defined is geared toward isolating students in shared workspaces for instructional purposes, the same basic design could be leveraged for testing new logic in an isolated environment before pushing to production.
 
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Handling Errors Gracefully
 # MAGIC 
 # MAGIC Review the logic in the function below.
@@ -148,6 +162,8 @@ def query_or_make_demo_table(table_name):
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC Try to identify the following before executing the next cell:
 # MAGIC 1. The expected output of cell execution
 # MAGIC 1. What logic is being executed
@@ -160,6 +176,8 @@ query_or_make_demo_table("demo_table")
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC Now answer the same three questions before running the same query below.
 
 # COMMAND ----------
@@ -169,6 +187,8 @@ query_or_make_demo_table("demo_table")
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC - On the first execution, the table **`demo_table`** did not yet exist. As such, the attempt to return the contents of the table created an error, which resulted in our **`except`** block of logic executing. This block:
 # MAGIC   1. Created the table
 # MAGIC   1. Inserted values
@@ -178,6 +198,8 @@ query_or_make_demo_table("demo_table")
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Adapting SQL to Python
 # MAGIC Let's consider the following SQL query against our demo table created above.
 
@@ -190,7 +212,11 @@ query_or_make_demo_table("demo_table")
 
 # COMMAND ----------
 
-# MAGIC %md which can also be expressed using the PySpark API and the **`display`** function as seen here:
+# MAGIC %md
+# MAGIC 
+# MAGIC 
+# MAGIC 
+# MAGIC which can also be expressed using the PySpark API and the **`display`** function as seen here:
 
 # COMMAND ----------
 
@@ -200,6 +226,8 @@ display(results)
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC Let's use this simple example to practice creating a Python function that adds optional functionality.
 # MAGIC 
 # MAGIC Our target function will:
@@ -236,6 +264,8 @@ def preview_values(state=None, render_results=False):
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC The assert statements below can be used to check whether or not your function works as intended.
 
 # COMMAND ----------

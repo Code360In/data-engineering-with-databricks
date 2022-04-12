@@ -8,6 +8,8 @@
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC # SQL for Delta Live Tables
 -- MAGIC 
 -- MAGIC In the last lesson, we walked through the process of scheduling this notebook as a Delta Live Table (DLT) pipeline. Now we'll explore the contents of this notebook to better understand the syntax used by Delta Live Tables.
@@ -27,6 +29,8 @@
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Declare Bronze Layer Tables
 -- MAGIC 
 -- MAGIC Below we declare two tables implementing the bronze layer. This represents data in its rawest form, but captured in a format that can be retained indefinitely and queried with the performance and benefits that Delta Lake has to offer.
@@ -34,6 +38,8 @@
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ### sales_orders_raw
 -- MAGIC 
 -- MAGIC **`sales_orders_raw`** ingests JSON data incrementally from the example dataset found in  */databricks-datasets/retail-org/sales_orders/*.
@@ -54,6 +60,8 @@ AS SELECT * FROM cloud_files("/databricks-datasets/retail-org/sales_orders/", "j
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ### customers
 -- MAGIC 
 -- MAGIC **`customers`** presents CSV customer data found in */databricks-datasets/retail-org/customers/*. This table will soon be used in a join operation to look up customer data based on sales records.
@@ -68,6 +76,8 @@ AS SELECT * FROM cloud_files("/databricks-datasets/retail-org/customers/", "csv"
 
 -- MAGIC %md
 -- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Declare Silver Layer Tables
 -- MAGIC 
 -- MAGIC Now we declare tables implementing the silver layer. This layer represents a refined copy of data from the bronze layer, with the intention of optimizing downstream applications. At this level we apply operations like data cleansing and enrichment.
@@ -75,6 +85,8 @@ AS SELECT * FROM cloud_files("/databricks-datasets/retail-org/customers/", "csv"
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ### sales_orders_cleaned
 -- MAGIC 
 -- MAGIC Here we declare our first silver table, which enriches the sales transaction data with customer information in addition to implementing quality control by rejecting records with a null order number.
@@ -117,6 +129,8 @@ AS
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Declare Gold Table
 -- MAGIC 
 -- MAGIC At the most refined level of the architecture, we declare a table delivering an aggregation with business value, in this case a collection of sales order data based in a specific region. In aggregating, the report generates counts and totals of orders by date and customer.
@@ -138,6 +152,8 @@ AS
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Explore Results
 -- MAGIC 
 -- MAGIC Explore the DAG (Directed Acyclic Graph) representing the entities involved in the pipeline and the relationships between them. Click on each to view a summary, which includes:
@@ -151,6 +167,8 @@ AS
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Update Pipeline
 -- MAGIC 
 -- MAGIC Uncomment the following cell to declare another gold table. Similar to the previous gold table declaration, this filters for the **`city`** of Chicago. 

@@ -8,6 +8,9 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
+# MAGIC 
 # MAGIC # Getting Started with the Databricks Platform
 # MAGIC 
 # MAGIC This notebook provides a hands-on review of some of the basic functionality of the Databricks Data Science and Engineering Workspace.
@@ -23,6 +26,9 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
+# MAGIC 
 # MAGIC # Renaming a Notebook
 # MAGIC 
 # MAGIC Changing the name of a notebook is easy. Click on the name at the top of this page, then make changes to the name. To make it easier to navigate back to this notebook later in case you need to, append a short test string to the end of the existing name.
@@ -30,6 +36,8 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC 
 # MAGIC # Attaching a cluster
 # MAGIC 
@@ -42,6 +50,9 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
+# MAGIC 
 # MAGIC # Using %run
 # MAGIC 
 # MAGIC Complex projects of any type can benefit from the ability to break them down into simpler, reusable components.
@@ -78,7 +89,10 @@
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC The folder that contains this notebook contains a subfolder named **`Includes`**, which in turn contains a notebook called **`example-setup`**. 
+# MAGIC 
+# MAGIC 
+# MAGIC 
+# MAGIC The folder that contains this notebook contains a subfolder named **`ExampleSetupFolder`**, which in turn contains a notebook called **`example-setup`**. 
 # MAGIC 
 # MAGIC This simple notebook declares the variable **`my_name`**, sets it to **`None`** and then creates a DataFrame called **`example_df`**. 
 # MAGIC 
@@ -86,7 +100,7 @@
 
 # COMMAND ----------
 
-# MAGIC %run ./Includes/example-setup
+# MAGIC %run ./ExampleSetupFolder/example-setup
 
 # COMMAND ----------
 
@@ -96,6 +110,9 @@ print(my_name)
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
+# MAGIC 
 # MAGIC ## Run a Python cell
 # MAGIC 
 # MAGIC Run the following cell to verify that the **`example-setup`** notebook was executed by displaying the **`example_df`** Dataframe. This table consists of 16 rows of increasing values.
@@ -107,6 +124,8 @@ display(example_df)
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC 
 # MAGIC # Detach and Reattach a Cluster
 # MAGIC 
@@ -120,6 +139,8 @@ display(example_df)
 
 # MAGIC %md
 # MAGIC 
+# MAGIC 
+# MAGIC 
 # MAGIC # Change Language
 # MAGIC 
 # MAGIC Notice that the default language for this notebook is set to Python. Change this by clicking the **Python** button to the right of the notebook name. Change the default language to SQL.
@@ -129,6 +150,9 @@ display(example_df)
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
+# MAGIC 
 # MAGIC # Create a Markdown Cell
 # MAGIC 
 # MAGIC Add a new cell below this one. Populate with some Markdown that includes at least the following elements:
@@ -139,6 +163,9 @@ display(example_df)
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
+# MAGIC 
 # MAGIC ## Run a SQL cell
 # MAGIC 
 # MAGIC Run the following cell to query a Delta table using SQL. This executes a simple query against a table is backed by a Databricks-provided example dataset included in all DBFS installations.
@@ -151,6 +178,9 @@ display(example_df)
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
+# MAGIC 
 # MAGIC Execute the following cell to view the underlying files backing this table.
 
 # COMMAND ----------
@@ -162,13 +192,23 @@ display(files)
 
 # MAGIC %md
 # MAGIC 
+# MAGIC 
+# MAGIC 
 # MAGIC # Review Changes
 # MAGIC 
-# MAGIC Assuming you have imported this material into your workspace using a Databricks Repo, open the Repo dialog by clicking the **`published`** branch button at the top-left corner of this page. Use the dialog to revert the changes and restore this notebook to its original state.
+# MAGIC Assuming you have imported this material into your workspace using a Databricks Repo, open the Repo dialog by clicking the **`published`** branch button at the top-left corner of this page. You should see three changes:
+# MAGIC 1. **Removed** with the old notebook name
+# MAGIC 1. **Added** with the new notebook name
+# MAGIC 1. **Modified** for creating a markdown cell above
+# MAGIC 
+# MAGIC Use the dialog to revert the changes and restore this notebook to its original state.
 
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
+# MAGIC 
 # MAGIC ## Wrapping Up
 # MAGIC 
 # MAGIC By completing this lab, you should now feel comfortable manipulating notebooks, creating new cells, and running notebooks within notebooks.

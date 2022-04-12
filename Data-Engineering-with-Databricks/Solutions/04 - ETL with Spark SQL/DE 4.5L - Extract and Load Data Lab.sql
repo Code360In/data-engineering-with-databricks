@@ -8,6 +8,8 @@
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC # Extract and Load Data Lab
 -- MAGIC 
 -- MAGIC In this lab, you will extract and load raw data from JSON files into a Delta table.
@@ -21,17 +23,21 @@
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Run Setup
 -- MAGIC 
 -- MAGIC Run the following cell to configure variables and datasets for this lesson.
 
 -- COMMAND ----------
 
--- MAGIC %run ../Includes/classroom-setup-4.5L-setup
+-- MAGIC %run ../Includes/Classroom-Setup-4.5L
 
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Overview of the Data
 -- MAGIC 
 -- MAGIC We will work with a sample of raw Kafka data written as JSON files. 
@@ -51,7 +57,9 @@
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC ## Extract Raw Events From JSON Files
 -- MAGIC To load this data into Delta properly, we first need to extract the JSON data using the correct schema.
 -- MAGIC 
@@ -68,6 +76,8 @@ OPTIONS (path = "${da.paths.datasets}/raw/events-kafka")
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC **NOTE**: We'll use Python to run checks occasionally throughout the lab. The following cell will return an error with a message on what needs to change if you have not followed instructions. No output from cell execution means that you have completed this step.
 
 -- COMMAND ----------
@@ -82,7 +92,11 @@ OPTIONS (path = "${da.paths.datasets}/raw/events-kafka")
 
 -- COMMAND ----------
 
--- MAGIC %md ## Insert Raw Events Into Delta Table
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
+-- MAGIC ## Insert Raw Events Into Delta Table
 -- MAGIC Create an empty managed Delta table named **`events_raw`** using the same schema.
 
 -- COMMAND ----------
@@ -93,7 +107,11 @@ CREATE OR REPLACE TABLE events_raw
 
 -- COMMAND ----------
 
--- MAGIC %md Run the cell below to confirm the table was created correctly.
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
+-- MAGIC Run the cell below to confirm the table was created correctly.
 
 -- COMMAND ----------
 
@@ -105,7 +123,11 @@ CREATE OR REPLACE TABLE events_raw
 
 -- COMMAND ----------
 
--- MAGIC %md Once the extracted data and Delta table are ready, insert the JSON records from the **`events_json`** table into the new **`events_raw`** Delta table.
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
+-- MAGIC Once the extracted data and Delta table are ready, insert the JSON records from the **`events_json`** table into the new **`events_raw`** Delta table.
 
 -- COMMAND ----------
 
@@ -116,6 +138,8 @@ SELECT * FROM events_json
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Manually review the table contents to ensure data was written as expected.
 
 -- COMMAND ----------
@@ -126,6 +150,9 @@ SELECT * FROM events_raw
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Run the cell below to confirm the data has been loaded correctly.
 
 -- COMMAND ----------
@@ -136,9 +163,13 @@ SELECT * FROM events_raw
 
 -- COMMAND ----------
 
--- MAGIC %md ## Create Delta Table from a Query
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
+-- MAGIC ## Create Delta Table from a Query
 -- MAGIC In addition to new events data, let's also load a small lookup table that provides product details that we'll use later in the course.
--- MAGIC Use a CTAS statement to create a managed Delta table named **`item_lookup`** that extracts data from the parquet directory provided below. 
+-- MAGIC Use a CTAS statement to create a managed Delta table named **`item_lookup`** that extracts data from the parquet directory provided below.
 
 -- COMMAND ----------
 
@@ -149,6 +180,9 @@ AS SELECT * FROM parquet.`${da.paths.datasets}/raw/item-lookup`
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Run the cell below to confirm the lookup table has been loaded correctly.
 
 -- COMMAND ----------
@@ -159,7 +193,9 @@ AS SELECT * FROM parquet.`${da.paths.datasets}/raw/item-lookup`
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC Run the following cell to delete the tables and files associated with this lesson.
 
 -- COMMAND ----------

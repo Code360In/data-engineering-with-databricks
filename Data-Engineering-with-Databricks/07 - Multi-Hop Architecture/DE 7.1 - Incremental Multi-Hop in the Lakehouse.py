@@ -8,6 +8,8 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC # Incremental Multi-Hop in the Lakehouse
 # MAGIC 
 # MAGIC Now that we have a better understanding of how to work with incremental data processing by combining Structured Streaming APIs and Spark SQL, we can explore the tight integration between Structured Streaming and Delta Lake.
@@ -22,6 +24,8 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Incremental Updates in the Lakehouse
 # MAGIC 
 # MAGIC Delta Lake allows users to easily combine streaming and batch workloads in a unified multi-hop pipeline. Each stage of the pipeline represents a state of our data valuable to driving core use cases within the business. Because all data and metadata lives in object storage in the cloud, multiple users and applications can access data in near-real time, allowing analysts to access the freshest data as it's being processed.
@@ -43,6 +47,8 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Datasets Used
 # MAGIC 
 # MAGIC This demo uses simplified artificially generated medical data. The schema of our two datasets is represented below. Note that we will be manipulating these schema during various steps.
@@ -68,17 +74,21 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Getting Started
 # MAGIC 
 # MAGIC Run the following cell to configure the lab environment.
 
 # COMMAND ----------
 
-# MAGIC %run ../Includes/classroom-setup-7.1-multi-hop-setup
+# MAGIC %run ../Includes/Classroom-Setup-7.1
 
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Data Simulator
 # MAGIC Databricks Auto Loader can automatically process files as they land in your cloud object stores. 
 # MAGIC 
@@ -91,6 +101,8 @@ DA.data_factory.load()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Bronze Table: Ingesting Raw JSON Recordings
 # MAGIC 
 # MAGIC Below, we configure a read on a raw JSON source using Auto Loader with schema inference.
@@ -112,6 +124,8 @@ DA.data_factory.load()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC Here, we'll enrich our raw data with additional metadata describing the source file and the time it was ingested. This additional metadata can be ignored during downstream processing while providing useful information for troubleshooting errors if corrupt data is encountered.
 
 # COMMAND ----------
@@ -125,6 +139,8 @@ DA.data_factory.load()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC The code below passes our enriched raw data back to PySpark API to process an incremental write to a Delta Lake table.
 
 # COMMAND ----------
@@ -139,6 +155,8 @@ DA.data_factory.load()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC Trigger another file arrival with the following cell and you'll see the changes immediately detected by the streaming query you've written.
 
 # COMMAND ----------
@@ -148,6 +166,8 @@ DA.data_factory.load()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ### Load Static Lookup Table
 # MAGIC The ACID guarantees that Delta Lake brings to your data are managed at the table level, ensuring that only fully successfully commits are reflected in your tables. If you choose to merge these data with other data sources, be aware of how those sources version data and what sort of consistency guarantees they have.
 # MAGIC 
@@ -170,6 +190,8 @@ DA.data_factory.load()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Silver Table: Enriched Recording Data
 # MAGIC As a second hop in our silver level, we will do the follow enrichments and checks:
 # MAGIC - Our recordings data will be joined with the PII to add patient names
@@ -204,6 +226,8 @@ DA.data_factory.load()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC Trigger another new file and wait for it propagate through both previous queries.
 
 # COMMAND ----------
@@ -218,6 +242,8 @@ DA.data_factory.load()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Gold Table: Daily Averages
 # MAGIC 
 # MAGIC Here we read a stream of data from **`recordings_enriched`** and write another stream to create an aggregate gold table of daily averages for each patient.
@@ -239,6 +265,8 @@ DA.data_factory.load()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC Note that we're using **`.trigger(once=True)`** below. This provides us the ability to continue to use the strengths of structured streaming while trigger this job as a single batch. To recap, these strengths include:
 # MAGIC - exactly once end-to-end fault tolerant processing
 # MAGIC - automatic detection of changes in upstream data sources
@@ -260,6 +288,8 @@ DA.data_factory.load()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC #### Important Considerations for complete Output with Delta
 # MAGIC 
 # MAGIC When using **`complete`** output mode, we rewrite the entire state of our table each time our logic runs. While this is ideal for calculating aggregates, we **cannot** read a stream from this directory, as Structured Streaming assumes data is only being appended in the upstream logic.
@@ -276,6 +306,8 @@ DA.data_factory.load()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC Note the above table includes all days for all users. If the predicates for our ad hoc queries match the data encoded here, we can push down our predicates to files at the source and very quickly generate more limited aggregate views.
 
 # COMMAND ----------
@@ -288,6 +320,8 @@ DA.data_factory.load()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Process Remaining Records
 # MAGIC The following cell will land additional files for the rest of 2020 in your source directory. You'll be able to see these process through the first 3 tables in your Delta Lake, but will need to re-run your final query to update your **`daily_patient_avg`** table, since this query uses the trigger once syntax.
 
@@ -298,6 +332,8 @@ DA.data_factory.load(continuous=True)
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Wrapping Up
 # MAGIC 
 # MAGIC Finally, make sure all streams are stopped.
@@ -309,6 +345,8 @@ DA.cleanup()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Summary
 # MAGIC 
 # MAGIC Delta Lake and Structured Streaming combine to provide near real-time analytic access to data in the lakehouse.
@@ -316,6 +354,8 @@ DA.cleanup()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Additional Topics & Resources
 # MAGIC 
 # MAGIC * <a href="https://docs.databricks.com/delta/delta-streaming.html" target="_blank">Table Streaming Reads and Writes</a>

@@ -8,6 +8,8 @@
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC # Creating Delta Tables
 -- MAGIC 
 -- MAGIC After extracting data from external data sources, load data into the Lakehouse to ensure that all of the benefits of the Databricks platform can be fully leveraged.
@@ -27,17 +29,23 @@
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Run Setup
 -- MAGIC 
 -- MAGIC The setup script will create the data and declare necessary values for the rest of this notebook to execute.
 
 -- COMMAND ----------
 
--- MAGIC %run ../Includes/classroom-setup-4.3-setup-external
+-- MAGIC %run ../Includes/Classroom-Setup-4.3
 
 -- COMMAND ----------
 
--- MAGIC %md ## Create Table as Select (CTAS)
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
+-- MAGIC ## Create Table as Select (CTAS)
 -- MAGIC 
 -- MAGIC **`CREATE TABLE AS SELECT`** statements create and populate Delta tables using data retrieved from an input query.
 
@@ -50,7 +58,9 @@ DESCRIBE EXTENDED sales;
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC CTAS statements automatically infer schema information from query results and do **not** support manual schema declaration. 
 -- MAGIC 
 -- MAGIC This means that CTAS statements are useful for external data ingestion from sources with well-defined schema, such as Parquet files and tables.
@@ -69,6 +79,8 @@ SELECT * FROM sales_unparsed;
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC To correctly ingest this data to a Delta Lake table, we'll need to use a reference to the files that allows us to specify options.
 -- MAGIC 
 -- MAGIC In the previous lesson, we showed doing this by registering an external table. Here, we'll slightly evolve this syntax to specify the options to a temporary view, and then use this temp view as the source for a CTAS statement to successfully register the Delta table.
@@ -91,7 +103,9 @@ SELECT * FROM sales_delta
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC ## Filtering and Renaming Columns from Existing Tables
 -- MAGIC 
 -- MAGIC Simple transformations like changing column names or omitting columns from target tables can be easily accomplished during table creation.
@@ -111,6 +125,8 @@ SELECT * FROM purchases
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Note that we could have accomplished this same goal with a view, as shown below.
 
 -- COMMAND ----------
@@ -123,7 +139,9 @@ SELECT * FROM purchases_vw
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC ## Declare Schema with Generated Columns
 -- MAGIC 
 -- MAGIC As noted previously, CTAS statements do not support schema declaration. We note above that the timestamp column appears to be some variant of a Unix timestamp, which may not be the most useful for our analysts to derive insights. This is a situation where generated columns would be beneficial.
@@ -147,7 +165,9 @@ CREATE OR REPLACE TABLE purchase_dates (
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC 
 -- MAGIC Because **`date`** is a generated column, if we write to **`purchase_dates`** without providing values for the **`date`** column, Delta Lake automatically computes them.
 -- MAGIC 
@@ -165,7 +185,9 @@ WHEN NOT MATCHED THEN
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC We can see below that all dates were computed correctly as data was inserted, although neither our source data or insert query specified the values in this field.
 -- MAGIC 
 -- MAGIC As with any Delta Lake source, the query automatically reads the most recent snapshot of the table for any query; you never need to run **`REFRESH TABLE`**.
@@ -177,6 +199,8 @@ SELECT * FROM purchase_dates
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC 
 -- MAGIC It's important to note that if a field that would otherwise be generated is included in an insert to a table, this insert will fail if the value provided does not exactly match the value that would be derived by the logic used to define the generated column.
 -- MAGIC 
@@ -190,6 +214,8 @@ SELECT * FROM purchase_dates
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Add a Table Constraint
 -- MAGIC 
 -- MAGIC The error message above refers to a **`CHECK constraint`**. Generated columns are a special implementation of check constraints.
@@ -211,6 +237,8 @@ ALTER TABLE purchase_dates ADD CONSTRAINT valid_date CHECK (date > '2020-01-01')
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Table constraints are shown in the **`TBLPROPERTIES`** field.
 
 -- COMMAND ----------
@@ -220,6 +248,8 @@ DESCRIBE EXTENDED purchase_dates
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Enrich Tables with Additional Options and Metadata
 -- MAGIC 
 -- MAGIC So far we've only scratched the surface as far as the options for enriching Delta Lake tables.
@@ -258,7 +288,9 @@ SELECT * FROM users_pii;
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC The metadata fields added to the table provide useful information to understand when records were inserted and from where. This can be especially helpful if troubleshooting problems in the source data becomes necessary.
 -- MAGIC 
 -- MAGIC All of the comments and properties for a given table can be reviewed using **`DESCRIBE TABLE EXTENDED`**.
@@ -271,7 +303,9 @@ DESCRIBE EXTENDED users_pii
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC Listing the location used for the table reveals that the unique values in the partition column **`first_touch_date`** are used to create data directories.
 
 -- COMMAND ----------
@@ -283,6 +317,8 @@ DESCRIBE EXTENDED users_pii
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Cloning Delta Lake Tables
 -- MAGIC Delta Lake has two options for efficiently copying Delta Lake tables.
 -- MAGIC 
@@ -296,6 +332,8 @@ DEEP CLONE purchases
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Because all the data files must be copied over, this can take quite a while for large datasets.
 -- MAGIC 
 -- MAGIC If you wish to create a copy of a table quickly to test out applying changes without the risk of modifying the current table, **`SHALLOW CLONE`** can be a good option. Shallow clones just copy the Delta transaction logs, meaning that the data doesn't move.
@@ -308,18 +346,24 @@ SHALLOW CLONE purchases
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC In either case, data modifications applied to the cloned version of the table will be tracked and stored separately from the source. Cloning is a great way to set up tables for testing SQL code while still in development.
 
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Summary
 -- MAGIC 
 -- MAGIC In this notebook, we focused primarily on DDL and syntax for creating Delta Lake tables. In the next notebook, we'll explore options for writing updates to tables.
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC Run the following cell to delete the tables and files associated with this lesson.
 
 -- COMMAND ----------

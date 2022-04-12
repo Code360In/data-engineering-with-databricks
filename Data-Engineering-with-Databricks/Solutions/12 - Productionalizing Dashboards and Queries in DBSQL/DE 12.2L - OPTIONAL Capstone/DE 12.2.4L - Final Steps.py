@@ -9,6 +9,8 @@
 
 # MAGIC %md
 # MAGIC 
+# MAGIC 
+# MAGIC 
 # MAGIC # End-to-End ETL in the Lakehouse
 # MAGIC ## Final Steps
 # MAGIC 
@@ -26,6 +28,8 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Execute a Query to Repair Broken Data
 # MAGIC 
 # MAGIC Review the code that defined the **`recordings_enriched`** table to identify the filter applied for the quality check.
@@ -41,6 +45,8 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC For the purposes of our demo, let's assume that thorough manual review of our data and systems has demonstrated that occasionally otherwise valid heartrate recordings are returned as negative values.
 # MAGIC 
 # MAGIC Run the following query to examine these same rows with the negative sign removed.
@@ -53,6 +59,8 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC To complete our dataset, we wish to insert these fixed records into the silver **`recordings_enriched`** table.
 # MAGIC 
 # MAGIC Use the cell below to update the query used in the DLT pipeline to execute this repair.
@@ -81,6 +89,8 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC Use the cell below to manually or programmatically confirm that this update has been successful.
 # MAGIC 
 # MAGIC (The total number of records in the **`recordings_bronze`** should now be equal to the total records in **`recordings_enriched`**).
@@ -93,6 +103,8 @@ assert spark.table(f"{DA.db_name}.recordings_bronze").count() == spark.table(f"{
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Consider Production Data Permissions
 # MAGIC 
 # MAGIC Note that while our manual repair of the data was successful, as the owner of these datasets, by default we have permissions to modify or delete these data from any location we're executing code.
@@ -104,6 +116,8 @@ assert spark.table(f"{DA.db_name}.recordings_bronze").count() == spark.table(f"{
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Shut Down Production Infrastructure
 # MAGIC 
 # MAGIC Note that Databricks Jobs, DLT Pipelines, and scheduled DBSQL queries and dashboards are all designed to provide sustained execution of production code. In this end-to-end demo, you were instructed to configure a Job and Pipeline for continuous data processing. To prevent these workloads from continuing to execute, you should **Pause** your Databricks Job and **Stop** your DLT pipeline. Deleting these assets will also ensure that production infrastructure is terminated.

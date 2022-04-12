@@ -8,6 +8,8 @@
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC # Databases and Tables on Databricks
 -- MAGIC In this demonstration, you will create and explore databases and tables.
 -- MAGIC 
@@ -28,16 +30,20 @@
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Lesson Setup
 -- MAGIC The following script clears out previous runs of this demo and configures some Hive variables that will be used in our SQL queries.
 
 -- COMMAND ----------
 
--- MAGIC %run ../Includes/classroom-setup-3.1-setup-meta
+-- MAGIC %run ../Includes/Classroom-Setup-3.1
 
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Using Hive Variables
 -- MAGIC 
 -- MAGIC While not a pattern that is generally recommended in Spark SQL, this notebook will use some Hive variables to substitute in string values derived from the account email of the current user.
@@ -52,15 +58,19 @@ SELECT "${da.db_name}" AS db_name,
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Because you may be working in a shared workspace, this course uses variables derived from your username so the databases don't conflict with other users. Again, consider this use of Hive variables a hack for our lesson environment rather than a good practice for development.
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC ## Databases
 -- MAGIC Let's start by creating two databases:
 -- MAGIC - One with no **`LOCATION`** specified
--- MAGIC - One with **`LOCATION`** specified 
+-- MAGIC - One with **`LOCATION`** specified
 
 -- COMMAND ----------
 
@@ -69,7 +79,9 @@ CREATE DATABASE IF NOT EXISTS ${da.db_name}_custom_location LOCATION '${da.paths
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC Note that the location of the first database is in the default location under **`dbfs:/user/hive/warehouse/`** and that the database directory is the name of the database with the **`.db`** extension
 
 -- COMMAND ----------
@@ -79,6 +91,8 @@ DESCRIBE DATABASE EXTENDED ${da.db_name}_default_location;
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Note that the location of the second database is in the directory specified after the **`LOCATION`** keyword.
 
 -- COMMAND ----------
@@ -87,7 +101,9 @@ DESCRIBE DATABASE EXTENDED ${da.db_name}_custom_location;
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC We will create a table in the database with default location and insert data. 
 -- MAGIC 
 -- MAGIC Note that the schema must be provided because there is no data from which to infer the schema.
@@ -103,7 +119,9 @@ SELECT * FROM managed_table_in_db_with_default_location;
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC We can look at the extended table description to find the location (you'll need to scroll down in the results).
 
 -- COMMAND ----------
@@ -113,6 +131,8 @@ DESCRIBE EXTENDED managed_table_in_db_with_default_location;
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC By default, managed tables in a database without the location specified will be created in the **`dbfs:/user/hive/warehouse/<database_name>.db/`** directory.
 -- MAGIC 
 -- MAGIC We can see that, as expected, the data and metadata for our Delta Table are stored in that location.
@@ -132,7 +152,9 @@ DESCRIBE EXTENDED managed_table_in_db_with_default_location;
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC Drop the table.
 
 -- COMMAND ----------
@@ -141,7 +163,9 @@ DROP TABLE managed_table_in_db_with_default_location;
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC Note the table's directory and its log and data files are deleted. Only the database directory remains.
 
 -- COMMAND ----------
@@ -154,7 +178,9 @@ DROP TABLE managed_table_in_db_with_default_location;
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC We now create a table in  the database with custom location and insert data. 
 -- MAGIC 
 -- MAGIC Note that the schema must be provided because there is no data from which to infer the schema.
@@ -169,7 +195,9 @@ SELECT * FROM managed_table_in_db_with_custom_location;
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC Again, we'll look at the description to find the table location.
 
 -- COMMAND ----------
@@ -178,7 +206,9 @@ DESCRIBE EXTENDED managed_table_in_db_with_custom_location;
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC As expected, this managed table is created in the path specified with the **`LOCATION`** keyword during database creation. As such, the data and metadata for the table are persisted in a directory here.
 
 -- COMMAND ----------
@@ -194,7 +224,9 @@ DESCRIBE EXTENDED managed_table_in_db_with_custom_location;
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC Let's drop the table.
 
 -- COMMAND ----------
@@ -203,7 +235,9 @@ DROP TABLE managed_table_in_db_with_custom_location;
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC Note the table's folder and the log file and data file are deleted.  
 -- MAGIC   
 -- MAGIC Only the database location remains
@@ -219,7 +253,9 @@ DROP TABLE managed_table_in_db_with_custom_location;
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC ## Tables
 -- MAGIC We will create an external (unmanaged) table from sample data. 
 -- MAGIC 
@@ -230,9 +266,9 @@ DROP TABLE managed_table_in_db_with_custom_location;
 USE ${da.db_name}_default_location;
 
 CREATE OR REPLACE TEMPORARY VIEW temp_delays USING CSV OPTIONS (
-  path '${da.paths.working_dir}/flights/departuredelays.csv',
-  header "true",
-  mode "FAILFAST" -- abort file parsing with a RuntimeException if any malformed lines are encountered
+  path = '${da.paths.working_dir}/flights/departuredelays.csv',
+  header = "true",
+  mode = "FAILFAST" -- abort file parsing with a RuntimeException if any malformed lines are encountered
 );
 CREATE OR REPLACE TABLE external_table LOCATION '${da.paths.working_dir}/external_table' AS
   SELECT * FROM temp_delays;
@@ -241,7 +277,9 @@ SELECT * FROM external_table;
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC Let's note the location of the table's data in this lesson's working directory.
 
 -- COMMAND ----------
@@ -250,7 +288,9 @@ DESCRIBE TABLE EXTENDED external_table;
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC Now, we drop the table.
 
 -- COMMAND ----------
@@ -259,7 +299,9 @@ DROP TABLE external_table;
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC The table definition no longer exists in the metastore, but the underlying data remain intact.
 
 -- COMMAND ----------
@@ -271,7 +313,9 @@ DROP TABLE external_table;
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC ## Clean up
 -- MAGIC Drop both databases.
 
@@ -282,7 +326,9 @@ DROP DATABASE ${da.db_name}_custom_location CASCADE;
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC Run the following cell to delete the tables and files associated with this lesson.
 
 -- COMMAND ----------

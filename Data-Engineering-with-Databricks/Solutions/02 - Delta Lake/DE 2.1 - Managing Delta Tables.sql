@@ -8,6 +8,9 @@
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC # Managing Delta Tables
 -- MAGIC 
 -- MAGIC If you know any flavor of SQL, you already have much of the knowledge you'll need to work effectively in the data lakehouse.
@@ -26,17 +29,22 @@
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Run Setup
 -- MAGIC The first thing we're going to do is run a setup script. It will define a username, userhome, and database that is scoped to each user.
 
 -- COMMAND ----------
 
--- MAGIC %run ../Includes/classroom-setup-2.1-sql-setup
+-- MAGIC %run ../Includes/Classroom-Setup-2.1
 
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Creating a Delta Table
 -- MAGIC 
 -- MAGIC There's not much code you need to write to create a table with Delta Lake. There are a number of ways to create Delta Lake tables that we'll see throughout the course. We'll begin with one of the easiest methods: registering an empty Delta Lake table.
@@ -45,6 +53,8 @@
 -- MAGIC - A **`CREATE TABLE`** statement
 -- MAGIC - A table name (below we use **`students`**)
 -- MAGIC - A schema
+-- MAGIC 
+-- MAGIC **NOTE:** In Databricks Runtime 8.0 and above, Delta Lake is the default format and you don’t need **`USING DELTA`**.
 
 -- COMMAND ----------
 
@@ -54,6 +64,9 @@ CREATE TABLE students
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC If we try to go back and run that cell again...it will error out! This is expected - because the table exists already, we receive an error.
 -- MAGIC 
 -- MAGIC We can add in an additional argument, **`IF NOT EXISTS`** which checks if the table exists. This will overcome our error.
@@ -65,7 +78,10 @@ CREATE TABLE IF NOT EXISTS students
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Inserting Data
 -- MAGIC Most often, data will be inserted to tables as the result of a query from another source.
 -- MAGIC 
@@ -80,6 +96,9 @@ INSERT INTO students VALUES (3, "Elia", 3.3);
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC In the cell above, we completed three separate **`INSERT`** statements. Each of these is processed as a separate transaction with its own ACID guarantees. Most frequently, we'll insert many records in a single transaction.
 
 -- COMMAND ----------
@@ -93,11 +112,17 @@ VALUES
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Note that Databricks doesn't have a **`COMMIT`** keyword; transactions run as soon as they're executed, and commit as they succeed.
 
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Querying a Delta Table
 -- MAGIC 
 -- MAGIC You probably won't be surprised that querying a Delta Lake table is as easy as using a standard **`SELECT`** statement.
@@ -109,6 +134,9 @@ SELECT * FROM students
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC What may surprise you is that Delta Lake guarantees that any read against a table will **always** return the most recent version of the table, and that you'll never encounter a state of deadlock due to ongoing operations.
 -- MAGIC 
 -- MAGIC To repeat: table reads can never conflict with other operations, and the newest version of your data is immediately available to all clients that can query your lakehouse. Because all transaction information is stored in cloud object storage alongside your data files, concurrent reads on Delta Lake tables is limited only by the hard limits of object storage on cloud vendors. (**NOTE**: It's not infinite, but it's at least thousands of reads per second.)
@@ -116,6 +144,9 @@ SELECT * FROM students
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Updating Records
 -- MAGIC 
 -- MAGIC Updating records provides atomic guarantees as well: we perform a snapshot read of the current version of our table, find all fields that match our **`WHERE`** clause, and then apply the changes as described.
@@ -131,6 +162,9 @@ WHERE name LIKE "T%"
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Query the table again to see these changes applied.
 
 -- COMMAND ----------
@@ -140,6 +174,9 @@ SELECT * FROM students
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Deleting Records
 -- MAGIC 
 -- MAGIC Deletes are also atomic, so there's no risk of only partially succeeding when removing data from your data lakehouse.
@@ -154,6 +191,9 @@ WHERE value > 6
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Using Merge
 -- MAGIC 
 -- MAGIC Some SQL systems have the concept of an upsert, which allows updates, inserts, and other data manipulations to be run as a single command.
@@ -175,6 +215,9 @@ SELECT * FROM updates;
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Using the syntax we've seen so far, we could filter from this view by type to write 3 statements, one each to insert, update, and delete records. But this would result in 3 separate transactions; if any of these transactions were to fail, it might leave our data in an invalid state.
 -- MAGIC 
 -- MAGIC Instead, we combine these actions into a single atomic transaction, applying all 3 types of changes together.
@@ -198,6 +241,9 @@ WHEN NOT MATCHED AND u.type = "insert"
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Note that only 3 records were impacted by our **`MERGE`** statement; one of the records in our updates table did not have a matching **`id`** in the students table but was marked as an **`update`**. Based on our custom logic, we ignored this record rather than inserting it. 
 -- MAGIC 
 -- MAGIC How would you modify the above statement to include unmatched records marked **`update`** in the final **`INSERT`** clause?
@@ -205,6 +251,9 @@ WHEN NOT MATCHED AND u.type = "insert"
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Dropping a Table
 -- MAGIC 
 -- MAGIC Assuming that you have proper permissions on the target table, you can permanently delete data in the lakehouse using a **`DROP TABLE`** command.
@@ -217,7 +266,10 @@ DROP TABLE students
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Run the following cell to delete the tables and files associated with this lesson.
 
 -- COMMAND ----------

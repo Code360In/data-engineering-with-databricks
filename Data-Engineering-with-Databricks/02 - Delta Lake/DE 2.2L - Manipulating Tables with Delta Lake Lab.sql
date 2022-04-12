@@ -8,6 +8,9 @@
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC # Manipulating Tables with Delta Lake
 -- MAGIC 
 -- MAGIC This notebook provides a hands-on review of some of the basic functionality of Delta Lake.
@@ -26,16 +29,22 @@
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Setup
 -- MAGIC Run the following script to setup necessary variables and clear out past runs of this notebook. Note that re-executing this cell will allow you to start the lab over.
 
 -- COMMAND ----------
 
--- MAGIC %run ../Includes/classroom-setup-2.2L-sql-setup
+-- MAGIC %run ../Includes/Classroom-Setup-2.2L
 
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Create a Table
 -- MAGIC 
 -- MAGIC In this notebook, we'll be creating a table to track our bean collection.
@@ -59,6 +68,9 @@
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC **NOTE**: We'll use Python to run checks occasionally throughout the lab. The following cell will return as error with a message on what needs to change if you have not followed instructions. No output from cell execution means that you have completed this step.
 
 -- COMMAND ----------
@@ -71,6 +83,8 @@
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Insert Data
 -- MAGIC 
 -- MAGIC Run the following cell to insert three rows into the table.
@@ -85,6 +99,9 @@ INSERT INTO beans VALUES
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Manually review the table contents to ensure data was written as expected.
 
 -- COMMAND ----------
@@ -95,6 +112,9 @@ INSERT INTO beans VALUES
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Insert the additional records provided below. Make sure you execute this as a single transaction.
 
 -- COMMAND ----------
@@ -108,6 +128,9 @@ INSERT INTO beans VALUES
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Run the cell below to confirm the data is in the proper state.
 
 -- COMMAND ----------
@@ -120,6 +143,9 @@ INSERT INTO beans VALUES
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Update Records
 -- MAGIC 
 -- MAGIC A friend is reviewing your inventory of beans. After much debate, you agree that jelly beans are delicious.
@@ -135,6 +161,9 @@ WHERE name = "jelly"
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC You realize that you've accidentally entered the weight of your pinto beans incorrectly.
 -- MAGIC 
 -- MAGIC Update the **`grams`** column for this record to the correct weight of 1500.
@@ -147,6 +176,9 @@ WHERE name = "jelly"
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Run the cell below to confirm this has completed properly.
 
 -- COMMAND ----------
@@ -161,6 +193,9 @@ WHERE name = "jelly"
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Delete Records
 -- MAGIC 
 -- MAGIC You've decided that you only want to keep track of delicious beans.
@@ -175,6 +210,9 @@ WHERE name = "jelly"
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Run the following cell to confirm this operation was successful.
 
 -- COMMAND ----------
@@ -186,6 +224,9 @@ WHERE name = "jelly"
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Using Merge to Upsert Records
 -- MAGIC 
 -- MAGIC Your friend gives you some new beans. The cell below registers these as a temporary view.
@@ -203,6 +244,9 @@ SELECT * FROM new_beans
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC In the cell below, use the above view to write a merge statement to update and insert new records to your **`beans`** table as one transaction.
 -- MAGIC 
 -- MAGIC Make sure your logic:
@@ -218,6 +262,9 @@ SELECT * FROM new_beans
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Run the cell below to check your work.
 
 -- COMMAND ----------
@@ -235,6 +282,9 @@ SELECT * FROM new_beans
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Dropping Tables
 -- MAGIC 
 -- MAGIC When working with managed Delta Lake tables, dropping a table results in permanently deleting access to the table and all underlying data files.
@@ -251,6 +301,9 @@ SELECT * FROM new_beans
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Run the cell below to assert that your table no longer exists.
 
 -- COMMAND ----------
@@ -261,6 +314,9 @@ SELECT * FROM new_beans
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Wrapping Up
 -- MAGIC 
 -- MAGIC By completing this lab, you should now feel comfortable:
@@ -268,7 +324,10 @@ SELECT * FROM new_beans
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Run the following cell to delete the tables and files associated with this lesson.
 
 -- COMMAND ----------

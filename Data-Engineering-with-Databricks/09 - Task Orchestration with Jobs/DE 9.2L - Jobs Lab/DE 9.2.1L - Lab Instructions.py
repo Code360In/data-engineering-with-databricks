@@ -8,6 +8,8 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC # Lab: Orchestrating Jobs with Databricks
 # MAGIC 
 # MAGIC In this lab, you'll be configuring a multi-task job comprising of:
@@ -27,6 +29,8 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Land Initial Data
 # MAGIC Seed the landing zone with some data before proceeding. You will re-run this command to land additional data later.
 
@@ -37,6 +41,8 @@ DA.data_factory.load()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Create and Configure a Pipeline
 # MAGIC 
 # MAGIC The pipline we create here is nearly identical to the one in the previous unit.
@@ -52,6 +58,8 @@ print_pipeline_config()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC Steps:
 # MAGIC 1. Click the **Jobs** button on the sidebar.
 # MAGIC 1. Select the **Delta Live Tables** tab.
@@ -77,7 +85,9 @@ print_pipeline_config()
 
 # COMMAND ----------
 
-# MAGIC %md
+# MAGIC %md --i18n-f98768ac-cbcc-42a2-8c51-ffdc3778aa11
+# MAGIC 
+# MAGIC 
 # MAGIC ## Schedule a Notebook Job
 # MAGIC 
 # MAGIC When using the Jobs UI to orchestrate a workload with multiple tasks, you'll always begin by scheduling a single task.
@@ -91,6 +101,8 @@ print_job_config()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC Here, we'll start by scheduling the notebook batch job.
 # MAGIC 
 # MAGIC Steps:
@@ -109,6 +121,8 @@ print_job_config()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Schedule a DLT Pipeline as a Task
 # MAGIC 
 # MAGIC In this step, we'll add a DLT pipeline to execute after the success of the task we configured at the start of this lesson.
@@ -126,11 +140,13 @@ print_job_config()
 # MAGIC You should now see a screen with 2 boxes and a downward arrow between them. 
 # MAGIC 
 # MAGIC Your **`Batch-Job`** task (possibly renamed to something like **Jobs-Labs-92-youremailaddress**) will be at the top, 
-# MAGIC leading into your **`DLT-Pipeline`** task. 
+# MAGIC leading into your **`DLT-Pipeline`** task.
 
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Schedule an Additional Notebook Task
 # MAGIC 
 # MAGIC An additional notebook has been provided which queries some of the DLT metrics and the gold table defined in the DLT pipeline. 

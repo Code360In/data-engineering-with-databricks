@@ -8,6 +8,8 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC # Propagating Incremental Updates with Structured Streaming and Delta Lake
 # MAGIC 
 # MAGIC ## Learning Objectives
@@ -17,16 +19,20 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Setup
 # MAGIC Run the following script to setup necessary variables and clear out past runs of this notebook. Note that re-executing this cell will allow you to start the lab over.
 
 # COMMAND ----------
 
-# MAGIC %run ../Includes/classroom-setup-7.2L-classic-setup
+# MAGIC %run ../Includes/Classroom-Setup-7.2L
 
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC 
 # MAGIC ## Ingest data
 # MAGIC 
@@ -36,17 +42,19 @@
 
 # COMMAND ----------
 
-# TODO
+# ANSWER
 customers_checkpoint_path = f"{DA.paths.checkpoints}/customers"
 
-query = (spark
-  .readStream
-  <FILL-IN>
-  .load("/databricks-datasets/retail-org/customers/")
-  .writeStream
-  <FILL-IN>
-  .table("bronze")
-)
+query = (spark.readStream
+              .format("cloudFiles")
+              .option("cloudFiles.format", "csv")
+              .option("cloudFiles.schemaLocation", customers_checkpoint_path)
+              .load("/databricks-datasets/retail-org/customers/")
+              .writeStream
+              .format("delta")
+              .option("checkpointLocation", customers_checkpoint_path)
+              .outputMode("append")
+              .table("bronze"))
 
 # COMMAND ----------
 
@@ -55,6 +63,8 @@ DA.block_until_stream_is_ready(query)
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC 
 # MAGIC Let's create a streaming temporary view into the bronze table, so that we can perform transforms using SQL.
 
@@ -68,6 +78,8 @@ DA.block_until_stream_is_ready(query)
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Clean and enhance data
 # MAGIC 
 # MAGIC Using CTAS syntax, define a new streaming view called **`bronze_enhanced_temp`** that does the following:
@@ -78,26 +90,33 @@ DA.block_until_stream_is_ready(query)
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC -- TODO
+# MAGIC -- ANSWER
 # MAGIC CREATE OR REPLACE TEMPORARY VIEW bronze_enhanced_temp AS
 # MAGIC SELECT
-# MAGIC   <FILL-IN>
+# MAGIC   *, current_timestamp() receipt_time, input_file_name() source_file
+# MAGIC   FROM bronze_temp
+# MAGIC   WHERE postcode > 0
 
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Silver table
 # MAGIC 
 # MAGIC Stream the data from **`bronze_enhanced_temp`** to a table called **`silver`**.
 
 # COMMAND ----------
 
-# TODO
+# ANSWER
 silver_checkpoint_path = f"{DA.paths.checkpoints}/silver"
 
 query = (spark.table("bronze_enhanced_temp")
-  <FILL-IN>
-  .table("silver"))
+              .writeStream
+              .format("delta")
+              .option("checkpointLocation", silver_checkpoint_path)
+              .outputMode("append")
+              .table("silver"))
 
 # COMMAND ----------
 
@@ -106,6 +125,8 @@ DA.block_until_stream_is_ready(query)
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC 
 # MAGIC Let's create a streaming temporary view into the silver table, so that we can perform business-level using SQL.
 
@@ -120,6 +141,8 @@ DA.block_until_stream_is_ready(query)
 
 # MAGIC %md
 # MAGIC 
+# MAGIC 
+# MAGIC 
 # MAGIC ## Gold tables
 # MAGIC 
 # MAGIC Using CTAS syntax, define a new streaming view called **`customer_count_temp`** that counts customers per state.
@@ -127,26 +150,31 @@ DA.block_until_stream_is_ready(query)
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC -- TODO
-# MAGIC CREATE OR REPLACE TEMPORARY VIEW customer_count_by_state_temp AS
-# MAGIC SELECT 
-# MAGIC <FILL-IN>
+# MAGIC -- ANSWER
+# MAGIC CREATE OR REPLACE TEMPORARY VIEW customer_count_temp AS
+# MAGIC SELECT state, count(customer_id) AS customer_count
+# MAGIC FROM silver_temp
+# MAGIC GROUP BY
+# MAGIC state
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Finally, stream the data from the **`customer_count_by_state_temp`** view to a Delta table called **`gold_customer_count_by_state`**.
+# MAGIC 
+# MAGIC 
+# MAGIC Finally, stream the data from the **`customer_count_temp`** view to a Delta table called **`gold_customer_count_by_state`**.
 
 # COMMAND ----------
 
-# TODO
+# ANSWER
 customers_count_checkpoint_path = f"{DA.paths.checkpoints}/customers_counts"
 
-query = (spark
-  .table("customer_count_by_state_temp")
-  .writeStream
-  <FILL-IN>
-  .table("gold_customer_count_by_state"))
+query = (spark.table("customer_count_temp")
+              .writeStream
+              .format("delta")
+              .option("checkpointLocation", customers_count_checkpoint_path)
+              .outputMode("complete")
+              .table("gold_customer_count_by_state"))
 
 # COMMAND ----------
 
@@ -155,6 +183,8 @@ DA.block_until_stream_is_ready(query)
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC 
 # MAGIC ## Query the results
 # MAGIC 
@@ -168,6 +198,8 @@ DA.block_until_stream_is_ready(query)
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Wrapping Up
 # MAGIC 
 # MAGIC Run the following cell to remove the database and all data associated with this lab.
@@ -179,6 +211,8 @@ DA.cleanup()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC By completing this lab, you should now feel comfortable:
 # MAGIC * Using PySpark to configure Auto Loader for incremental data ingestion
 # MAGIC * Using Spark SQL to aggregate streaming data

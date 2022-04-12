@@ -8,6 +8,8 @@
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC # Databases, Tables, and Views Lab
 -- MAGIC 
 -- MAGIC ## Learning Objectives
@@ -27,17 +29,21 @@
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ### Getting Started
 -- MAGIC 
 -- MAGIC Run the following cell to configure variables and datasets for this lesson.
 
 -- COMMAND ----------
 
--- MAGIC %run ../Includes/classroom-setup-3.3L-setup-meta
+-- MAGIC %run ../Includes/Classroom-Setup-3.3L
 
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Overview of the Data
 -- MAGIC 
 -- MAGIC The data include multiple entries from a selection of weather stations, including average temperatures recorded in either Fahrenheit or Celsius. The schema for the table:
@@ -63,6 +69,8 @@ FROM parquet.`${da.paths.working_dir}/weather`
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Create a Database
 -- MAGIC 
 -- MAGIC Create a database in the default location using the **`da.db_name`** variable defined in setup script.
@@ -76,6 +84,8 @@ FROM parquet.`${da.paths.working_dir}/weather`
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Change to Your New Database
 -- MAGIC 
 -- MAGIC **`USE`** your newly created database.
@@ -89,6 +99,8 @@ FROM parquet.`${da.paths.working_dir}/weather`
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Create a Managed Table
 -- MAGIC Use a CTAS statement to create a managed table named **`weather_managed`**.
 
@@ -103,6 +115,8 @@ FROM parquet.`${da.paths.working_dir}/weather`
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Create an External Table
 -- MAGIC 
 -- MAGIC Recall that an external table differs from a managed table through specification of a location. Create an external table called **`weather_external`** below.
@@ -119,6 +133,8 @@ FROM parquet.`${da.paths.working_dir}/weather`
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Examine Table Details
 -- MAGIC Use the SQL command **`DESCRIBE EXTENDED table_name`** to examine the two weather tables.
 
@@ -133,6 +149,8 @@ DESCRIBE EXTENDED weather_external
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Run the following helper code to extract and compare the table locations.
 
 -- COMMAND ----------
@@ -158,6 +176,8 @@ DESCRIBE EXTENDED weather_external
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC List the contents of these directories to confirm that data exists in both locations.
 
 -- COMMAND ----------
@@ -175,6 +195,8 @@ DESCRIBE EXTENDED weather_external
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ### Check Directory Contents after Dropping Database and All Tables
 -- MAGIC The **`CASCADE`** keyword will accomplish this.
 
@@ -187,6 +209,8 @@ DESCRIBE EXTENDED weather_external
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC With the database dropped, the files will have been deleted as well.
 -- MAGIC 
 -- MAGIC Uncomment and run the following cell, which will throw a **`FileNotFoundException`** as your confirmation.
@@ -212,6 +236,8 @@ DESCRIBE EXTENDED weather_external
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC **This highlights the main differences between managed and external tables.** By default, the files associated with managed tables will be stored to this location on the root DBFS storage linked to the workspace, and will be deleted when a table is dropped.
 -- MAGIC 
 -- MAGIC Files for external tables will be persisted in the location provided at table creation, preventing users from inadvertently deleting underlying files. **External tables can easily be migrated to other databases or renamed, but these operations with managed tables will require rewriting ALL underlying files.**
@@ -219,6 +245,8 @@ DESCRIBE EXTENDED weather_external
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Create a Database with a Specified Path
 -- MAGIC 
 -- MAGIC Assuming you dropped your database in the last step, you can use the same **`database`** name.
@@ -231,6 +259,8 @@ USE ${da.db_name};
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Recreate your **`weather_managed`** table in this new database and print out the location of this table.
 
 -- COMMAND ----------
@@ -247,11 +277,15 @@ USE ${da.db_name};
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC While here we're using the **`userhome`** directory created on the DBFS root, _any_ object store can be used as the database directory. **Defining database directories for groups of users can greatly reduce the chances of accidental data exfiltration**.
 
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Views and their Scoping
 -- MAGIC 
 -- MAGIC Using the provided **`AS`** clause, register:
@@ -271,6 +305,8 @@ AS (SELECT *
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Now create a temporary view.
 
 -- COMMAND ----------
@@ -285,6 +321,8 @@ AS (SELECT *
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Now register a global temp view.
 
 -- COMMAND ----------
@@ -299,6 +337,8 @@ AS (SELECT *
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Views will be displayed alongside tables when listing from the catalog.
 
 -- COMMAND ----------
@@ -308,6 +348,8 @@ SHOW TABLES
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Note the following:
 -- MAGIC - The view is associated with the current database. This view will be available to any user that can access this database and will persist between sessions.
 -- MAGIC - The temp view is not associated with any database. The temp view is ephemeral and is only accessible in the current SparkSession.
@@ -320,11 +362,15 @@ SELECT * FROM global_temp.celsius_global
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC While no job was triggered when defining these views, a job is triggered _each time_ a query is executed against the view.
 
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Clean Up
 -- MAGIC Drop the database and all tables to clean up your workspace.
 
@@ -335,6 +381,8 @@ DROP DATABASE ${da.db_name} CASCADE
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Synopsis
 -- MAGIC 
 -- MAGIC In this lab we:
@@ -344,7 +392,9 @@ DROP DATABASE ${da.db_name} CASCADE
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC Run the following cell to delete the tables and files associated with this lesson.
 
 -- COMMAND ----------

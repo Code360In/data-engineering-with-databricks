@@ -8,6 +8,8 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC # Configuring Privileges for Production Data and Derived Tables
 # MAGIC 
 # MAGIC The instructions as detailed below are provided for pairs of users to explore how Table ACLs on Databricks work. It leverages Databricks SQL and the Data Explorer to accomplish these tasks, and assumes that neither user has admin privileges for the workspace. An admin will need to have previously granted **`CREATE`** and **`USAGE`** privileges on a catalog for users to be able to create databases in Databricks SQL.
@@ -20,13 +22,15 @@
 
 # COMMAND ----------
 
-# MAGIC %run ../Includes/classroom-setup-11.2L
+# MAGIC %run ../Includes/Classroom-Setup-11.2L
 
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Exchange User Names with your Partner
-# MAGIC If you are not in a workspace where you usernames correspond with your email address, make sure your partner has your username.
+# MAGIC If you are not in a workspace where your usernames correspond with your email address, make sure your partner has your username.
 # MAGIC 
 # MAGIC They will need this when assigning privileges and searching for your database at later steps.
 # MAGIC 
@@ -39,6 +43,8 @@ print(f"Your username: {DA.username}")
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Generate Setup Statements
 # MAGIC 
 # MAGIC The following cell uses Python to extract the username of the current user and format this into several statements used to create databases, tables, and views.
@@ -54,19 +60,23 @@ DA.generate_query()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC Steps:
-# MAGIC * Run the cell above
-# MAGIC * Copy the entire output to your clipboard
-# MAGIC * Navigate to the Databricks SQL workspace
-# MAGIC * Make sure that a DBSQL endpoint is running
-# MAGIC * Use the left sidebar to select the **SQL Editor**
-# MAGIC * Paste the query above and click the blue **Run** in the top right
+# MAGIC 1. Run the cell above
+# MAGIC 1. Copy the entire output to your clipboard
+# MAGIC 1. Navigate to the Databricks SQL workspace
+# MAGIC 1. Make sure that a DBSQL endpoint is running
+# MAGIC 1. Use the left sidebar to select the **SQL Editor**
+# MAGIC 1. Paste the query above and click the blue **Run** in the top right
 # MAGIC 
 # MAGIC **NOTE**: You will need to be connected to a DBSQL endpoint to execute these queries successfully. If you cannot connect to a DBSQL endpoint, you will need to contact your administrator to give you access.
 
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Find Your Database
 # MAGIC In the Data Explorer, find the database you created earlier (this should follow the pattern **`dbacademy_<username>_dewd_acls_lab`**).
 # MAGIC 
@@ -79,9 +89,11 @@ DA.generate_query()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Change Database Permissions
 # MAGIC 
-# MAGIC Step:
+# MAGIC Steps:
 # MAGIC 1. Make sure you have the **Permissions** tab selected for the database
 # MAGIC 1. Click the blue **Grant** button
 # MAGIC 1. Select the **USAGE**, **SELECT**, and **READ_METADATA** options
@@ -93,6 +105,8 @@ DA.generate_query()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Run a Query to Confirm
 # MAGIC 
 # MAGIC By granting **`USAGE`**, **`SELECT`**, and **`READ_METADATA`** on your database, your partner should now be able to freely query the tables and views in this database, but will not be able to create new tables OR modify your data.
@@ -111,9 +125,11 @@ DA.generate_confirmation_query("FILL_IN")
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Execute a Query to Generate the Union of Your Beans
 # MAGIC 
-# MAGIC Execute the query below agasint your own databases.
+# MAGIC Execute the query below against your own databases.
 # MAGIC 
 # MAGIC **NOTE**: Because random values were inserted for the **`grams`** and **`delicious`** columns, you should see 2 distinct rows for each **`name`**, **`color`** pair.
 
@@ -124,6 +140,8 @@ DA.generate_union_query()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Register a Derivative View to Your Database
 # MAGIC 
 # MAGIC Execute the query below to register the results of the previous query to your database.
@@ -135,6 +153,8 @@ DA.generate_derivative_view()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Query Your Partner's View
 # MAGIC 
 # MAGIC Once your partner has successfully completed the previous step, run the following query against each of your tables; you should get the same results:
@@ -147,6 +167,8 @@ DA.generate_partner_view("FILL_IN")
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Add Modify Permissions
 # MAGIC 
 # MAGIC Now try to drop each other's **`beans`** tables. 
@@ -172,6 +194,8 @@ DA.generate_delete_query("FILL_IN")
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC This query should successfully drop all records from the target table.
 # MAGIC 
 # MAGIC Try to re-execute queries against any of the views of tables you'd previously queried in this lab.

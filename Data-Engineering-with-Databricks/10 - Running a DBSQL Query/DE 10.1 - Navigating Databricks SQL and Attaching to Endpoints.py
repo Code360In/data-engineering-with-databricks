@@ -8,6 +8,8 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC # Navigating Databricks SQL and Attaching to Endpoints
 # MAGIC 
 # MAGIC * Navigate to Databricks SQL  
@@ -59,7 +61,7 @@
 # MAGIC 
 # MAGIC * Use the sidebar to navigate to **Queries**
 # MAGIC * Click the **`Create Query`** button
-# MAGIC * In the **Schema Browser**, click on the current metastore and select **`samples`**
+# MAGIC * Make sure you are connected to an endpoint. In the **Schema Browser**, click on the current metastore and select **`samples`**. 
 # MAGIC   * Select the **`tpch`** database
 # MAGIC   * Click on the **`partsupp`** table to get a preview of the schema
 # MAGIC   * While hovering over the **`partsupp`** table name, click the **>>** button to insert the table name into your query text

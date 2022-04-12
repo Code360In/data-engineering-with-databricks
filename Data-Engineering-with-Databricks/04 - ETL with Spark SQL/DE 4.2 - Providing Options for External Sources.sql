@@ -8,6 +8,8 @@
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC # Providing Options for External Sources
 -- MAGIC While directly querying files works well for self-describing formats, many data sources require additional configurations or schema declaration to properly ingest records.
 -- MAGIC 
@@ -22,17 +24,21 @@
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Run Setup
 -- MAGIC 
 -- MAGIC The setup script will create the data and declare necessary values for the rest of this notebook to execute.
 
 -- COMMAND ----------
 
--- MAGIC %run ../Includes/classroom-setup-4.2-setup-external
+-- MAGIC %run ../Includes/Classroom-Setup-4.2
 
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## When Direct Queries Don't Work 
 -- MAGIC 
 -- MAGIC While views can be used to persist direct queries against files between sessions, this approach has limited utility.
@@ -46,6 +52,8 @@ SELECT * FROM csv.`${da.paths.working_dir}/sales-csv`
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC We can see from the above that:
 -- MAGIC 1. The header row is being extracted as a table row
 -- MAGIC 1. All columns are being loaded as a single column
@@ -55,6 +63,8 @@ SELECT * FROM csv.`${da.paths.working_dir}/sales-csv`
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Registering Tables on External Data with Read Options
 -- MAGIC 
 -- MAGIC While Spark will extract some self-describing data sources efficiently using default settings, many formats will require declaration of schema or other options.
@@ -75,6 +85,8 @@ SELECT * FROM csv.`${da.paths.working_dir}/sales-csv`
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC The cell below demonstrates using Spark SQL DDL to create a table against an external CSV source, specifying:
 -- MAGIC 1. The column names and types
 -- MAGIC 1. The file format
@@ -96,6 +108,8 @@ LOCATION "${da.paths.working_dir}/sales-csv"
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Note that no data has moved during table declaration. Similar to when we directly queried our files and created a view, we are still just pointing to files stored in an external location.
 -- MAGIC 
 -- MAGIC Run the following cell to confirm that data is now being loaded correctly.
@@ -111,6 +125,8 @@ SELECT COUNT(*) FROM sales_csv
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC All the metadata and options passed during table declaration will be persisted to the metastore, ensuring that data in the location will always be read with these options.
 -- MAGIC 
 -- MAGIC **NOTE**: When working with CSVs as a data source, it's important to ensure that column order does not change if additional data files will be added to the source directory. Because the data format does not have strong schema enforcement, Spark will load columns and apply column names and data types in the order specified during table declaration.
@@ -124,6 +140,8 @@ DESCRIBE EXTENDED sales_csv
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Limits of Tables with External Data Sources
 -- MAGIC 
 -- MAGIC If you've taken other courses on Databricks or reviewed any of our company literature, you may have heard about Delta Lake and the Lakehouse. Note that whenever we're defining tables or queries against external data sources, we **cannot** expect the performance guarantees associated with Delta Lake and Lakehouse.
@@ -143,6 +161,8 @@ DESCRIBE EXTENDED sales_csv
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC If we look at the current count of records in our table, the number we see will not reflect these newly inserted rows.
 
 -- COMMAND ----------
@@ -152,6 +172,8 @@ SELECT COUNT(*) FROM sales_csv
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC At the time we previously queried this data source, Spark automatically cached the underlying data in local storage. This ensures that on subsequent queries, Spark will provide the optimal performance by just querying this local cache.
 -- MAGIC 
 -- MAGIC Our external data source is not configured to tell Spark that it should refresh this data. 
@@ -165,6 +187,8 @@ REFRESH TABLE sales_csv
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Note that refreshing our table will invalidate our cache, meaning that we'll need to rescan our original data source and pull all data back into memory. 
 -- MAGIC 
 -- MAGIC For very large datasets, this may take a significant amount of time.
@@ -176,6 +200,8 @@ SELECT COUNT(*) FROM sales_csv
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Extracting Data from SQL Databases
 -- MAGIC SQL databases are an extremely common data source, and Databricks has a standard JDBC driver for connecting with many flavors of SQL.
 -- MAGIC 
@@ -192,7 +218,9 @@ SELECT COUNT(*) FROM sales_csv
 -- MAGIC )
 -- MAGIC </code></strong>
 -- MAGIC 
--- MAGIC In the code sample below, we'll connect with SQLite (which uses a local file to store a database, and doesn't have users and passwords).
+-- MAGIC In the code sample below, we'll connect with <a href="https://www.sqlite.org/index.html" target="_blank">SQLite</a>.
+-- MAGIC   
+-- MAGIC **NOTE:** SQLite uses a local file to store a database, and doesn't require a port, username, or password.  
 -- MAGIC   
 -- MAGIC <img src="https://files.training.databricks.com/images/icon_warn_24.png"> **WARNING**: The backend-configuration of the JDBC server assume you are running this notebook on a single-node cluster. If you are running on a cluster with multiple workers, the client running in the executors will not be able to connect to the driver.
 
@@ -210,6 +238,8 @@ OPTIONS (
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Now we can query this table as if it were defined locally.
 
 -- COMMAND ----------
@@ -219,6 +249,8 @@ SELECT * FROM users_jdbc
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Looking at the table metadata reveals that we have captured the schema information from the external system. Storage properties (which would include the username and password associated with the connection) are automatically redacted.
 
 -- COMMAND ----------
@@ -228,6 +260,8 @@ DESCRIBE EXTENDED users_jdbc
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC While the table is listed as **`MANAGED`**, listing the contents of the specified location confirms that no data is being persisted locally.
 
 -- COMMAND ----------
@@ -242,6 +276,8 @@ DESCRIBE EXTENDED users_jdbc
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Note that some SQL systems such as data warehouses will have custom drivers. Spark will interact with various external databases differently, but the two basic approaches can be summarized as either:
 -- MAGIC 1. Moving the entire source table(s) to Databricks and then executing logic on the currently active cluster
 -- MAGIC 1. Pushing down the query to the external SQL database and only transferring the results back to Databricks
@@ -252,7 +288,9 @@ DESCRIBE EXTENDED users_jdbc
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC Run the following cell to delete the tables and files associated with this lesson.
 
 -- COMMAND ----------

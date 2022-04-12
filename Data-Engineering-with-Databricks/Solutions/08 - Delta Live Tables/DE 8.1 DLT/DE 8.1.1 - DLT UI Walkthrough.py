@@ -8,6 +8,8 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC # Using the Delta Live Tables UI
 # MAGIC 
 # MAGIC This demo will explore the DLT UI. By the end of this lesson you will be able to: 
@@ -20,6 +22,8 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Run Setup
 # MAGIC 
 # MAGIC The following cell is configured to reset this demo.
@@ -31,31 +35,48 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC Execute the following cell to print out values that will be used during the following configuration steps.
 
 # COMMAND ----------
 
-print_pipeline_config()
+DA.print_pipeline_config()
+
+# COMMAND ----------
+
+# ANSWER
+
+# This function is provided for students who do not 
+# want to work through the exercise of creating the pipeline.
+DA.create_pipeline()
+
+# This function is provided to start the pipeline and block 
+# until it has completed, canceled or failed
+DA.start_pipeline()
 
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Create and Configure a Pipeline
 # MAGIC 
 # MAGIC In this section you will create a pipeline using a notebook provided with the courseware. We'll explore the contents of the notebook in the following lesson.
 # MAGIC 
-# MAGIC 1. Click the **Jobs** button on the sidebar,
+# MAGIC 1. Click the **Jobs** button on the sidebar.
 # MAGIC 1. Select the **Delta Live Tables** tab.
 # MAGIC 1. Click **Create Pipeline**.
-# MAGIC 1. Fill in a **Pipeline Name** - because these names must be unique, we suggest using the **Pipline Name** provided in the cell above.
+# MAGIC 1. Leave **Product Edition** as **Advanced**.
+# MAGIC 1. Fill in a **Pipeline Name** - because these names must be unique, we suggest using the **`Pipeline Name`** provided by the cell above.
 # MAGIC 1. For **Notebook Libraries**, use the navigator to locate and select the companion notebook called **DE 8.1.2 - SQL for Delta Live Tables**.   
-# MAGIC    * Alternatively, you can copy the **Notebook Path** specified above and paste it into the field provided.
+# MAGIC    * Alternatively, you can copy the **`Notebook Path`** provided by the cell above and paste it into the provided field.
 # MAGIC    * Even though this document is a standard Databricks Notebook, the SQL syntax is specialized to DLT table declarations.
 # MAGIC    * We will be exploring the syntax in the exercise that follows.
-# MAGIC 1. In the **Target** field, specify the database name printed out next to **Target** in the cell above.<br/>
+# MAGIC 1. In the **Target** field, specify the database name printed out next to **`Target`** in the cell above.<br/>
 # MAGIC This should follow the pattern **`dbacademy_<username>_dewd_dlt_demo_81`**
 # MAGIC    * This field is optional; if not specified, then tables will not be registered to a metastore, but will still be available in the DBFS. Refer to the <a href="https://docs.databricks.com/data-engineering/delta-live-tables/delta-live-tables-user-guide.html#publish-tables" target="_blank">documentation</a> for more information on this option.
-# MAGIC 1. In the **Storage location** field, copy the directory as printed above.
+# MAGIC 1. In the **Storage location** field, copy the **`Storage Location`** path printed by the cell above.
 # MAGIC    * This optional field allows the user to specify a location to store logs, tables, and other information related to pipeline execution. 
 # MAGIC    * If not specified, DLT will automatically generate a directory.
 # MAGIC 1. For **Pipeline Mode**, select **Triggered**
@@ -69,6 +90,8 @@ print_pipeline_config()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Run a Pipeline
 # MAGIC 
 # MAGIC With a pipeline created, you will now run the pipeline.
@@ -85,6 +108,8 @@ print_pipeline_config()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Exploring the DAG
 # MAGIC 
 # MAGIC As the pipeline completes, the execution flow is graphed. 

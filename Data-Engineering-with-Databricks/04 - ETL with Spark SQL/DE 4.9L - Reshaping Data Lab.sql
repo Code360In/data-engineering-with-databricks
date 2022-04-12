@@ -8,6 +8,8 @@
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC # Reshaping Data Lab
 -- MAGIC 
 -- MAGIC In this lab, you will create a **`clickpaths`** table that aggregates the number of times each user took a particular action in **`events`** and then join this information with the flattened view of **`transactions`** created in the previous notebook.
@@ -21,17 +23,21 @@
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Run Setup
 -- MAGIC 
 -- MAGIC The setup script will create the data and declare necessary values for the rest of this notebook to execute.
 
 -- COMMAND ----------
 
--- MAGIC %run ../Includes/classroom-setup-4.9L-setup-transactions
+-- MAGIC %run ../Includes/Classroom-Setup-4.9L
 
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Reshape Datasets to Create Click Paths
 -- MAGIC This operation will join data from your **`events`** and **`transactions`** tables in order to create a record of all actions a user took on the site and what their final order looked like.
 -- MAGIC 
@@ -39,7 +45,11 @@
 
 -- COMMAND ----------
 
--- MAGIC %md ### 1. Pivot **`events`** to count actions for each user
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
+-- MAGIC ### 1. Pivot **`events`** to count actions for each user
 -- MAGIC We want to aggregate the number of times each user performed a specific event, specified in the **`event_name`** column. To do this, group by **`user`** and pivot on **`event_name`** to provide a count of every event type in its own column, resulting in the schema below.
 -- MAGIC 
 -- MAGIC | field | type | 
@@ -83,6 +93,9 @@ CREATE OR REPLACE VIEW events_pivot
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC **NOTE**: We'll use Python to run checks occasionally throughout the lab. The helper functions below will return an error with a message on what needs to change if you have not followed instructions. No output means that you have completed this step.
 
 -- COMMAND ----------
@@ -95,7 +108,11 @@ CREATE OR REPLACE VIEW events_pivot
 
 -- COMMAND ----------
 
--- MAGIC %md Run the cell below to confirm the view was created correctly.
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
+-- MAGIC Run the cell below to confirm the view was created correctly.
 
 -- COMMAND ----------
 
@@ -105,7 +122,11 @@ CREATE OR REPLACE VIEW events_pivot
 
 -- COMMAND ----------
 
--- MAGIC %md ### 2. Join event counts and transactions for all users
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
+-- MAGIC ### 2. Join event counts and transactions for all users
 -- MAGIC 
 -- MAGIC Next, join **`events_pivot`** with **`transactions`** to create the table **`clickpaths`**. This table should have the same event name columns from the **`events_pivot`** table created above, followed by columns from the **`transactions`** table, as shown below.
 -- MAGIC 
@@ -141,7 +162,11 @@ CREATE OR REPLACE VIEW clickpaths AS
 
 -- COMMAND ----------
 
--- MAGIC %md Run the cell below to confirm the table was created correctly.
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
+-- MAGIC Run the cell below to confirm the table was created correctly.
 
 -- COMMAND ----------
 
@@ -152,6 +177,8 @@ CREATE OR REPLACE VIEW clickpaths AS
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Flag Types of Products Purchased
 -- MAGIC Here, you'll use the higher order function **`EXISTS`** to create boolean columns **`mattress`** and **`pillow`** that indicate whether the item purchased was a mattress or pillow product.
 -- MAGIC 
@@ -176,7 +203,11 @@ EXISTS <FILL_IN>.item_name LIKE "%Pillow"
 
 -- COMMAND ----------
 
--- MAGIC %md Run the cell below to confirm the table was created correctly.
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
+-- MAGIC Run the cell below to confirm the table was created correctly.
 
 -- COMMAND ----------
 
@@ -187,7 +218,9 @@ EXISTS <FILL_IN>.item_name LIKE "%Pillow"
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC Run the following cell to delete the tables and files associated with this lesson.
 
 -- COMMAND ----------

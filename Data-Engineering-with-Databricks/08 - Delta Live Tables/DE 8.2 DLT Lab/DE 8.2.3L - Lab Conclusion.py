@@ -8,6 +8,8 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC # Lab: Conclusion
 # MAGIC Running the following cell to configure the lab environment:
 
@@ -18,6 +20,8 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Display Results
 # MAGIC 
 # MAGIC Assuming your pipeline runs successfully, display the contents of the gold table.
@@ -32,6 +36,8 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC Trigger another file arrival with the following cell. 
 # MAGIC 
 # MAGIC Feel free to run it a couple more times if desired. 
@@ -47,6 +53,8 @@ DA.data_factory.load()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Wrapping Up
 # MAGIC 
 # MAGIC Ensure that you delete your pipeline from the DLT UI, and run the following cell to clean up the files and tables that were created as part of the lab setup and execution.
@@ -58,6 +66,8 @@ DA.cleanup()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Summary
 # MAGIC 
 # MAGIC In this lab, you learned to convert an existing data pipeline to a Delta Live Tables SQL pipeline, and deployed that pipeline using the DLT UI.
@@ -65,6 +75,8 @@ DA.cleanup()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Additional Topics & Resources
 # MAGIC 
 # MAGIC * <a href="https://docs.databricks.com/data-engineering/delta-live-tables/index.html" target="_blank">Delta Live Tables Documentation</a>

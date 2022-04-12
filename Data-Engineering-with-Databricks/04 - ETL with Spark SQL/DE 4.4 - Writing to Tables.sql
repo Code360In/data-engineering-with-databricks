@@ -7,7 +7,9 @@
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC # Writing to Delta Tables
 -- MAGIC Delta Lake tables provide ACID compliant updates to tables backed by data files in cloud object storage.
 -- MAGIC 
@@ -22,17 +24,21 @@
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Run Setup
 -- MAGIC 
 -- MAGIC The setup script will create the data and declare necessary values for the rest of this notebook to execute.
 
 -- COMMAND ----------
 
--- MAGIC %run ../Includes/classroom-setup-4.4-setup-updates
+-- MAGIC %run ../Includes/Classroom-Setup-4.4
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC ## Complete Overwrites
 -- MAGIC 
 -- MAGIC We can use overwrites to atomically replace all of the data in a table. There are multiple benefits to overwriting tables instead of deleting and recreating tables:
@@ -55,6 +61,8 @@ SELECT * FROM parquet.`${da.paths.datasets}/raw/events-historical`
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Reviewing the table history shows a previous version of this table was replaced.
 
 -- COMMAND ----------
@@ -64,7 +72,15 @@ DESCRIBE HISTORY events
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC **`INSERT OVERWRITE`** provides a nearly identical outcome: data in the target table will be replaced by data from the query.
+-- MAGIC 
+-- MAGIC 
+-- MAGIC **`INSERT OVERWRITE`** provides a nearly identical outcome as above: data in the target table will be replaced by data from the query. 
+-- MAGIC 
+-- MAGIC **`INSERT OVERWRITE`**:
+-- MAGIC 
+-- MAGIC - Can only overwrite an existing table, not create a new one like our CRAS statement
+-- MAGIC - Can overwrite only with new records that match the current table schema -- and thus can be a "safer" technique for overwriting an existing table without disrupting downstream consumers
+-- MAGIC - Can overwrite individual partitions
 
 -- COMMAND ----------
 
@@ -74,6 +90,8 @@ SELECT * FROM parquet.`${da.paths.datasets}/raw/sales-historical/`
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Note that different metrics are displayed than a CRAS statement; the table history also records the operation differently.
 
 -- COMMAND ----------
@@ -83,6 +101,8 @@ DESCRIBE HISTORY sales
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC A primary difference here has to do with how Delta Lake enforces schema on write.
 -- MAGIC 
 -- MAGIC Whereas a CRAS statement will allow us to completely redefine the contents of our target table, **`INSERT OVERWRITE`** will fail if we try to change our schema (unless we provide optional settings). 
@@ -96,7 +116,11 @@ DESCRIBE HISTORY sales
 
 -- COMMAND ----------
 
--- MAGIC %md ## Append Rows
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
+-- MAGIC ## Append Rows
 -- MAGIC 
 -- MAGIC We can use **`INSERT INTO`** to atomically append new rows to an existing Delta table. This allows for incremental updates to existing tables, which is much more efficient than overwriting each time.
 -- MAGIC 
@@ -110,11 +134,18 @@ SELECT * FROM parquet.`${da.paths.datasets}/raw/sales-30m`
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Note that **`INSERT INTO`** does not have any built-in guarantees to prevent inserting the same records multiple times. Re-executing the above cell would write the same records to the target table, resulting in duplicate records.
 
 -- COMMAND ----------
 
--- MAGIC %md ## Merge Updates
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
+-- MAGIC ## Merge Updates
 -- MAGIC 
 -- MAGIC You can upsert data from a source table, view, or DataFrame into a target Delta table using the **`MERGE`** SQL operation. Delta Lake supports inserts, updates and deletes in **`MERGE`**, and supports extended syntax beyond the SQL standards to facilitate advanced use cases.
 -- MAGIC 
@@ -131,11 +162,14 @@ SELECT * FROM parquet.`${da.paths.datasets}/raw/sales-30m`
 -- COMMAND ----------
 
 CREATE OR REPLACE TEMP VIEW users_update AS 
-SELECT *, current_timestamp() updated FROM parquet.`${da.paths.datasets}/raw/users-30m`
+SELECT *, current_timestamp() AS updated 
+FROM parquet.`${da.paths.datasets}/raw/users-30m`
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC The main benefits of **`MERGE`**:
 -- MAGIC * updates, inserts, and deletes are completed as a single transaction
 -- MAGIC * multiple conditionals can be added in addition to matching fields
@@ -157,11 +191,15 @@ WHEN NOT MATCHED THEN INSERT *
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Note that we explicitly specify the behavior of this function for both the **`MATCHED`** and **`NOT MATCHED`** conditions; the example demonstrated here is just an example of logic that can be applied, rather than indicative of all **`MERGE`** behavior.
 
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Insert-Only Merge for Deduplication
 -- MAGIC 
 -- MAGIC A common ETL use case is to collect logs or other every-appending datasets into a Delta table through a series of append operations. 
@@ -182,7 +220,9 @@ WHEN NOT MATCHED AND b.traffic_source = 'email' THEN
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC ## Load Incrementally
 -- MAGIC 
 -- MAGIC **`COPY INTO`** provides SQL engineers an idempotent option to incrementally ingest data from external systems.
@@ -203,7 +243,9 @@ FILEFORMAT = PARQUET
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC Run the following cell to delete the tables and files associated with this lesson.
 
 -- COMMAND ----------

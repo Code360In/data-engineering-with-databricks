@@ -8,6 +8,8 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC # Notebook Basics
 # MAGIC 
 # MAGIC Notebooks are the primary means of developing and executing code interactively on Databricks. This lesson provides a basic introduction to working with Databricks notebooks.
@@ -29,6 +31,8 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Attach to a Cluster
 # MAGIC 
 # MAGIC In the previous lesson, you should have either deployed a cluster or identified a cluster that an admin has configured for you to use.
@@ -40,6 +44,8 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Notebooks Basics
 # MAGIC 
 # MAGIC Notebooks provide cell-by-cell execution of code. Multiple languages can be mixed in a notebook. Users can add plots, images, and markdown text to enhance their code.
@@ -59,11 +65,15 @@ print("I'm running Python!")
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC **NOTE**: Cell-by-cell code execution means that cells can be executed multiple times or out of order. Unless explicitly instructed, you should always assume that the notebooks in this course are intended to be run one cell at a time from top to bottom. If you encounter an error, make sure you read the text before and after a cell to ensure that the error wasn't an intentional learning moment before you try to troubleshoot. Most errors can be resolved by either running earlier cells in a notebook that were missed or re-executing the entire notebook from the top.
 
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ### Setting the Default Notebook Language
 # MAGIC 
 # MAGIC The cell above executes a Python command, because our current default language for the notebook is set to Python.
@@ -83,6 +93,8 @@ print("I'm running Python!")
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ### Create and Run a SQL Cell
 # MAGIC 
 # MAGIC * Highlight this cell and press the **B** button on the keyboard to create a new cell below
@@ -96,6 +108,8 @@ print("I'm running Python!")
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Magic Commands
 # MAGIC * Magic commands are specific to the Databricks notebooks
 # MAGIC * They are very similar to magic commands found in comparable notebook products
@@ -107,6 +121,8 @@ print("I'm running Python!")
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ### Language Magics
 # MAGIC Language magic commands allow for the execution of code in languages other than the notebook's default. In this course, we'll see the following language magics:
 # MAGIC * <strong><code>&#37;python</code></strong>
@@ -131,7 +147,10 @@ print("Hello Python!")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ### %md
+# MAGIC 
+# MAGIC 
+# MAGIC 
+# MAGIC ### Markdown
 # MAGIC 
 # MAGIC The magic command **&percnt;md** allows us to render Markdown in a cell:
 # MAGIC * Double click this cell to begin editing it
@@ -173,6 +192,8 @@ print("Hello Python!")
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ### %run
 # MAGIC * You can run a notebook from another notebook by using the magic command **%run**
 # MAGIC * Notebooks to be run are specified with relative paths
@@ -180,7 +201,10 @@ print("Hello Python!")
 
 # COMMAND ----------
 
-# MAGIC %md Uncommenting and executing the following cell will generate the following error:<br/>
+# MAGIC %md
+# MAGIC 
+# MAGIC 
+# MAGIC Uncommenting and executing the following cell will generate the following error:<br/>
 # MAGIC **`Error in SQL statement: AnalysisException: Table or view not found: demo_tmp_vw`**
 
 # COMMAND ----------
@@ -191,16 +215,20 @@ print("Hello Python!")
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC But we can declare it and a handful of other variables and functions buy running this cell:
 
 # COMMAND ----------
 
-# MAGIC %run ../Includes/classroom-setup-1.2-workspace-setup
+# MAGIC %run ../Includes/Classroom-Setup-1.2
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC The **`../Includes/classroom-setup-1.2-workspace-setup`** notebook we referenced includes logic to create and **`USE`** a database, as well as creating the temp view **`demo_temp_vw`**.
+# MAGIC 
+# MAGIC 
+# MAGIC The **`../Includes/Classroom-Setup-1.2`** notebook we referenced includes logic to create and **`USE`** a database, as well as creating the temp view **`demo_temp_vw`**.
 # MAGIC 
 # MAGIC We can see this temp view is now available in our current notebook session with the following query.
 
@@ -212,6 +240,8 @@ print("Hello Python!")
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC We'll use this pattern of "setup" notebooks throughout the course to help configure the environment for lessons and labs.
 # MAGIC 
 # MAGIC These "provided" variables, functions and other objects should be easily identifiable in that they are part of the **`DA`** object which is an instance of **`DBAcademyHelper`**.
@@ -231,7 +261,10 @@ print(f"DA.db_name:           {DA.db_name}")
 
 # COMMAND ----------
 
-# MAGIC %md In addition to this, these same variables are "injected" into the SQL context so that we can use them in SQL statements.
+# MAGIC %md
+# MAGIC 
+# MAGIC 
+# MAGIC In addition to this, these same variables are "injected" into the SQL context so that we can use them in SQL statements.
 # MAGIC 
 # MAGIC We will talk more about this later, but you can see a quick example in the following cell.
 # MAGIC 
@@ -247,6 +280,8 @@ print(f"DA.db_name:           {DA.db_name}")
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Databricks Utilities
 # MAGIC Databricks notebooks provide a number of utility commands for configuring and interacting with the environment: <a href="https://docs.databricks.com/user-guide/dev-tools/dbutils.html" target="_blank">dbutils docs</a>
 # MAGIC 
@@ -259,6 +294,8 @@ dbutils.fs.ls("/databricks-datasets")
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## display()
 # MAGIC 
 # MAGIC When running SQL queries from cells, results will always be displayed in a rendered tabular format.
@@ -274,6 +311,8 @@ display(dbutils.fs.ls("/databricks-datasets"))
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC The **`display()`** command has the following capabilities and limitations:
 # MAGIC * Preview of results limited to 1000 records
 # MAGIC * Provides button to download results data as CSV
@@ -281,7 +320,9 @@ display(dbutils.fs.ls("/databricks-datasets"))
 
 # COMMAND ----------
 
-# MAGIC %md-sandbox
+# MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Downloading Notebooks
 # MAGIC 
 # MAGIC There are a number of options for downloading either individual notebooks or collections of notebooks.
@@ -303,19 +344,20 @@ display(dbutils.fs.ls("/databricks-datasets"))
 # MAGIC **NOTE**: The following instructions assume you have imported these materials using **Repos**.
 # MAGIC 
 # MAGIC Steps:
-# MAGIC * Click the **Repos** icon on the left sidebar
+# MAGIC * Click the  ![](https://files.training.databricks.com/images/repos-icon.png) **Repos** on the left sidebar
 # MAGIC   * This should give you a preview of the parent directories for this notebook
 # MAGIC * On the left side of the directory preview around the middle of the screen, there should be a left arrow. Click this to move up in your file hierarchy.
 # MAGIC * You should see a directory called **Data Engineering with Databricks**. Click the the down arrow/chevron to bring up a menu
 # MAGIC * From the menu, hover over **Export** and select **DBC Archive**
 # MAGIC 
-# MAGIC The DBC that is downloaded contains a serialized collection of the directories and notebooks in this course. Users should not attempt to edit these DBC files locally, but they can be safely uploaded into any Databricks workspace to move or share notebook contents.
+# MAGIC The DBC(Databricks Cloud) file that is downloaded contains a zipped collection of the directories and notebooks in this course. Users should not attempt to edit these DBC files locally, but they can be safely uploaded into any Databricks workspace to move or share notebook contents.
 # MAGIC 
 # MAGIC **NOTE**: When downloading a collection of DBCs, result previews and plots will also be exported. When downloading source notebooks, only code will be saved.
 
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
 # MAGIC 
 # MAGIC ## Learning More
 # MAGIC 
@@ -324,6 +366,7 @@ display(dbutils.fs.ls("/databricks-datasets"))
 # MAGIC * <a href="https://docs.databricks.com/user-guide/getting-started.html" target="_blank">Getting Started with Databricks</a>
 # MAGIC * <a href="https://docs.databricks.com/user-guide/notebooks/index.html" target="_blank">User Guide / Notebooks</a>
 # MAGIC * <a href="https://docs.databricks.com/notebooks/notebooks-manage.html#notebook-external-formats" target="_blank">Importing notebooks - Supported Formats</a>
+# MAGIC * <a href="https://docs.databricks.com/repos/index.html" target="_blank">Repos</a>
 # MAGIC * <a href="https://docs.databricks.com/administration-guide/index.html#administration-guide" target="_blank">Administration Guide</a>
 # MAGIC * <a href="https://docs.databricks.com/user-guide/clusters/index.html" target="_blank">Cluster Configuration</a>
 # MAGIC * <a href="https://docs.databricks.com/api/latest/index.html#rest-api-2-0" target="_blank">REST API</a>
@@ -331,7 +374,9 @@ display(dbutils.fs.ls("/databricks-datasets"))
 
 # COMMAND ----------
 
-# MAGIC %md 
+# MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## One more note! 
 # MAGIC 
 # MAGIC At the end of each lesson you will see the following command, **`DA.cleanup()`**.

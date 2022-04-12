@@ -8,6 +8,8 @@
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC # Extracting Data Directly from Files
 -- MAGIC 
 -- MAGIC In this notebook, you'll learn to extract data directly from files using Spark SQL on Databricks.
@@ -22,17 +24,21 @@
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Run Setup
 -- MAGIC 
 -- MAGIC The setup script will create the data and declare necessary values for the rest of this notebook to execute.
 
 -- COMMAND ----------
 
--- MAGIC %run ../Includes/classroom-setup-4.1-setup
+-- MAGIC %run ../Includes/Classroom-Setup-4.1
 
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Data Overview
 -- MAGIC 
 -- MAGIC In this example, we'll work with a sample of raw Kafka data written as JSON files. 
@@ -51,6 +57,8 @@
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Note that our source directory contains many JSON files.
 
 -- COMMAND ----------
@@ -65,6 +73,8 @@
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Here, we'll be using relative file paths to data that's been written to the DBFS root. 
 -- MAGIC 
 -- MAGIC Most workflows will require users to access data from external cloud storage locations. 
@@ -76,6 +86,8 @@
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Query a Single File
 -- MAGIC 
 -- MAGIC To query the data contained in a single file, execute the query with the following pattern:
@@ -91,14 +103,18 @@ SELECT * FROM json.`${da.paths.datasets}/raw/events-kafka/001.json`
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Note that our preview displays all 321 rows of our source file.
 
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Query a Directory of Files
 -- MAGIC 
--- MAGIC Assuming all of the files in a directory have the same format and schema, all files can be queried simultaneously by specifying the directory path rather than an individual file. 
+-- MAGIC Assuming all of the files in a directory have the same format and schema, all files can be queried simultaneously by specifying the directory path rather than an individual file.
 
 -- COMMAND ----------
 
@@ -107,11 +123,15 @@ SELECT * FROM json.`${da.paths.datasets}/raw/events-kafka`
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC By default, this query will only show the first 1000 rows.
 
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Create References to Files
 -- MAGIC This ability to directly query files and directories means that additional Spark logic can be chained to queries against files.
 -- MAGIC 
@@ -127,6 +147,8 @@ SELECT * FROM events_temp_view
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Extract Text Files as Raw Strings
 -- MAGIC 
 -- MAGIC When working with text-based files (which include JSON, CSV, TSV, and TXT formats), you can use the **`text`** format to load each line of the file as a row with one string column named **`value`**. This can be useful when data sources are prone to corruption and custom text parsing functions will be used to extract value from text fields.
@@ -138,6 +160,8 @@ SELECT * FROM text.`${da.paths.datasets}/raw/events-kafka/`
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Extract the Raw Bytes and Metadata of a File
 -- MAGIC 
 -- MAGIC Some workflows may require working with entire files, such as when dealing with images or unstructured data. Using **`binaryFile`** to query a directory will provide file metadata alongside the binary representation of the file contents.
@@ -150,7 +174,9 @@ SELECT * FROM binaryFile.`${da.paths.datasets}/raw/events-kafka/`
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC Run the following cell to delete the tables and files associated with this lesson.
 
 -- COMMAND ----------

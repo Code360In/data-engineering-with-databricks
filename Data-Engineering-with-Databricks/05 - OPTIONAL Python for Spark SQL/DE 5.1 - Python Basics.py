@@ -8,6 +8,8 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC # Just Enough Python for Databricks SQL
 # MAGIC 
 # MAGIC While Databricks SQL provides an ANSI-compliant flavor of SQL with many additional custom methods (including the entire Delta Lake SQL syntax), users migrating from some systems may run into missing features, especially around control flow and error handling.
@@ -25,6 +27,8 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Strings
 # MAGIC Characters enclosed in single (**`'`**) or double (**`"`**) quotes are considered strings.
 
@@ -35,6 +39,8 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC To preview how a string will render, we can call **`print()`**.
 
 # COMMAND ----------
@@ -44,6 +50,8 @@ print("This is a string")
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC By wrapping a string in triple quotes (**`"""`**), it's possible to use multiple lines.
 
 # COMMAND ----------
@@ -59,6 +67,8 @@ string
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC This makes it easy to turn SQL queries into Python strings.
 
 # COMMAND ----------
@@ -71,6 +81,8 @@ FROM test_table
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC When we execute SQL from a Python cell, we will pass a string as an argument to **`spark.sql()`**.
 
 # COMMAND ----------
@@ -80,6 +92,8 @@ spark.sql("SELECT 1 AS test")
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC To render a query the way it would appear in a normal SQL notebook, we call **`display()`** on this function.
 
 # COMMAND ----------
@@ -89,6 +103,8 @@ display(spark.sql("SELECT 1 AS test"))
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC **NOTE**: Executing a cell with only a Python string in it will just print the string. Using **`print()`** with a string just renders it back to the notebook.
 # MAGIC 
 # MAGIC To execute a string that contains SQL using Python, it must be passed within a call to **`spark.sql()`**.
@@ -96,6 +112,8 @@ display(spark.sql("SELECT 1 AS test"))
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Variables
 # MAGIC Python variables are assigned using the **`=`**.
 # MAGIC 
@@ -112,6 +130,8 @@ my_string = "This is a string"
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC Executing a cell with this variable will return its value.
 
 # COMMAND ----------
@@ -121,6 +141,8 @@ my_string
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC The output here is the same as if we typed **`"This is a string"`** into the cell and ran it.
 # MAGIC 
 # MAGIC Note that the quotation marks aren't part of the string, as shown when we print it.
@@ -132,6 +154,8 @@ print(my_string)
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC This variable can be used the same way a string would be.
 # MAGIC 
 # MAGIC String concatenation (joining to strings together) can be performed with a **`+`**.
@@ -143,6 +167,8 @@ print("This is a new string and " + my_string)
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC We can join string variables with other string variables.
 
 # COMMAND ----------
@@ -153,6 +179,8 @@ print(new_string + my_string)
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Functions
 # MAGIC Functions allow you to specify local variables as arguments and then apply custom logic. We define a function using the keyword **`def`** followed by the function name and, enclosed in parentheses, any variable arguments we wish to pass into the function. Finally, the function header has a **`:`** at the end.
 # MAGIC 
@@ -168,6 +196,8 @@ def print_string(arg):
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC When we pass a string as the argument, it will be printed.
 
 # COMMAND ----------
@@ -177,6 +207,8 @@ print_string("foo")
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC We can also pass a variable as an argument.
 
 # COMMAND ----------
@@ -186,6 +218,8 @@ print_string(my_string)
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC Oftentimes we want to return the results of our function for use elsewhere. For this we use the **`return`** keyword.
 # MAGIC 
 # MAGIC The function below constructs a new string by concatenating our argument. Note that both functions and arguments can have arbitrary names, just like variables (and follow the same rules).
@@ -198,6 +232,8 @@ def return_new_string(string_arg):
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC Running this function returns the output.
 
 # COMMAND ----------
@@ -207,6 +243,8 @@ return_new_string("foobar")
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC Assigning it to a variable captures the output for reuse elsewhere.
 
 # COMMAND ----------
@@ -216,6 +254,8 @@ function_output = return_new_string("foobar")
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC This variable doesn't contain our function, just the results of our function (a string).
 
 # COMMAND ----------
@@ -225,6 +265,8 @@ function_output
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## F-strings
 # MAGIC By adding the letter **`f`** before a Python string, you can inject variables or evaluated Python code by inserted them inside curly braces (**`{}`**).
 # MAGIC 
@@ -237,6 +279,8 @@ f"I can substitute {my_string} here"
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC The following cell inserts the string returned by a function.
 
 # COMMAND ----------
@@ -246,6 +290,8 @@ f"I can substitute functions like {return_new_string('foobar')} here"
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC Combine this with triple quotes and you can format a paragraph or list, like below.
 
 # COMMAND ----------
@@ -261,6 +307,8 @@ print(multi_line_string)
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC Or you could format a SQL query.
 
 # COMMAND ----------

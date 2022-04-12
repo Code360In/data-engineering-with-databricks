@@ -8,6 +8,8 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC # Incremental Data Ingestion with Auto Loader
 # MAGIC 
 # MAGIC Incremental ETL is important since it allows us to deal solely with new data that has been encountered since the last ingestion. Reliably processing only the new data reduces redundant processing and helps enterprises reliably scale data pipelines.
@@ -40,17 +42,21 @@
 
 # MAGIC %md
 # MAGIC 
+# MAGIC 
+# MAGIC 
 # MAGIC ## Getting Started
 # MAGIC 
 # MAGIC Run the following cell to reset the demo and configure required variables and help functions.
 
 # COMMAND ----------
 
-# MAGIC %run ../Includes/classroom-setup-6.1-auto-loader-setup
+# MAGIC %run ../Includes/Classroom-Setup-6.1
 
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Using Auto Loader
 # MAGIC 
 # MAGIC In the cell below, a function is defined to demonstrate using Databricks Auto Loader with the PySpark API. This code includes both a Structured Streaming read and write.
@@ -85,6 +91,8 @@ def autoload_to_table(data_source, source_format, table_name, checkpoint_directo
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC In the following cell, we use the previously defined function and some path variables defined in the setup script to begin an Auto Loader stream.
 # MAGIC 
 # MAGIC Here, we're reading from a source directory of JSON files.
@@ -100,6 +108,8 @@ query = autoload_to_table(data_source = f"{DA.paths.working_dir}/tracker",
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC Because Auto Loader uses Spark Structured Streaming to load data incrementally, the code above doesn't appear to finish executing.
 # MAGIC 
 # MAGIC We can think of this as a **continuously active query**. This means that as soon as new data arrives in our data source, it will be processed through our logic and loaded into our target table. We'll explore this in just a second.
@@ -107,6 +117,8 @@ query = autoload_to_table(data_source = f"{DA.paths.working_dir}/tracker",
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Helper Function for Streaming Lessons
 # MAGIC 
 # MAGIC Our notebook-based lessons combine streaming functions with batch and streaming queries against the results of those operations. These notebooks are for instructional purposes and intended for interactive, cell-by-cell execution. This pattern is not intended for production.
@@ -127,6 +139,8 @@ block_until_stream_is_ready(query)
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Query Target Table
 # MAGIC 
 # MAGIC Once data has been ingested to Delta Lake with Auto Loader, users can interact with it the same way they would any table.
@@ -139,6 +153,8 @@ block_until_stream_is_ready(query)
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC Note that the **`_rescued_data`** column is added by Auto Loader automatically to capture any data that might be malformed and not fit into the table otherwise.
 # MAGIC 
 # MAGIC While Auto Loader captured the field names for our data correctly, note that it encoded all fields as **`STRING`** type. Because JSON is a text-based format, this is the safest and most permissive type, ensuring that the least amount of data is dropped or ignored at ingestion due to type mismatch.
@@ -151,6 +167,8 @@ block_until_stream_is_ready(query)
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC Use the cell below to define a temporary view that summarizes the recordings in our target table.
 # MAGIC 
 # MAGIC We'll use this view below to demonstrate how new data is automatically ingested with Auto Loader.
@@ -168,6 +186,8 @@ block_until_stream_is_ready(query)
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Land New Data
 # MAGIC 
 # MAGIC As mentioned previously, Auto Loader is configured to incrementally process files from a directory in cloud object storage into a Delta Lake table.
@@ -182,6 +202,8 @@ display(files)
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC At present, you should see a single JSON file listed in this location.
 # MAGIC 
 # MAGIC The method in the cell below was configured in our setup script to allow us to model an external system writing data to this directory. Each time you execute the cell below, a new file will land in the **`source_path`** directory.
@@ -193,6 +215,8 @@ DA.data_factory.load()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC List the contents of the **`source_path`** again using the cell below. You should see an additional JSON file for each time you ran the previous cell.
 
 # COMMAND ----------
@@ -203,6 +227,8 @@ display(files)
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Tracking Ingestion Progress
 # MAGIC 
 # MAGIC Historically, many systems have been configured to either reprocess all records in a source directory to calculate current results or require data engineers to implement custom logic to identify new data that's arrived since the last time a table was updated.
@@ -219,6 +245,8 @@ display(files)
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC The Auto Loader query we configured earlier automatically detects and processes records from the source directory into the target table. There is a slight delay as records are ingested, but an Auto Loader query executing with default streaming configuration should update results in near real time.
 # MAGIC 
 # MAGIC The query below shows the table history. A new table version should be indicated for each **`STREAMING UPDATE`**. These update events coincide with new batches of data arriving at the source.
@@ -231,6 +259,8 @@ display(files)
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Clean Up
 # MAGIC Feel free to continue landing new data and exploring the table results with the cells above.
 # MAGIC 

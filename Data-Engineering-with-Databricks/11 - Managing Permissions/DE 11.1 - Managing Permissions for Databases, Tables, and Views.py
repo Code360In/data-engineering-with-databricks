@@ -8,6 +8,8 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC # Managing Permissions for Databases, Tables, and Views
 # MAGIC 
 # MAGIC The instructions as detailed below are provided for groups of users to explore how Table ACLs on Databricks work. It leverages Databricks SQL and the Data Explorer to accomplish these tasks, and assumes that at least one user in the group has administrator status (or that an admin has previously configured permissions to allow proper permissions for users to create databases, tables, and views). 
@@ -23,11 +25,13 @@
 
 # COMMAND ----------
 
-# MAGIC %run ../Includes/classroom-setup-11.1
+# MAGIC %run ../Includes/Classroom-Setup-11.1
 
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Generate Setup Statements
 # MAGIC 
 # MAGIC The following cell uses Python to extract username of the current user and format this into several statements used to create databases, tables, and views.
@@ -41,19 +45,23 @@ DA.generate_users_table()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC Steps:
-# MAGIC * Run the cell above
-# MAGIC * Copy the entire output to your clipboard
-# MAGIC * Navigate to the Databricks SQL workspace
-# MAGIC * Make sure that a DBSQL endpoint is running
-# MAGIC * Use the left sidebar to select the **SQL Editor**
-# MAGIC * Paste the query above and click the blue **Run** in the top right
+# MAGIC 1. Run the cell above
+# MAGIC 1. Copy the entire output to your clipboard
+# MAGIC 1. Navigate to the Databricks SQL workspace
+# MAGIC 1. Make sure that a DBSQL endpoint is running
+# MAGIC 1. Use the left sidebar to select the **SQL Editor**
+# MAGIC 1. Paste the query above and click the blue **Run** in the top right
 # MAGIC 
 # MAGIC **NOTE**: You will need to be connected to a DBSQL endpoint to execute these queries successfully. If you cannot connect to a DBSQL endpoint, you will need to contact your administrator to give you access.
 
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Using Data Explorer
 # MAGIC 
 # MAGIC * Use the left sidebar navigator to select the **Data** tab; this places you in the **Data Explorer**
@@ -117,6 +125,8 @@ DA.generate_users_table()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Review the Default Permissions
 # MAGIC In the Data Explorer, find the database you created earlier (this should follow the pattern **`dbacademy_<username>_acls_demo`**).
 # MAGIC 
@@ -127,6 +137,8 @@ DA.generate_users_table()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Assigning Ownership
 # MAGIC 
 # MAGIC Click the blue pencil next to the **Owner** field. Note that an owner can be set as an individual OR a group. For most implementations, having one or several small groups of trusted power users as owners will limit admin access to important datasets while ensuring that a single user does not create a choke point in productivity.
@@ -136,11 +148,13 @@ DA.generate_users_table()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Change Database Permissions
 # MAGIC 
 # MAGIC Begin by allowing all users to review metadata about the database.
 # MAGIC 
-# MAGIC Step:
+# MAGIC Steps:
 # MAGIC 1. Make sure you have the **Permissions** tab selected for the database
 # MAGIC 1. Click the blue **Grant** button
 # MAGIC 1. Select the **USAGE** and **READ_METADATA** options
@@ -152,13 +166,15 @@ DA.generate_users_table()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Change View Permissions
 # MAGIC 
 # MAGIC While users can now see information about this database, they won't be able to interact with the table of view declared above.
 # MAGIC 
 # MAGIC Let's start by giving users the ability to query our view.
 # MAGIC 
-# MAGIC Step:
+# MAGIC Steps:
 # MAGIC 1. Select the **`ny_users_vw`**
 # MAGIC 1. Select the **Permissions** tab
 # MAGIC    * Users should have inherited the permissions granted at the database level; you'll be able to see which permissions users currently have on an asset, as well as where that permission is inherited from
@@ -171,6 +187,8 @@ DA.generate_users_table()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Run a Query to Confirm
 # MAGIC 
 # MAGIC In the **SQL Editor**, all users should use the **Schema Browser** on the lefthand side to navigate to the database being controlled by the admin.
@@ -184,11 +202,13 @@ DA.generate_users_table()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Change Table Permissions
 # MAGIC 
 # MAGIC Perform the same steps as above, but now for the **`users`** table.
 # MAGIC 
-# MAGIC Step:
+# MAGIC Steps:
 # MAGIC 1. Select the **`users`** table
 # MAGIC 1. Select the **Permissions** tab
 # MAGIC 1. Click the blue **Grant** button
@@ -199,6 +219,8 @@ DA.generate_users_table()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Have Users Attempt to **`DROP TABLE`**
 # MAGIC 
 # MAGIC In the **SQL Editor**, encourage users to explore the data in this table.
@@ -208,6 +230,8 @@ DA.generate_users_table()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Create a Database for Derivative Datasets
 # MAGIC 
 # MAGIC In most cases users will need a location to save out derivative datasets. At present, users may not have the ability to create new tables in any location (depending on existing ACLs in the workspace and databases created during previous lessons students have completed).
@@ -223,6 +247,8 @@ DA.generate_create_database_with_grants()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Have Users Create New Tables or Views
 # MAGIC 
 # MAGIC Give users a moment to test that they can create tables and views in this new database.
@@ -232,6 +258,8 @@ DA.generate_create_database_with_grants()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Admin Configuration
 # MAGIC 
 # MAGIC At present, users do not have any Table ACL permissions granted on the default catalog **`hive_metastore`** by default. The next lab assumes that users will be able to create databases.

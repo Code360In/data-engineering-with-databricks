@@ -7,7 +7,9 @@
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC # Cleaning Data
 -- MAGIC 
 -- MAGIC Most transformations completed with Spark SQL will be familiar to SQL-savvy developers.
@@ -32,17 +34,21 @@
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Run Setup
 -- MAGIC 
 -- MAGIC The setup script will create the data and declare necessary values for the rest of this notebook to execute.
 
 -- COMMAND ----------
 
--- MAGIC %run ../Includes/classroom-setup-4.6-setup-cleaning
+-- MAGIC %run ../Includes/Classroom-Setup-4.6
 
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC We'll work with new users records in **`users_dirty`** table for this lesson.
 
 -- COMMAND ----------
@@ -51,7 +57,9 @@ SELECT * FROM users_dirty
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC ## Inspect Data
 -- MAGIC 
 -- MAGIC Let's start by counting values in each field of our data.
@@ -63,7 +71,9 @@ FROM users_dirty
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC Note that **`count(col)`** skips **`NULL`** values when counting specific columns or expressions.
 -- MAGIC 
 -- MAGIC However, **`count(*)`** is a special case that counts the total number of rows (including rows that are only **`NULL`** values).
@@ -82,11 +92,15 @@ FROM users_dirty
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Clearly there are at least a handful of null values in all of our fields. Let's try to discover what is causing this.
 
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Distinct Records
 -- MAGIC 
 -- MAGIC Start by looking for distinct rows.
@@ -98,19 +112,14 @@ FROM users_dirty
 
 -- COMMAND ----------
 
--- MAGIC %md
--- MAGIC Note that when we called **`DISTINCT(*)`**, by default we ignored all rows containing **any** null values; as such, our result is the same as the count of user emails above.
--- MAGIC 
--- MAGIC Let's look at the **`user_id`** column.
-
--- COMMAND ----------
-
 SELECT count(DISTINCT(user_id))
 FROM users_dirty
 
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Because **`user_id`** is generated alongside the **`user_first_touch_timestamp`**, these fields should always be in parity for counts.
 
 -- COMMAND ----------
@@ -121,6 +130,8 @@ FROM users_dirty
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Here we note that while there are some duplicate records relative to our total row count, we have a much higher number of distinct values.
 -- MAGIC 
 -- MAGIC Let's go ahead and combine our distinct counts with columnar counts to see these values side-by-side.
@@ -141,6 +152,8 @@ FROM users_dirty
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Based on the above summary, we know:
 -- MAGIC * All of our emails are unique
 -- MAGIC * Our emails contain the largest number of null values
@@ -148,7 +161,9 @@ FROM users_dirty
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC ## Deduplicate Rows
 -- MAGIC Based on the above behavior, what do you expect will happen if we use **`DISTINCT *`** to try to remove duplicate records?
 
@@ -162,6 +177,8 @@ SELECT * FROM users_deduped
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Note in the preview above that there appears to be null values, even though our **`COUNT(DISTINCT(*))`** ignored these nulls.
 -- MAGIC 
 -- MAGIC How many rows do you expect passed through this **`DISTINCT`** command?
@@ -173,6 +190,8 @@ SELECT COUNT(*) FROM users_deduped
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Note that we now have a completely new number.
 -- MAGIC 
 -- MAGIC Spark skips null values while counting values in a column or counting distinct values for a field, but does not omit rows with nulls from a **`DISTINCT`** query.
@@ -190,7 +209,9 @@ WHERE
 
 -- COMMAND ----------
 
--- MAGIC %md  
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC   
 -- MAGIC ## Deduplicate Based on Specific Columns
 -- MAGIC 
 -- MAGIC Recall that **`user_id`** and **`user_first_touch_timestamp`** should form unique tuples, as they are both generated when a given user is first encountered.
@@ -206,6 +227,8 @@ WHERE user_id IS NOT NULL
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Here, we'll use these distinct pairs to remove unwanted rows from our data.
 -- MAGIC 
 -- MAGIC The code below uses **`GROUP BY`** to remove duplicate records based on **`user_id`** and **`user_first_touch_timestamp`**.
@@ -215,7 +238,7 @@ WHERE user_id IS NOT NULL
 -- COMMAND ----------
 
 CREATE OR REPLACE TEMP VIEW deduped_users AS
-SELECT user_id, user_first_touch_timestamp, max(email) email, max(updated) updated
+SELECT user_id, user_first_touch_timestamp, max(email) AS email, max(updated) AS updated
 FROM users_dirty
 WHERE user_id IS NOT NULL
 GROUP BY user_id, user_first_touch_timestamp;
@@ -224,7 +247,9 @@ SELECT count(*) FROM deduped_users
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC ## Validate Datasets
 -- MAGIC We've visually confirmed that our counts are as expected, based our manual review.
 -- MAGIC  
@@ -241,7 +266,11 @@ SELECT max(row_count) <= 1 no_duplicate_ids FROM (
 
 -- COMMAND ----------
 
--- MAGIC %md Confirm that each email is associated with at most one **`user_id`**.
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
+-- MAGIC Confirm that each email is associated with at most one **`user_id`**.
 
 -- COMMAND ----------
 
@@ -253,7 +282,9 @@ SELECT max(user_id_count) <= 1 at_most_one_id FROM (
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC ## Date Format and Regex
 -- MAGIC Now that we've removed null fields and eliminated duplicates, we may wish to extract further value out of the data.
 -- MAGIC 
@@ -276,7 +307,9 @@ FROM (
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC Run the following cell to delete the tables and files associated with this lesson.
 
 -- COMMAND ----------

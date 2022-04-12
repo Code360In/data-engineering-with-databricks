@@ -8,9 +8,11 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC # Lab: Migrating SQL Notebooks to Delta Live Tables
 # MAGIC 
-# MAGIC This notebook dictates an overall structure for the lab exercise, configures the environment for the lab, provides simulated data streaming, and performs cleanup once you are done. A notebook like this is not typically needed in a production pipeline scenario.
+# MAGIC This notebook describes the overall structure for the lab exercise, configures the environment for the lab, provides simulated data streaming, and performs cleanup once you are done. A notebook like this is not typically needed in a production pipeline scenario.
 # MAGIC 
 # MAGIC ## Learning Objectives
 # MAGIC By the end of this lesson, you should be able to:
@@ -19,6 +21,8 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Datasets Used
 # MAGIC 
 # MAGIC This demo uses simplified artificially generated medical data. The schema of our two datasets is represented below. Note that we will be manipulating these schema during various steps.
@@ -44,6 +48,8 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Getting Started
 # MAGIC 
 # MAGIC Begin by running the following cell to configure the lab environment.
@@ -55,6 +61,8 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Land Initial Data
 # MAGIC Seed the landing zone with some data before proceeding. You will re-run this command to land additional data later.
 
@@ -65,25 +73,30 @@ DA.data_factory.load()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC Execute the following cell to print out values that will be used during the following configuration steps.
 
 # COMMAND ----------
 
-print_pipeline_config()    
+DA.print_pipeline_config()    
 
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Create and Configure a Pipeline
 # MAGIC 
 # MAGIC 1. Click the **Jobs** button on the sidebar, then select the **Delta Live Tables** tab.
 # MAGIC 1. Click **Create Pipeline**.
+# MAGIC 1. Leave **Product Edition** as **Advanced**.
 # MAGIC 1. Fill in a **Pipeline Name** - because these names must be unique, we suggest using the **Pipline Name** provided in the cell above.
 # MAGIC 1. For **Notebook Libraries**, use the navigator to locate and select the notebook **`DE 8.2.2L - Migrating a SQL Pipeline to DLT Lab`**.
 # MAGIC 1. Configure the Source
-# MAGIC   * Click **`Add configuration`**
-# MAGIC   * Enter the word **`source`** in the **Key** field
-# MAGIC   * Enter the **Source** value specified above to the **`Value`** field
+# MAGIC     * Click **`Add configuration`**
+# MAGIC     * Enter the word **`source`** in the **Key** field
+# MAGIC     * Enter the **Source** value specified above to the **`Value`** field
 # MAGIC 1. Enter the database name printed next to **`Target`** below in the **Target** field.
 # MAGIC 1. Enter the location printed next to **`Storage Location`** below in the **Storage Location** field.
 # MAGIC 1. Set **Pipeline Mode** to **Triggered**.
@@ -94,6 +107,8 @@ print_pipeline_config()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Open and Complete DLT Pipeline Notebook
 # MAGIC 
 # MAGIC You will perform your work in the companion notebook [DE 8.2.2L - Migrating a SQL Pipeline to DLT Lab]($./DE 8.2.2L - Migrating a SQL Pipeline to DLT Lab),<br/>
@@ -105,6 +120,8 @@ print_pipeline_config()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Run your Pipeline
 # MAGIC 
 # MAGIC Select **Development** mode, which accelerates the development lifecycle by reusing the same cluster across runs.<br/>
@@ -119,6 +136,8 @@ print_pipeline_config()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Troubleshooting Code in Development Mode
 # MAGIC 
 # MAGIC Don't despair if your pipeline fails the first time. Delta Live Tables is in active development, and error messages are improving all the time.

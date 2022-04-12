@@ -8,6 +8,8 @@
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC # Delta Lake Versioning, Optimization, and Vacuuming
 -- MAGIC 
 -- MAGIC This notebook provides a hands-on review of some of the more esoteric features Delta Lake brings to the data lakehouse.
@@ -22,16 +24,20 @@
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Setup
 -- MAGIC Run the following script to setup necessary variables and clear out past runs of this notebook. Note that re-executing this cell will allow you to start the lab over.
 
 -- COMMAND ----------
 
--- MAGIC %run ../Includes/classroom-setup-2.4L-sql-setup
+-- MAGIC %run ../Includes/Classroom-Setup-2.4L
 
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Recreate the History of your Bean Collection
 -- MAGIC 
 -- MAGIC This lab picks up where the last lab left off. The cell below condenses all the operations from the last lab into a single cell (other than the final **`DROP TABLE`** statement).
@@ -88,6 +94,8 @@ WHEN NOT MATCHED AND b.delicious = true THEN
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Review the Table History
 -- MAGIC 
 -- MAGIC Delta Lake's transaction log stores information about each transaction that modifies a table's contents or settings.
@@ -102,6 +110,8 @@ WHEN NOT MATCHED AND b.delicious = true THEN
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC If all the previous operations were completed as described you should see 7 versions of the table (**NOTE**: Delta Lake versioning starts with 0, so the max version number will be 6).
 -- MAGIC 
 -- MAGIC The operations should be as follows:
@@ -125,6 +135,8 @@ WHEN NOT MATCHED AND b.delicious = true THEN
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Query a Specific Version
 -- MAGIC 
 -- MAGIC After reviewing the table history, you decide you want to view the state of your table after your very first data was inserted.
@@ -138,6 +150,8 @@ SELECT * FROM beans VERSION AS OF 1
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC And now review the current state of your data.
 
 -- COMMAND ----------
@@ -147,6 +161,8 @@ SELECT * FROM beans
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC You want to review the weights of your beans before you deleted any records.
 -- MAGIC 
 -- MAGIC Fill in the statement below to register a temporary view of the version just before data was deleted, then run the following cell to query the view.
@@ -164,6 +180,8 @@ SELECT * FROM pre_delete_vw
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Run the cell below to check that you have captured the correct version.
 
 -- COMMAND ----------
@@ -176,6 +194,8 @@ SELECT * FROM pre_delete_vw
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Restore a Previous Version
 -- MAGIC 
 -- MAGIC Apparently there was a misunderstanding; the beans your friend gave you that you merged into your collection were not intended for you to keep.
@@ -190,6 +210,8 @@ SELECT * FROM pre_delete_vw
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Review the history of your table. Make note of the fact that restoring to a previous version adds another table version.
 
 -- COMMAND ----------
@@ -206,6 +228,8 @@ DESCRIBE HISTORY beans
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## File Compaction
 -- MAGIC Looking at the transaction metrics during your reversion, you are surprised you have some many files for such a small collection of data.
 -- MAGIC 
@@ -221,6 +245,8 @@ DESCRIBE HISTORY beans
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Your data should have been compacted to a single file; confirm this manually by running the following cell.
 
 -- COMMAND ----------
@@ -230,6 +256,8 @@ DESCRIBE DETAIL beans
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Run the cell below to check that you've successfully optimized and indexed your table.
 
 -- COMMAND ----------
@@ -242,6 +270,8 @@ DESCRIBE DETAIL beans
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC ## Cleaning Up Stale Data Files
 -- MAGIC 
 -- MAGIC You know that while all your data now resides in 1 data file, the data files from previous versions of your table are still being stored alongside this. You wish to remove these files and remove access to previous versions of the table by running **`VACUUM`** on the table.
@@ -264,6 +294,8 @@ SET spark.databricks.delta.vacuum.logging.enabled = true;
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Before permanently deleting data files, review them manually using the **`DRY RUN`** option.
 
 -- COMMAND ----------
@@ -273,6 +305,8 @@ VACUUM beans RETAIN 0 HOURS DRY RUN
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC All data files not in the current version of the table will be shown in the preview above.
 -- MAGIC 
 -- MAGIC Run the command again without **`DRY RUN`** to permanently delete these files.
@@ -286,6 +320,8 @@ VACUUM beans RETAIN 0 HOURS
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Because **`VACUUM`** can be such a destructive act for important datasets, it's always a good idea to turn the retention duration check back on. Run the cell below to reactive this setting.
 
 -- COMMAND ----------
@@ -295,6 +331,8 @@ SET spark.databricks.delta.retentionDurationCheck.enabled = true
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Note that the table history will indicate the user that completed the **`VACUUM`** operation, the number of files deleted, and log that the retention check was disabled during this operation.
 
 -- COMMAND ----------
@@ -304,6 +342,8 @@ DESCRIBE HISTORY beans
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC Query your table again to confirm you still have access to the current version.
 
 -- COMMAND ----------
@@ -313,6 +353,8 @@ SELECT * FROM beans
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC <img src="https://files.training.databricks.com/images/icon_warn_32.png"> Because Delta Cache stores copies of files queried in the current session on storage volumes deployed to your currently active cluster, you may still be able to temporarily access previous table versions (though systems should **not** be designed to expect this behavior). 
 -- MAGIC 
 -- MAGIC Restarting the cluster will ensure that these cached data files are permanently purged.
@@ -327,6 +369,8 @@ SELECT * FROM beans
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC 
+-- MAGIC 
 -- MAGIC By completing this lab, you should now feel comfortable:
 -- MAGIC * Completing standard Delta Lake table creation and data manipulation commands
 -- MAGIC * Reviewing table metadata including table history
@@ -336,7 +380,9 @@ SELECT * FROM beans
 
 -- COMMAND ----------
 
--- MAGIC %md 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC  
 -- MAGIC Run the following cell to delete the tables and files associated with this lesson.
 
 -- COMMAND ----------

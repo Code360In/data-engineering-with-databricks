@@ -9,6 +9,8 @@
 
 # MAGIC %md
 # MAGIC 
+# MAGIC 
+# MAGIC 
 # MAGIC ## End-to-End ETL in the Lakehouse
 # MAGIC 
 # MAGIC In this notebook, you will pull together concepts learned throughout the course to complete an example data pipeline.
@@ -28,6 +30,8 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Run Setup
 # MAGIC Run the following cell to reset all the databases and directories associated with this lab.
 
@@ -38,8 +42,10 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Land Initial Data
-# MAGIC Seed the landing zone with some data before proceeding. 
+# MAGIC Seed the landing zone with some data before proceeding.
 
 # COMMAND ----------
 
@@ -48,6 +54,8 @@ DA.data_factory.load()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Create and Configure a DLT Pipeline
 # MAGIC **NOTE**: The main difference between the instructions here and in previous labs with DLT is that in this instance, we will be setting up our pipeline for **Continuous** execution in **Production** mode.
 
@@ -58,6 +66,8 @@ print_pipeline_config()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC Steps:
 # MAGIC 1. Click the **Jobs** button on the sidebar.
 # MAGIC 1. Select the **Delta Live Tables** tab.
@@ -83,6 +93,8 @@ print_pipeline_config()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Schedule a Notebook Job
 # MAGIC 
 # MAGIC Our DLT pipeline is setup to process data as soon as it arrives. 
@@ -98,6 +110,8 @@ print_job_config()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC Steps:
 # MAGIC 1. Navigate to the Jobs UI using the Databricks left side navigation bar.
 # MAGIC 1. Click the blue **Create Job** button
@@ -113,19 +127,24 @@ print_job_config()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Set a Chronological Schedule for your Job
 # MAGIC Steps:
-# MAGIC * On the right hand side of the Jobs UI, locate the **Schedule** section.
-# MAGIC * Click on the **Edit schedule** button to explore scheduling options.
-# MAGIC * Change **Schedule type** field from **Manual** to **Scheduled** will bring up a chron scheduling UI.
-# MAGIC * Set the schedule to update **Every 2**, **Minutes** from **00** 
-# MAGIC * Click **Save**
+# MAGIC 1. Navigate to the **Jobs UI** and click on the job you just created.
+# MAGIC 1. Locate the **Schedule** section in the side panel on the right.
+# MAGIC 1. Click on the **Edit schedule** button to explore scheduling options.
+# MAGIC 1. Change the **Schedule type** field from **Manual** to **Scheduled**, which will bring up a chron scheduling UI.
+# MAGIC 1. Set the schedule to update **Every 2**, **Minutes** from **00** 
+# MAGIC 1. Click **Save**
 # MAGIC 
 # MAGIC **NOTE**: If you wish, you can click **Run now** to trigger the first run, or wait until the top of the next minute to make sure your scheduling has worked successfully.
 
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Register DLT Event Metrics for Querying with DBSQL
 # MAGIC 
 # MAGIC The following cell prints out SQL statements to register the DLT event logs to your target database for querying in DBSQL.
@@ -141,6 +160,8 @@ DA.generate_register_dlt_event_metrics_sql()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Define a Query on the Gold Table
 # MAGIC 
 # MAGIC The **daily_patient_avg** table is automatically updated each time a new batch of data is processed through the DLT pipeline. Each time a query is executed against this table, DBSQL will confirm if there is a newer version and then materialize results from the newest available version.
@@ -154,13 +175,15 @@ DA.generate_daily_patient_avg()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Add a Line Plot Visualization
 # MAGIC 
 # MAGIC To track trends in patient averages over time, create a line plot and add it to a new dashboard.
 # MAGIC 
 # MAGIC Create a line plot with the following settings:
 # MAGIC * **X Column**: **`date`**
-# MAGIC * **Y Columns**: **`avg_heartrate`**
+# MAGIC * **Y Column**: **`avg_heartrate`**
 # MAGIC * **Group By**: **`name`**
 # MAGIC 
 # MAGIC Add this visualization to a dashboard.
@@ -168,13 +191,15 @@ DA.generate_daily_patient_avg()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Track Data Processing Progress
 # MAGIC 
 # MAGIC The code below extracts the **`flow_name`**, **`timestamp`**, and **`num_output_rows`** from the DLT event logs.
 # MAGIC 
 # MAGIC Save this query in DBSQL, then define a bar plot visualization that shows:
 # MAGIC * **X Column**: **`timestamp`**
-# MAGIC * **Y Columns**: **`num_output_rows`**
+# MAGIC * **Y Column**: **`num_output_rows`**
 # MAGIC * **Group By**: **`flow_name`**
 # MAGIC 
 # MAGIC Add your visualization to your dashboard.
@@ -186,6 +211,8 @@ DA.generate_visualization_query()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
+# MAGIC 
 # MAGIC ## Refresh your Dashboard and Track Results
 # MAGIC 
 # MAGIC The **Land-Data** notebook scheduled with Jobs above has 12 batches of data, each representing a month of recordings for our small sampling of patients. As configured per our instructions, it should take just over 20 minutes for all of these batches of data to be triggered and processed (we scheduled the Databricks Job to run every 2 minutes, and batches of data will process through our pipeline very quickly after initial ingestion).
@@ -194,7 +221,11 @@ DA.generate_visualization_query()
 
 # COMMAND ----------
 
-# MAGIC %md With everything configured, you can now continue to the final part of your lab in the notebook [DE 12.2.4L - Final Steps]($./DE 12.2.4L - Final Steps)
+# MAGIC %md
+# MAGIC 
+# MAGIC 
+# MAGIC 
+# MAGIC With everything configured, you can now continue to the final part of your lab in the notebook [DE 12.2.4L - Final Steps]($./DE 12.2.4L - Final Steps)
 
 # COMMAND ----------
 
