@@ -104,10 +104,10 @@
 # MAGIC 
 # MAGIC This approach _only_ works if the streaming source is replayable; replayable sources include cloud-based object storage and pub/sub messaging services.
 # MAGIC 
-# MAGIC At a high level, the underlying streaming mechanism relies on a couple approaches:
+# MAGIC At a high level, the underlying streaming mechanism relies on a couple of approaches:
 # MAGIC 
 # MAGIC * First, Structured Streaming uses checkpointing and write-ahead logs to record the offset range of data being processed during each trigger interval.
-# MAGIC * Next, the streaming sinks are designed to be _idempotent_—that is, multiple writes of the same data (as identified by the offset) do _not_ result in duplicates being written to the sink.
+# MAGIC * Next, the streaming sinks are designed to be _idempotent_ - that is, multiple writes of the same data (as identified by the offset) do _not_ result in duplicates being written to the sink.
 # MAGIC 
 # MAGIC Taken together, replayable data sources and idempotent sinks allow Structured Streaming to ensure **end-to-end, exactly-once semantics** under any failure condition.
 
