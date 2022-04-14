@@ -29,6 +29,15 @@
 -- COMMAND ----------
 
 -- MAGIC %md
+-- MAGIC ## This notebook requires a Single node Cluster
+-- MAGIC 
+-- MAGIC <img src="https://files.training.databricks.com/images/icon_warn_24.png"> **WARNING**: The backend-configuration of the JDBC server assume you are running this notebook on a single-node cluster. If you are running on a cluster with multiple workers, the client running in the executors will not be able to connect to the driver.
+-- MAGIC 
+-- MAGIC To create a Single Node Cluster, go into Compute, Create Cluster and in "Cluster Mode" select "Single Node". Once it's done, attach the notebook to your new cluster.
+
+-- COMMAND ----------
+
+-- MAGIC %md
 -- MAGIC 
 -- MAGIC 
 -- MAGIC ## Run Setup
