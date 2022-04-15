@@ -16,7 +16,7 @@ def autoload_to_table(data_source, source_format, table_name, checkpoint_directo
         .writeStream
         .option("checkpointLocation", checkpoint_directory)
         .option("mergeSchema", "true")
-        .trigger(once=True)
+        .trigger(availableNow=True)
         .table(table_name)
         .awaitTermination()
     )

@@ -19,11 +19,11 @@
 -- MAGIC In this notebook, we'll first have a simple introduction to these methods, and then explore how this logic can be combined with **`CASE`** / **`WHEN`** clauses to provide reusable custom control flow logic.
 -- MAGIC 
 -- MAGIC ## Learning Objectives
--- MAGIC By the end of this lesson, students will be confident:
--- MAGIC * Defining and registering SQL UDFs
--- MAGIC * Describing the security model used for sharing SQL UDFs
--- MAGIC * Using **`CASE`** / **`WHEN`** statements in SQL code
--- MAGIC * Leveraging **`CASE`** / **`WHEN`** statements in SQL UDFs for custom control flow
+-- MAGIC By the end of this lesson, you should be able to:
+-- MAGIC * Define and registering SQL UDFs
+-- MAGIC * Describe the security model used for sharing SQL UDFs
+-- MAGIC * Use **`CASE`** / **`WHEN`** statements in SQL code
+-- MAGIC * Leverage **`CASE`** / **`WHEN`** statements in SQL UDFs for custom control flow
 
 -- COMMAND ----------
 

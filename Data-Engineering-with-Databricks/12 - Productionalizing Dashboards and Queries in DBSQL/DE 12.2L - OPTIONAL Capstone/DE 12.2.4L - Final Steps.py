@@ -70,7 +70,7 @@
 # COMMAND ----------
 
 # TODO
-# CREATE INCREMENTAL LIVE TABLE recordings_enriched
+# CREATE OR REFRESH STREAMING LIVE TABLE recordings_enriched
 #   (CONSTRAINT positive_heartrate EXPECT (heartrate > 0) ON VIOLATION DROP ROW)
 # AS SELECT 
 #   CAST(a.device_id AS INTEGER) device_id, 

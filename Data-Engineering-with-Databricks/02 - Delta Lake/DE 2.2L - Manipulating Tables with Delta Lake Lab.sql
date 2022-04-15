@@ -16,7 +16,7 @@
 -- MAGIC This notebook provides a hands-on review of some of the basic functionality of Delta Lake.
 -- MAGIC 
 -- MAGIC ## Learning Objectives
--- MAGIC By the end of this lessons, student will be able to:
+-- MAGIC By the end of this lab, you should be able to:
 -- MAGIC - Execute standard operations to create and manipulate Delta Lake tables, including:
 -- MAGIC   - **`CREATE TABLE`**
 -- MAGIC   - **`INSERT INTO`**

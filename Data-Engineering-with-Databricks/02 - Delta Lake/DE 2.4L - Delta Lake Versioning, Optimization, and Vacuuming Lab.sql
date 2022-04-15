@@ -15,7 +15,7 @@
 -- MAGIC This notebook provides a hands-on review of some of the more esoteric features Delta Lake brings to the data lakehouse.
 -- MAGIC 
 -- MAGIC ## Learning Objectives
--- MAGIC By the end of this lessons, student will be able to:
+-- MAGIC By the end of this lab, you should be able to:
 -- MAGIC - Review table history
 -- MAGIC - Query previous table versions and rollback a table to a specific version
 -- MAGIC - Perform file compaction and Z-order indexing

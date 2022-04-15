@@ -17,13 +17,13 @@
 -- MAGIC This gets more complicated as the data structure becomes less regular, when many tables need to be used in a single query, or when the shape of data needs to be changed dramatically. This notebook introduces a number of functions present in Spark SQL to help engineers complete even the most complicated transformations.
 -- MAGIC 
 -- MAGIC ## Learning Objectives
--- MAGIC By the end of this lesson, students should feel confident:
--- MAGIC - Using **`.`** and **`:`** syntax to query nested data
--- MAGIC - Working with JSON
--- MAGIC - Flattening and unpacking arrays and structs
--- MAGIC - Combining datasets using joins and set operators
--- MAGIC - Reshaping data using pivot tables
--- MAGIC - Using higher order functions for working with arrays
+-- MAGIC By the end of this lesson, you should be able to:
+-- MAGIC - Use **`.`** and **`:`** syntax to query nested data
+-- MAGIC - Work with JSON
+-- MAGIC - Flatten and unpacking arrays and structs
+-- MAGIC - Combine datasets using joins and set operators
+-- MAGIC - Reshape data using pivot tables
+-- MAGIC - Use higher order functions for working with arrays
 
 -- COMMAND ----------
 

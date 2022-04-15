@@ -17,13 +17,13 @@
 -- MAGIC Note that while some of the keywords used here aren't part of standard ANSI SQL, all Delta Lake operations can be run on Databricks using SQL
 -- MAGIC 
 -- MAGIC ## Learning Objectives
--- MAGIC By the end of this lesson, students should feel confident:
--- MAGIC * Using **`OPTIMIZE`** to compact small files
--- MAGIC * Using **`ZORDER`** to index tables
--- MAGIC * Describing the directory structure of Delta Lake files
--- MAGIC * Reviewing a history of table transactions
--- MAGIC * Querying and rolling back to previous table version
--- MAGIC * Cleaning up stale data files with **`VACUUM`**
+-- MAGIC By the end of this lesson, you should be able to:
+-- MAGIC * Use **`OPTIMIZE`** to compact small files
+-- MAGIC * Use **`ZORDER`** to index tables
+-- MAGIC * Describe the directory structure of Delta Lake files
+-- MAGIC * Review a history of table transactions
+-- MAGIC * Query and roll back to previous table version
+-- MAGIC * Clean up stale data files with **`VACUUM`**
 -- MAGIC 
 -- MAGIC **Resources**
 -- MAGIC * <a href="https://docs.databricks.com/spark/latest/spark-sql/language-manual/delta-optimize.html" target="_blank">Delta Optimize - Databricks Docs</a>

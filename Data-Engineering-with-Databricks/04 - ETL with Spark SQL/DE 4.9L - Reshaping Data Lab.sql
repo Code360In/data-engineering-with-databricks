@@ -16,7 +16,8 @@
 -- MAGIC 
 -- MAGIC You'll also explore a new higher order function to flag items recorded in **`sales`** based on information extracted from item names.
 -- MAGIC 
--- MAGIC ##### Objectives
+-- MAGIC ## Learning Objectives
+-- MAGIC By the end of this lab, you should be able to:
 -- MAGIC - Pivot and join tables to create clickpaths for each user
 -- MAGIC - Apply higher order functions to flag types of products purchased
 

@@ -14,7 +14,8 @@
 -- MAGIC 
 -- MAGIC In this lab, you will extract and load raw data from JSON files into a Delta table.
 -- MAGIC 
--- MAGIC ##### Objectives
+-- MAGIC ## Learning Objectives
+-- MAGIC By the end of this lab, you should be able to:
 -- MAGIC - Create an external table to extract data from JSON files
 -- MAGIC - Create an empty Delta table with a provided schema
 -- MAGIC - Insert records from an existing table into a Delta table

@@ -20,12 +20,12 @@
 -- MAGIC Note that Delta Lake is the default format for all tables created with Databricks; if you've been running SQL statements on Databricks, you're likely already working with Delta Lake.
 -- MAGIC 
 -- MAGIC ## Learning Objectives
--- MAGIC By the end of this lesson, students should feel confident:
--- MAGIC * Creating Delta Lake tables
--- MAGIC * Querying data from Delta Lake tables
--- MAGIC * Inserting, updating, and deleting records in Delta Lake tables
--- MAGIC * Writing upsert statements with Delta Lake
--- MAGIC * Dropping Delta Lake tables
+-- MAGIC By the end of this lesson, you should be able to:
+-- MAGIC * Create Delta Lake tables
+-- MAGIC * Query data from Delta Lake tables
+-- MAGIC * Insert, update, and delete records in Delta Lake tables
+-- MAGIC * Write upsert statements with Delta Lake
+-- MAGIC * Drop Delta Lake tables
 
 -- COMMAND ----------
 

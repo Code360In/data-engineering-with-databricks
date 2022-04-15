@@ -267,7 +267,7 @@ DA.data_factory.load()
 # MAGIC %md
 # MAGIC 
 # MAGIC 
-# MAGIC Note that we're using **`.trigger(once=True)`** below. This provides us the ability to continue to use the strengths of structured streaming while trigger this job as a single batch. To recap, these strengths include:
+# MAGIC Note that we're using **`.trigger(availableNow=True)`** below. This provides us the ability to continue to use the strengths of structured streaming while trigger this job one-time to process all available data in micro-batches. To recap, these strengths include:
 # MAGIC - exactly once end-to-end fault tolerant processing
 # MAGIC - automatic detection of changes in upstream data sources
 # MAGIC 
@@ -282,7 +282,7 @@ DA.data_factory.load()
       .format("delta")
       .outputMode("complete")
       .option("checkpointLocation", f"{DA.paths.checkpoints}/daily_avg")
-      .trigger(once=True)
+      .trigger(availableNow=True)
       .table("daily_patient_avg"))
 
 # COMMAND ----------
@@ -323,7 +323,7 @@ DA.data_factory.load()
 # MAGIC 
 # MAGIC 
 # MAGIC ## Process Remaining Records
-# MAGIC The following cell will land additional files for the rest of 2020 in your source directory. You'll be able to see these process through the first 3 tables in your Delta Lake, but will need to re-run your final query to update your **`daily_patient_avg`** table, since this query uses the trigger once syntax.
+# MAGIC The following cell will land additional files for the rest of 2020 in your source directory. You'll be able to see these process through the first 3 tables in your Delta Lake, but will need to re-run your final query to update your **`daily_patient_avg`** table, since this query uses the trigger available now syntax.
 
 # COMMAND ----------
 

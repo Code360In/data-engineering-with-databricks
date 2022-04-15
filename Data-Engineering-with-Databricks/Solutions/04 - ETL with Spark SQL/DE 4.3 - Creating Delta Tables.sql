@@ -19,12 +19,12 @@
 -- MAGIC This lesson will focus primarily on the pattern used to create most tables, **`CREATE TABLE _ AS SELECT`** (CTAS) statements.
 -- MAGIC 
 -- MAGIC ## Learning Objectives
--- MAGIC By the end of this lesson, students should feel confident:
--- MAGIC - Using CTAS statements to create Delta Lake tables
--- MAGIC - Creating new tables from existing views or tables
--- MAGIC - Enriching loaded data with additional metadata
--- MAGIC - Declaring table schema with generated columns and descriptive comments
--- MAGIC - Setting advanced options to control data location, quality enforcement, and partitioning
+-- MAGIC By the end of this lesson, you should be able to:
+-- MAGIC - Use CTAS statements to create Delta Lake tables
+-- MAGIC - Create new tables from existing views or tables
+-- MAGIC - Enrich loaded data with additional metadata
+-- MAGIC - Declare table schema with generated columns and descriptive comments
+-- MAGIC - Set advanced options to control data location, quality enforcement, and partitioning
 
 -- COMMAND ----------
 

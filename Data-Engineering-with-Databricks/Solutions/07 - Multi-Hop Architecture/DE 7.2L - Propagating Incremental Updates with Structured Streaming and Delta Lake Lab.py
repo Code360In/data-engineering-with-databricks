@@ -13,7 +13,7 @@
 # MAGIC # Propagating Incremental Updates with Structured Streaming and Delta Lake
 # MAGIC 
 # MAGIC ## Learning Objectives
-# MAGIC By the end of this lab, you will be able to:
+# MAGIC By the end of this lab, you should be able to:
 # MAGIC * Apply your knowledge of structured streaming and Auto Loader to implement a simple multi-hop architecture
 
 # COMMAND ----------
@@ -38,7 +38,7 @@
 # MAGIC 
 # MAGIC This lab uses a collection of customer-related CSV data from DBFS found in */databricks-datasets/retail-org/customers/*.
 # MAGIC 
-# MAGIC Read this data using Auto Loader using its schema inference (use **`customersCheckpointPath`** to store the schema info). Stream the raw data to a Delta table called **`bronze`**.
+# MAGIC Read this data using Auto Loader using its schema inference (use **`customers_checkpoint_path`** to store the schema info). Stream the raw data to a Delta table called **`bronze`**.
 
 # COMMAND ----------
 
@@ -59,6 +59,18 @@ query = (spark.readStream
 # COMMAND ----------
 
 DA.block_until_stream_is_ready(query)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC 
+# MAGIC Run the cell below to check your work.
+
+# COMMAND ----------
+
+assert spark.table("bronze"), "Table named `bronze` does not exist"
+assert spark.sql(f"SHOW TABLES").filter(f"tableName == 'bronze'").first()["isTemporary"] == False, "Table is temporary"
+assert spark.table("bronze").dtypes ==  [('customer_id', 'string'), ('tax_id', 'string'), ('tax_code', 'string'), ('customer_name', 'string'), ('state', 'string'), ('city', 'string'), ('postcode', 'string'), ('street', 'string'), ('number', 'string'), ('unit', 'string'), ('region', 'string'), ('district', 'string'), ('lon', 'string'), ('lat', 'string'), ('ship_to_address', 'string'), ('valid_from', 'string'), ('valid_to', 'string'), ('units_purchased', 'string'), ('loyalty_segment', 'string'), ('_rescued_data', 'string')], "Incorrect Schema"
 
 # COMMAND ----------
 
@@ -101,6 +113,19 @@ DA.block_until_stream_is_ready(query)
 
 # MAGIC %md
 # MAGIC 
+# MAGIC Run the cell below to check your work.
+
+# COMMAND ----------
+
+assert spark.table("bronze_enhanced_temp"), "Table named `bronze_enhanced_temp` does not exist"
+assert spark.sql(f"SHOW TABLES").filter(f"tableName == 'bronze_enhanced_temp'").first()["isTemporary"] == True, "Table is not temporary"
+assert spark.table("bronze_enhanced_temp").dtypes ==  [('customer_id', 'string'), ('tax_id', 'string'), ('tax_code', 'string'), ('customer_name', 'string'), ('state', 'string'), ('city', 'string'), ('postcode', 'string'), ('street', 'string'), ('number', 'string'), ('unit', 'string'), ('region', 'string'), ('district', 'string'), ('lon', 'string'), ('lat', 'string'), ('ship_to_address', 'string'), ('valid_from', 'string'), ('valid_to', 'string'), ('units_purchased', 'string'), ('loyalty_segment', 'string'), ('_rescued_data', 'string'), ('receipt_time', 'timestamp'), ('source_file', 'string')], "Incorrect Schema"
+assert spark.table("bronze_enhanced_temp").isStreaming, "Not a streaming table"
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC 
 # MAGIC 
 # MAGIC ## Silver table
 # MAGIC 
@@ -121,6 +146,19 @@ query = (spark.table("bronze_enhanced_temp")
 # COMMAND ----------
 
 DA.block_until_stream_is_ready(query)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC 
+# MAGIC Run the cell below to check your work.
+
+# COMMAND ----------
+
+assert spark.table("silver"), "Table named `silver` does not exist"
+assert spark.sql(f"SHOW TABLES").filter(f"tableName == 'silver'").first()["isTemporary"] == False, "Table is temporary"
+assert spark.table("silver").dtypes ==  [('customer_id', 'string'), ('tax_id', 'string'), ('tax_code', 'string'), ('customer_name', 'string'), ('state', 'string'), ('city', 'string'), ('postcode', 'string'), ('street', 'string'), ('number', 'string'), ('unit', 'string'), ('region', 'string'), ('district', 'string'), ('lon', 'string'), ('lat', 'string'), ('ship_to_address', 'string'), ('valid_from', 'string'), ('valid_to', 'string'), ('units_purchased', 'string'), ('loyalty_segment', 'string'), ('_rescued_data', 'string'), ('receipt_time', 'timestamp'), ('source_file', 'string')], "Incorrect Schema"
+assert spark.table("silver").filter("postcode <= 0").count() == 0, "Null postcodes present"
 
 # COMMAND ----------
 
@@ -161,6 +199,18 @@ DA.block_until_stream_is_ready(query)
 
 # MAGIC %md
 # MAGIC 
+# MAGIC Run the cell below to check your work.
+
+# COMMAND ----------
+
+assert spark.table("customer_count_temp"), "Table named `customer_count_temp` does not exist"
+assert spark.sql(f"SHOW TABLES").filter(f"tableName == 'customer_count_temp'").first()["isTemporary"] == True, "Table is not temporary"
+assert spark.table("customer_count_temp").dtypes ==  [('state', 'string'), ('customer_count', 'bigint')], "Incorrect Schema"
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC 
 # MAGIC 
 # MAGIC Finally, stream the data from the **`customer_count_temp`** view to a Delta table called **`gold_customer_count_by_state`**.
 
@@ -179,6 +229,19 @@ query = (spark.table("customer_count_temp")
 # COMMAND ----------
 
 DA.block_until_stream_is_ready(query)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC 
+# MAGIC Run the cell below to check your work.
+
+# COMMAND ----------
+
+assert spark.table("gold_customer_count_by_state"), "Table named `gold_customer_count_by_state` does not exist"
+assert spark.sql(f"show tables").filter(f"tableName == 'gold_customer_count_by_state'").first()["isTemporary"] == False, "Table is temporary"
+assert spark.table("gold_customer_count_by_state").dtypes ==  [('state', 'string'), ('customer_count', 'bigint')], "Incorrect Schema"
+assert spark.table("gold_customer_count_by_state").count() == 51, "Incorrect number of rows" 
 
 # COMMAND ----------
 

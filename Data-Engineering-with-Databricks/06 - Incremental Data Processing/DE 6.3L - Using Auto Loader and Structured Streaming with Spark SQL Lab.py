@@ -13,7 +13,7 @@
 # MAGIC # Using Auto Loader and Structured Streaming with Spark SQL
 # MAGIC 
 # MAGIC ## Learning Objectives
-# MAGIC By the end of this lab, you will be able to:
+# MAGIC By the end of this lab, you should be able to:
 # MAGIC * Ingest data using Auto Loader
 # MAGIC * Aggregate streaming data
 # MAGIC * Stream data to a Delta table
@@ -55,6 +55,31 @@ customers_checkpoint_path = f"{DA.paths.checkpoints}/customers"
 
 # COMMAND ----------
 
+from pyspark.sql import Row
+assert Row(tableName="customers_raw_temp", isTemporary=True) in spark.sql("show tables").select("tableName", "isTemporary").collect(), "Table not present or not temporary"
+assert spark.table("customers_raw_temp").dtypes ==  [('customer_id', 'string'),
+ ('tax_id', 'string'),
+ ('tax_code', 'string'),
+ ('customer_name', 'string'),
+ ('state', 'string'),
+ ('city', 'string'),
+ ('postcode', 'string'),
+ ('street', 'string'),
+ ('number', 'string'),
+ ('unit', 'string'),
+ ('region', 'string'),
+ ('district', 'string'),
+ ('lon', 'string'),
+ ('lat', 'string'),
+ ('ship_to_address', 'string'),
+ ('valid_from', 'string'),
+ ('valid_to', 'string'),
+ ('units_purchased', 'string'),
+ ('loyalty_segment', 'string'),
+ ('_rescued_data', 'string')], "Incorrect Schema"
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC 
 # MAGIC 
@@ -71,6 +96,11 @@ customers_checkpoint_path = f"{DA.paths.checkpoints}/customers"
 # MAGIC CREATE OR REPLACE TEMPORARY VIEW customer_count_by_state_temp AS
 # MAGIC SELECT
 # MAGIC   <FILL-IN>
+
+# COMMAND ----------
+
+assert Row(tableName="customer_count_by_state_temp", isTemporary=True) in spark.sql("show tables").select("tableName", "isTemporary").collect(), "Table not present or not temporary"
+assert spark.table("customer_count_by_state_temp").dtypes == [('state', 'string'), ('customer_count', 'bigint')], "Incorrect Schema"
 
 # COMMAND ----------
 
@@ -93,6 +123,11 @@ query = (spark
 # COMMAND ----------
 
 DA.block_until_stream_is_ready(query)
+
+# COMMAND ----------
+
+assert Row(tableName="customer_count_by_state", isTemporary=False) in spark.sql("show tables").select("tableName", "isTemporary").collect(), "Table not present or not temporary"
+assert spark.table("customer_count_by_state").dtypes == [('state', 'string'), ('customer_count', 'bigint')], "Incorrect Schema"
 
 # COMMAND ----------
 

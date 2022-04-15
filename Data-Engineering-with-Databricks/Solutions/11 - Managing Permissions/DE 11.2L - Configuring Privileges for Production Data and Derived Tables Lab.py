@@ -14,7 +14,9 @@
 # MAGIC 
 # MAGIC The instructions as detailed below are provided for pairs of users to explore how Table ACLs on Databricks work. It leverages Databricks SQL and the Data Explorer to accomplish these tasks, and assumes that neither user has admin privileges for the workspace. An admin will need to have previously granted **`CREATE`** and **`USAGE`** privileges on a catalog for users to be able to create databases in Databricks SQL.
 # MAGIC 
-# MAGIC By the end of this lesson, you should be able to:
+# MAGIC ##Learning Objectives
+# MAGIC 
+# MAGIC By the end of this lab, you should be able to:
 # MAGIC * Use Data Explorer to navigate relational entities
 # MAGIC * Configure permissions for tables and views with Data Explorer
 # MAGIC * Configure minimal permissions to allow for table discovery and querying

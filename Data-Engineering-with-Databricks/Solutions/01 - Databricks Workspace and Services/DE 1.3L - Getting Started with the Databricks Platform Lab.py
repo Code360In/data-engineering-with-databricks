@@ -16,7 +16,7 @@
 # MAGIC This notebook provides a hands-on review of some of the basic functionality of the Databricks Data Science and Engineering Workspace.
 # MAGIC 
 # MAGIC ## Learning Objectives
-# MAGIC By the end of this lessons, you will be able to:
+# MAGIC By the end of this lab, you should be able to:
 # MAGIC - Rename a notebook and change the default language
 # MAGIC - Attach a cluster
 # MAGIC - Use the **`%run`** magic command

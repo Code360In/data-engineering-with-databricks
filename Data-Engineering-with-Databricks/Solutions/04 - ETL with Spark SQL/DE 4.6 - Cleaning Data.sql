@@ -25,11 +25,11 @@
 -- MAGIC We'll pay special attention to behaviors around **`NULL`** values, as well as formatting strings and datetime fields.
 -- MAGIC 
 -- MAGIC ## Learning Objectives
--- MAGIC By the end of this notebook, students should feel comfortable:
--- MAGIC - Summarizing datasets and describe null behaviors
--- MAGIC - Retrieving and removing duplicates
--- MAGIC - Validating datasets for expected counts, missing values, and duplicate records
--- MAGIC - Applying common transformations to clean and transform data
+-- MAGIC By the end of this lesson, you should be able to:
+-- MAGIC - Summarize datasets and describe null behaviors
+-- MAGIC - Retrieve and removing duplicates
+-- MAGIC - Validate datasets for expected counts, missing values, and duplicate records
+-- MAGIC - Apply common transformations to clean and transform data
 
 -- COMMAND ----------
 

@@ -13,7 +13,7 @@
 # MAGIC # Just Enough Python for Databricks SQL
 # MAGIC 
 # MAGIC ## Learning Objectives
-# MAGIC By the end of this lesson, students should be able to:
+# MAGIC By the end of this lesson, you should be able to:
 # MAGIC * Leverage **`if`** / **`else`**
 # MAGIC * Describe how errors impact notebook execution
 # MAGIC * Write simple tests with **`assert`**

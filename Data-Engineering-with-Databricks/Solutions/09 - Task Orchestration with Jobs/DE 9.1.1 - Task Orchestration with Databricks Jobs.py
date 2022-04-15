@@ -16,13 +16,13 @@
 # MAGIC 
 # MAGIC Here, we'll start by reviewing the steps for scheduling a notebook as a triggered standalone job, and then add a dependent job using a DLT pipeline. 
 # MAGIC 
-# MAGIC 
-# MAGIC By the end of this lesson, you should feel confident:
-# MAGIC * Scheduling a notebook as a Databricks Job
-# MAGIC * Describing job scheduling options and differences between cluster types
-# MAGIC * Reviewing Job Runs to track progress and see results
-# MAGIC * Scheduling a DLT pipeline as a Databricks Job
-# MAGIC * Configuring linear dependencies between tasks using the Databricks Jobs UI
+# MAGIC ## Learning Objectives
+# MAGIC By the end of this lesson, you should be able to:
+# MAGIC * Schedule a notebook as a Databricks Job
+# MAGIC * Describe job scheduling options and differences between cluster types
+# MAGIC * Review Job Runs to track progress and see results
+# MAGIC * Schedule a DLT pipeline as a Databricks Job
+# MAGIC * Configure linear dependencies between tasks using the Databricks Jobs UI
 
 # COMMAND ----------
 

@@ -87,7 +87,7 @@ AS SELECT *
 -- COMMAND ----------
 
 -- TODO
-CREATE INCREMENTAL LIVE TABLE recordings_enriched
+CREATE OR REFRESH STREAMING LIVE TABLE recordings_enriched
   (<FILL-IN add a constraint to drop records when heartrate ! > 0>)
 AS SELECT 
   CAST(<FILL-IN>) device_id, 

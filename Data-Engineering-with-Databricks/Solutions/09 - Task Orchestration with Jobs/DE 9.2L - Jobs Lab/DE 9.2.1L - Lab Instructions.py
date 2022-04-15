@@ -17,10 +17,11 @@
 # MAGIC * A Delta Live Table pipeline that processes this data through a series of tables
 # MAGIC * A notebook that queries the gold table produced by this pipeline as well as various metrics output by DLT
 # MAGIC 
-# MAGIC By the end of this lab, you should feel confident:
-# MAGIC * Scheduling a notebook as a Databricks Job
-# MAGIC * Scheduling a DLT pipeline as a Databricks Job
-# MAGIC * Configuring linear dependencies between tasks using the Databricks Jobs UI
+# MAGIC ## Learning Objectives
+# MAGIC By the end of this lab, you should be able to:
+# MAGIC * Schedule a notebook as a Databricks Job
+# MAGIC * Schedule a DLT pipeline as a Databricks Job
+# MAGIC * Configure linear dependencies between tasks using the Databricks Jobs UI
 
 # COMMAND ----------
 
@@ -45,7 +46,7 @@ DA.data_factory.load()
 # MAGIC 
 # MAGIC ## Create and Configure a Pipeline
 # MAGIC 
-# MAGIC The pipline we create here is nearly identical to the one in the previous unit.
+# MAGIC The pipeline we create here is nearly identical to the one in the previous unit.
 # MAGIC 
 # MAGIC We will use it as part of a scheduled job in this lesson.
 # MAGIC 
@@ -64,7 +65,7 @@ print_pipeline_config()
 # MAGIC 1. Click the **Jobs** button on the sidebar.
 # MAGIC 1. Select the **Delta Live Tables** tab.
 # MAGIC 1. Click **Create Pipeline**.
-# MAGIC 1. Fill in a **Pipeline Name** - because these names must be unique, we suggest using the **Pipline Name** provided in the cell above.
+# MAGIC 1. Fill in a **Pipeline Name** - because these names must be unique, we suggest using the **Pipeline Name** provided in the cell above.
 # MAGIC 1. For **Notebook Libraries**, use the navigator to locate and select the companion notebook called **DE 9.2.3L - DLT Job**.
 # MAGIC     * Alternatively, you can copy the **Notebook Path** specified above and paste it into the field provided.
 # MAGIC 1. Configure the Source

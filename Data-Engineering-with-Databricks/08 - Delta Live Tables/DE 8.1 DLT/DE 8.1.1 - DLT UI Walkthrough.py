@@ -12,8 +12,11 @@
 # MAGIC 
 # MAGIC # Using the Delta Live Tables UI
 # MAGIC 
-# MAGIC This demo will explore the DLT UI. By the end of this lesson you will be able to: 
+# MAGIC This demo will explore the DLT UI. 
 # MAGIC 
+# MAGIC 
+# MAGIC ## Learning Objectives
+# MAGIC By the end of this lesson, you should be able to:
 # MAGIC * Deploy a DLT pipeline
 # MAGIC * Explore the resultant DAG
 # MAGIC * Execute an update of the pipeline

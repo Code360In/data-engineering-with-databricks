@@ -4,7 +4,7 @@
 # MAGIC 
 # MAGIC # Exploring the Results of a DLT Pipeline
 # MAGIC 
-# MAGIC This Notebook explores the execution results of a DLT pipeline.
+# MAGIC This notebook explores the execution results of a DLT pipeline.
 
 # COMMAND ----------
 

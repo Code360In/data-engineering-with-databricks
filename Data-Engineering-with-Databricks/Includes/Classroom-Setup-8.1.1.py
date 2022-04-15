@@ -54,25 +54,25 @@ def _create_pipeline():
         target = DA.db_name, 
         notebooks = [path])
 
-    DA.pipline_id = pipeline.get("pipeline_id")
+    DA.pipeline_id = pipeline.get("pipeline_id")
        
 DA.create_pipeline = _create_pipeline
 
 # COMMAND ----------
 
 def _start_pipeline():
-    "Provided by DBAcademy, this function starts the pipline and then blocks until it has completed, failed or was canceled"
+    "Provided by DBAcademy, this function starts the pipeline and then blocks until it has completed, failed or was canceled"
 
     import time
     from dbacademy.dbrest import DBAcademyRestClient
     client = DBAcademyRestClient()
 
     # Start the pipeline
-    start = client.pipelines().start_by_id(DA.pipline_id)
+    start = client.pipelines().start_by_id(DA.pipeline_id)
     update_id = start.get("update_id")
 
     # Get the status and block until it is done
-    update = client.pipelines().get_update_by_id(DA.pipline_id, update_id)
+    update = client.pipelines().get_update_by_id(DA.pipeline_id, update_id)
     state = update.get("update").get("state")
 
     done = ["COMPLETED", "FAILED", "CANCELED"]
@@ -80,7 +80,7 @@ def _start_pipeline():
         duration = 15
         time.sleep(duration)
         print(f"Current state is {state}, sleeping {duration} seconds.")    
-        update = client.pipelines().get_update_by_id(DA.pipline_id, update_id)
+        update = client.pipelines().get_update_by_id(DA.pipeline_id, update_id)
         state = update.get("update").get("state")
     
     print(f"The final state is {state}.")    

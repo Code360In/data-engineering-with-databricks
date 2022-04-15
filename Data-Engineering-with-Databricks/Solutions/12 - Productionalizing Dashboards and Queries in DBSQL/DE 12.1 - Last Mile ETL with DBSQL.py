@@ -30,12 +30,12 @@
 # MAGIC Finally, we'll walk through scheduling updates for queries and dashboards, and demonstrate setting alerts to help monitor the state of production datasets over time.
 # MAGIC 
 # MAGIC ## Learning Objectives
-# MAGIC By the end of this lesson, you will feel confident:
-# MAGIC * Using Databricks SQL as a tool to support production ETL tasks backing analytic workloads
-# MAGIC * Configuring SQL queries and visualizations with the Databricks SQL Editor
-# MAGIC * Creating dashboards in Databricks SQL
-# MAGIC * Scheduling updates for queries and dashboards
-# MAGIC * Setting alerts for SQL queries
+# MAGIC By the end of this lesson, you should be able to:
+# MAGIC * Use Databricks SQL as a tool to support production ETL tasks backing analytic workloads
+# MAGIC * Configure SQL queries and visualizations with the Databricks SQL Editor
+# MAGIC * Create dashboards in Databricks SQL
+# MAGIC * Schedule updates for queries and dashboards
+# MAGIC * Set alerts for SQL queries
 
 # COMMAND ----------
 

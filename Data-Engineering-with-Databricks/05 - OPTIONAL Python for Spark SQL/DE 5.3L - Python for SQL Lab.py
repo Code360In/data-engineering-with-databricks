@@ -13,7 +13,7 @@
 # MAGIC # Just Enough Python for Databricks SQL Lab
 # MAGIC 
 # MAGIC ## Learning Objectives
-# MAGIC By the end of this lesson, students should be able to:
+# MAGIC By the end of this lab, you should be able to:
 # MAGIC * Review basic Python code and describe expected outcomes of code execution
 # MAGIC * Reason through control flow statements in Python functions
 # MAGIC * Add parameters to a SQL query by wrapping it in a Python function

@@ -16,6 +16,7 @@
 -- MAGIC In this notebook, we'll explore SQL syntax to process updates with Delta Lake. While many operations are standard SQL, slight variations exist to accommodate Spark and Delta Lake execution.
 -- MAGIC 
 -- MAGIC ## Learning Objectives
+-- MAGIC By the end of this lesson, you should be able to:
 -- MAGIC - Overwrite data tables using **`INSERT OVERWRITE`**
 -- MAGIC - Append to a table using **`INSERT INTO`**
 -- MAGIC - Append, update, and delete from a table using **`MERGE INTO`**

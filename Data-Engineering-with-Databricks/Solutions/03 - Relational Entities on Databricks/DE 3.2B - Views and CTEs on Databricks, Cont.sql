@@ -1,5 +1,5 @@
 -- Databricks notebook source
--- MAGIC %md --i18n-dba9ce4f-16fd-4879-ae52-eec0809a7119
+-- MAGIC %md
 -- MAGIC 
 -- MAGIC 
 -- MAGIC # Views and CTEs on Databricks, Cont'

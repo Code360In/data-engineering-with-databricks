@@ -11,21 +11,16 @@
 # MAGIC   
 # MAGIC # Create and Manage Interactive Clusters
 # MAGIC 
-# MAGIC A Databricks cluster is a set of computation resources and configurations on which you run data engineering, data science, and data analytics workloads, such as production ETL pipelines, streaming analytics, ad-hoc analytics, and machine learning.
+# MAGIC A Databricks cluster is a set of computation resources and configurations on which you run data engineering, data science, and data analytics workloads, such as production ETL pipelines, streaming analytics, ad-hoc analytics, and machine learning. You run these workloads as a set of commands in a notebook or as an automated job. 
 # MAGIC 
-# MAGIC The specifics of how clusters are configured varies slightly between cloud vendors, but at a high level, it's safe to generalize that a Databricks cluster is created on demand and is temporary. At its most simple, a cluster comprises:
-# MAGIC * virtual machines
-# MAGIC   * compute resources and associated operational memory (similar to CPU and RAM on your laptop)
-# MAGIC   * temporary storage
-# MAGIC * secure networking
-# MAGIC   * configurations to allow cloud resources to exchange data and instructions
-# MAGIC   * (similar to the settings that allows you to use a printer on the same WiFi network)
+# MAGIC Databricks makes a distinction between all-purpose clusters and job clusters. 
+# MAGIC - You use all-purpose clusters to analyze data collaboratively using interactive notebooks.
+# MAGIC - You use job clusters to run fast and robust automated jobs.
 # MAGIC 
 # MAGIC This demo will cover creating and managing all-purpose Databricks clusters using the Databricks Data Science & Engineering Workspace. 
 # MAGIC 
 # MAGIC ## Learning Objectives
-# MAGIC By the end of this lesson you will be able to:
-# MAGIC * Describe basic cluster structure
+# MAGIC By the end of this lesson, you should be able to:
 # MAGIC * Use the Clusters UI to configure and deploy a cluster
 # MAGIC * Edit, terminate, restart, and delete clusters
 
@@ -41,19 +36,25 @@
 # MAGIC 
 # MAGIC **NOTE**: Check with your instructor or a platform admin to confirm whether or not you should create a new cluster or connect to a cluster that has already been deployed. Cluster policies may impact your options for cluster configuration. 
 # MAGIC 
-# MAGIC As of this time, this courseware has only been tested against **DBR 9.1 LTS (Long Term Support)**. See Runtime Notes <a href="https://docs.databricks.com/runtime/index.html" target="_blank">here</a>.
-# MAGIC 
-# MAGIC Most functionality should remain consistent in newer Databricks Runtimes(DBR), but backwards compatability is not guaranteed. This courseware should run successfully on a small cluster or a shared cluster. The instructions provided here deploy a single node cluster using a VM with 4 cores.
-# MAGIC 
 # MAGIC Steps:
 # MAGIC 1. Use the left sidebar to navigate to the **Compute** page by clicking on the ![compute](https://files.training.databricks.com/images/clusters-icon.png) icon
 # MAGIC 1. Click the blue **Create Cluster** button
 # MAGIC 1. For the **Cluster name**, use your name so that you can find it easily and the instructor can easily identify it if you have problems
-# MAGIC 1. Make sure the **Databricks runtime version** is set to **9.1 LTS**
-# MAGIC 1. Leave the boxes checked alongside default settings under the **Autopilot Options**
+# MAGIC 1. Set the **Cluster mode** to **Single Node** (this mode is required to run this course)
+# MAGIC 1. Use the recommended **Databricks runtime version** for this course
+# MAGIC 1. Leave boxes checked for the default settings under the **Autopilot Options**
 # MAGIC 1. Click the blue **Create Cluster** button
 # MAGIC 
-# MAGIC **NOTE**: Clusters can take several minutes to deploy. Once you have finished deploying a cluster, feel free to continue to explore the cluster creation UI.
+# MAGIC **NOTE:** Clusters can take several minutes to deploy. Once you have finished deploying a cluster, feel free to continue to explore the cluster creation UI.
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC 
+# MAGIC ### <img src="https://files.training.databricks.com/images/icon_warn_24.png"> Single-Node Cluster Required for This Course
+# MAGIC **IMPORTANT:** This course requires you to run notebooks on a single-node cluster. 
+# MAGIC 
+# MAGIC Follow the instructions above to create a cluster that has **Cluster mode** set to **`Single Node`**.
 
 # COMMAND ----------
 

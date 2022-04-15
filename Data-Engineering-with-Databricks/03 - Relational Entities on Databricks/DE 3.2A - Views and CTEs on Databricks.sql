@@ -14,7 +14,7 @@
 -- MAGIC In this demonstration, you will create and explore views and common table expressions (CTEs).
 -- MAGIC 
 -- MAGIC ## Learning Objectives
--- MAGIC By the end of this lesson, you will be able to:
+-- MAGIC By the end of this lesson, you should be able to:
 -- MAGIC * Use Spark SQL DDL to define views
 -- MAGIC * Run queries that use common table expressions
 -- MAGIC 

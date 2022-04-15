@@ -17,7 +17,7 @@
 # MAGIC If you've previously used Databricks notebooks but this is your first time executing a notebook in Databricks Repos, you'll notice that basic functionality is the same. In the next lesson, we'll review some of the functionality that Databricks Repos adds to notebooks.
 # MAGIC 
 # MAGIC ## Learning Objectives
-# MAGIC By the end of this lesson, students should be able to:
+# MAGIC By the end of this lesson, you should be able to:
 # MAGIC * Attach a notebook to a cluster
 # MAGIC * Execute a cell in a notebook
 # MAGIC * Set the language for a notebook

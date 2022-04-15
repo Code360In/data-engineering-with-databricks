@@ -15,7 +15,7 @@
 # MAGIC This notebook describes the overall structure for the lab exercise, configures the environment for the lab, provides simulated data streaming, and performs cleanup once you are done. A notebook like this is not typically needed in a production pipeline scenario.
 # MAGIC 
 # MAGIC ## Learning Objectives
-# MAGIC By the end of this lesson, you should be able to:
+# MAGIC By the end of this lab, you should be able to:
 # MAGIC * Convert existing data pipelines to Delta Live Tables
 
 # COMMAND ----------
@@ -158,7 +158,7 @@ DA.start_pipeline()
 # MAGIC 
 # MAGIC Let's consider our DAG below:
 # MAGIC 
-# MAGIC <img src="https://files.training.databricks.com/images/dlt_dag.png" width="400">
+# MAGIC <img src="https://files.training.databricks.com/images/dlt-dag.png">
 # MAGIC 
 # MAGIC If the error message **`Dataset not found: 'recordings_parsed'`** is raised, there may be several culprits:
 # MAGIC 1. The logic defining **`recordings_parsed`** is invalid

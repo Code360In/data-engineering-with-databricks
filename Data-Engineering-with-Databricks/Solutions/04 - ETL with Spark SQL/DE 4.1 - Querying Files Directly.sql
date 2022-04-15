@@ -17,9 +17,9 @@
 -- MAGIC A number of file formats support this option, but it is most useful for self-describing data formats (such as parquet and JSON).
 -- MAGIC 
 -- MAGIC ## Learning Objectives
--- MAGIC By the end of this lesson, students should feel confident:
--- MAGIC - Using Spark SQL to directly query data files
--- MAGIC - Leveraging **`text`** and **`binaryFile`** methods to review raw file contents
+-- MAGIC By the end of this lesson, you should be able to:
+-- MAGIC - Use Spark SQL to directly query data files
+-- MAGIC - Leverage **`text`** and **`binaryFile`** methods to review raw file contents
 
 -- COMMAND ----------
 

@@ -16,10 +16,10 @@
 -- MAGIC In this lesson, we will create tables using external data sources. While these tables will not yet be stored in the Delta Lake format (and therefore not be optimized for the Lakehouse), this technique helps to facilitate extracting data from diverse external systems.
 -- MAGIC 
 -- MAGIC ## Learning Objectives
--- MAGIC By the end of this lesson, students should feel confident:
--- MAGIC - Using Spark SQL to configure options for extracting data from external sources
--- MAGIC - Creating tables against external data sources for various file formats
--- MAGIC - Describing default behavior when querying tables defined against external sources
+-- MAGIC By the end of this lesson, you should be able to:
+-- MAGIC - Use Spark SQL to configure options for extracting data from external sources
+-- MAGIC - Create tables against external data sources for various file formats
+-- MAGIC - Describe default behavior when querying tables defined against external sources
 
 -- COMMAND ----------
 

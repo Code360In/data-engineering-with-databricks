@@ -19,7 +19,7 @@
 # MAGIC Mastering just a handful of Python concepts will unlock powerful new design practices for engineers and analysts proficient in SQL. Rather than trying to teach the entire language, this lesson focuses on those features that can immediately be leveraged to write more extensible SQL programs on Databricks.
 # MAGIC 
 # MAGIC ## Learning Objectives
-# MAGIC By the end of this lesson, students should be able to:
+# MAGIC By the end of this lesson, you should be able to:
 # MAGIC * Print and manipulate multi-line Python strings
 # MAGIC * Define variables and functions
 # MAGIC * Use f-strings for variable substitution

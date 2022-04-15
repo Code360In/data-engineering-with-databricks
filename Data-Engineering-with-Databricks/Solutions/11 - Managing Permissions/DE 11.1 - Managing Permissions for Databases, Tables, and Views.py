@@ -16,6 +16,7 @@
 # MAGIC 
 # MAGIC As written, these instructions are for the admin user to complete. The following notebook will have a similar exercise for users to complete in pairs.
 # MAGIC 
+# MAGIC ## Learning Objectives
 # MAGIC By the end of this lesson, you should be able to:
 # MAGIC * Describe the default permissions for users and admins in DBSQL
 # MAGIC * Identify the default owner for databases, tables, and views created in DBSQL and change ownership

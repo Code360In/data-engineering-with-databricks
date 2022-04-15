@@ -16,19 +16,10 @@
 -- MAGIC In this lesson, we will create tables using external data sources. While these tables will not yet be stored in the Delta Lake format (and therefore not be optimized for the Lakehouse), this technique helps to facilitate extracting data from diverse external systems.
 -- MAGIC 
 -- MAGIC ## Learning Objectives
--- MAGIC By the end of this lesson, students should feel confident:
--- MAGIC - Using Spark SQL to configure options for extracting data from external sources
--- MAGIC - Creating tables against external data sources for various file formats
--- MAGIC - Describing default behavior when querying tables defined against external sources
-
--- COMMAND ----------
-
--- MAGIC %md
--- MAGIC ## This notebook requires a Single node Cluster
--- MAGIC 
--- MAGIC <img src="https://files.training.databricks.com/images/icon_warn_24.png"> **WARNING**: The backend-configuration of the JDBC server assume you are running this notebook on a single-node cluster. If you are running on a cluster with multiple workers, the client running in the executors will not be able to connect to the driver.
--- MAGIC 
--- MAGIC To create a Single Node Cluster, go into Compute, Create Cluster and in "Cluster Mode" select "Single Node". Once it's done, attach the notebook to your new cluster.
+-- MAGIC By the end of this lesson, you should be able to:
+-- MAGIC - Use Spark SQL to configure options for extracting data from external sources
+-- MAGIC - Create tables against external data sources for various file formats
+-- MAGIC - Describe default behavior when querying tables defined against external sources
 
 -- COMMAND ----------
 

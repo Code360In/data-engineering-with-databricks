@@ -14,7 +14,7 @@
 -- MAGIC In this demonstration, you will create and explore databases and tables.
 -- MAGIC 
 -- MAGIC ## Learning Objectives
--- MAGIC By the end of this lesson, you will be able to:
+-- MAGIC By the end of this lesson, you should be able to:
 -- MAGIC * Use Spark SQL DDL to define databases and tables
 -- MAGIC * Describe how the **`LOCATION`** keyword impacts the default storage directory
 -- MAGIC 

@@ -13,11 +13,11 @@
 -- MAGIC # Databases, Tables, and Views Lab
 -- MAGIC 
 -- MAGIC ## Learning Objectives
--- MAGIC **In this lab, you will create and explore interactions between various relational entities, including:**
--- MAGIC 
--- MAGIC - Databases
--- MAGIC - Tables (managed and external)
--- MAGIC - Views (views, temp views, and global temp views)
+-- MAGIC By the end of this lab, you should be able to:
+-- MAGIC - Create and explore interactions between various relational entities, including:
+-- MAGIC   - Databases
+-- MAGIC   - Tables (managed and external)
+-- MAGIC   - Views (views, temp views, and global temp views)
 -- MAGIC 
 -- MAGIC **Resources**
 -- MAGIC * <a href="https://docs.databricks.com/user-guide/tables.html" target="_blank">Databases and Tables - Databricks Docs</a>
@@ -85,6 +85,17 @@ FROM parquet.`${da.paths.working_dir}/weather`
 
 -- MAGIC %md
 -- MAGIC 
+-- MAGIC Run the cell below to check your work.
+
+-- COMMAND ----------
+
+-- MAGIC %python 
+-- MAGIC assert spark.sql(f"SHOW DATABASES").filter(f"databaseName == '{DA.db_name}'").count() == 1, "Database not present"
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC 
 -- MAGIC 
 -- MAGIC ## Change to Your New Database
 -- MAGIC 
@@ -95,6 +106,17 @@ FROM parquet.`${da.paths.working_dir}/weather`
 -- TODO
 
 <FILL-IN> ${da.db_name}
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC Run the cell below to check your work.
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC assert spark.sql(f"SHOW CURRENT DATABASE").first()["namespace"] == DA.db_name, "Not using the correct database"
 
 -- COMMAND ----------
 
@@ -116,6 +138,18 @@ FROM parquet.`${da.paths.working_dir}/weather`
 
 -- MAGIC %md
 -- MAGIC 
+-- MAGIC Run the cell below to check your work.
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC assert spark.table("weather_managed"), "Table named `weather_managed` does not exist"
+-- MAGIC assert spark.table("weather_managed").count() == 2559, "Incorrect row count"
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC 
 -- MAGIC 
 -- MAGIC ## Create an External Table
 -- MAGIC 
@@ -129,6 +163,18 @@ FROM parquet.`${da.paths.working_dir}/weather`
 LOCATION "${da.paths.working_dir}/lab/external"
 AS SELECT * 
 FROM parquet.`${da.paths.working_dir}/weather`
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC Run the cell below to check your work.
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC assert spark.table("weather_external"), "Table named `weather_external` does not exist"
+-- MAGIC assert spark.table("weather_external").count() == 2559, "Incorrect row count"
 
 -- COMMAND ----------
 
@@ -210,6 +256,17 @@ DESCRIBE EXTENDED weather_external
 
 -- MAGIC %md
 -- MAGIC 
+-- MAGIC Run the cell below to check your work.
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC assert spark.sql(f"SHOW DATABASES").filter(f"databaseName == '{DA.db_name}'").count() == 0, "Database present"
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC 
 -- MAGIC 
 -- MAGIC With the database dropped, the files will have been deleted as well.
 -- MAGIC 
@@ -278,8 +335,20 @@ USE ${da.db_name};
 
 -- MAGIC %md
 -- MAGIC 
+-- MAGIC Run the cell below to check your work.
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC assert spark.table("weather_managed"), "Table named `weather_managed` does not exist"
+-- MAGIC assert spark.table("weather_managed").count() == 2559, "Incorrect row count"
+
+-- COMMAND ----------
+
+-- MAGIC %md
 -- MAGIC 
--- MAGIC While here we're using the **`userhome`** directory created on the DBFS root, _any_ object store can be used as the database directory. **Defining database directories for groups of users can greatly reduce the chances of accidental data exfiltration**.
+-- MAGIC 
+-- MAGIC While here we're using the **`working_dir`** directory created on the DBFS root, _any_ object store can be used as the database directory. **Defining database directories for groups of users can greatly reduce the chances of accidental data exfiltration**.
 
 -- COMMAND ----------
 
@@ -306,6 +375,18 @@ AS (SELECT *
 
 -- MAGIC %md
 -- MAGIC 
+-- MAGIC Run the cell below to check your work.
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC assert spark.table("celsius"), "Table named `celsius` does not exist"
+-- MAGIC assert spark.sql(f"SHOW TABLES").filter(f"tableName == 'celsius'").first()["isTemporary"] == False, "Table is temporary"
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC 
 -- MAGIC 
 -- MAGIC Now create a temporary view.
 
@@ -322,6 +403,18 @@ AS (SELECT *
 
 -- MAGIC %md
 -- MAGIC 
+-- MAGIC Run the cell below to check your work.
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC assert spark.table("celsius_temp"), "Table named `celsius_temp` does not exist"
+-- MAGIC assert spark.sql(f"SHOW TABLES").filter(f"tableName == 'celsius_temp'").first()["isTemporary"] == True, "Table is not temporary"
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC 
 -- MAGIC 
 -- MAGIC Now register a global temp view.
 
@@ -333,6 +426,17 @@ AS (SELECT *
 AS (SELECT *
   FROM weather_managed
   WHERE UNIT = "C")
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC Run the cell below to check your work.
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC assert spark.table("global_temp.celsius_global"), "Global temporary view named `celsius_global` does not exist"
 
 -- COMMAND ----------
 

@@ -19,12 +19,11 @@
 -- MAGIC At its simplest, you can think of DLT SQL as a slight modification to traditional CTAS statements. DLT tables and views will always be preceded by the **`LIVE`** keyword.
 -- MAGIC 
 -- MAGIC ## Learning Objectives
--- MAGIC 
--- MAGIC By the end of this lesson, students should feel confident:
--- MAGIC * Defining tables and views with Delta Live Tables
--- MAGIC * Using SQL to incrementally ingest raw data with Auto Loader
--- MAGIC * Performing incremental reads on Delta tables with SQL
--- MAGIC * Updating code and redeploying a pipeline
+-- MAGIC By the end of this lesson, you should be able to:
+-- MAGIC * Define tables and views with Delta Live Tables
+-- MAGIC * Use SQL to incrementally ingest raw data with Auto Loader
+-- MAGIC * Perform incremental reads on Delta tables with SQL
+-- MAGIC * Update code and redeploy a pipeline
 
 -- COMMAND ----------
 
@@ -44,7 +43,7 @@
 -- MAGIC 
 -- MAGIC **`sales_orders_raw`** ingests JSON data incrementally from the example dataset found in  */databricks-datasets/retail-org/sales_orders/*.
 -- MAGIC 
--- MAGIC Incremental processing via <a herf="https://docs.databricks.com/spark/latest/structured-streaming/auto-loader.html" target="_blank">Auto Loader</a> (which uses the same processing model as Structured Streaming), requires the addition of the **`INCREMENTAL`** keyword in the declaration as seen below. The **`cloud_files()`** method enables Auto Loader to be used natively with SQL. This method takes the following positional parameters:
+-- MAGIC Incremental processing via <a herf="https://docs.databricks.com/spark/latest/structured-streaming/auto-loader.html" target="_blank">Auto Loader</a> (which uses the same processing model as Structured Streaming), requires the addition of the **`STREAMING`** keyword in the declaration as seen below. The **`cloud_files()`** method enables Auto Loader to be used natively with SQL. This method takes the following positional parameters:
 -- MAGIC * The source location, as mentioned above
 -- MAGIC * The source data format, which is JSON in this case
 -- MAGIC * An arbitrarily sized array of optional reader options. In this case, we set **`cloudFiles.inferColumnTypes`** to **`true`**
@@ -53,7 +52,7 @@
 
 -- COMMAND ----------
 
-CREATE INCREMENTAL LIVE TABLE sales_orders_raw
+CREATE OR REFRESH STREAMING LIVE TABLE sales_orders_raw
 COMMENT "The raw sales orders, ingested from /databricks-datasets."
 AS SELECT * FROM cloud_files("/databricks-datasets/retail-org/sales_orders/", "json", map("cloudFiles.inferColumnTypes", "true"))
 
@@ -68,7 +67,7 @@ AS SELECT * FROM cloud_files("/databricks-datasets/retail-org/sales_orders/", "j
 
 -- COMMAND ----------
 
-CREATE INCREMENTAL LIVE TABLE customers
+CREATE OR REFRESH STREAMING LIVE TABLE customers
 COMMENT "The customers buying finished products, ingested from /databricks-datasets."
 AS SELECT * FROM cloud_files("/databricks-datasets/retail-org/customers/", "csv");
 
@@ -112,7 +111,7 @@ AS SELECT * FROM cloud_files("/databricks-datasets/retail-org/customers/", "csv"
 
 -- COMMAND ----------
 
-CREATE INCREMENTAL LIVE TABLE sales_orders_cleaned(
+CREATE OR REFRESH STREAMING LIVE TABLE sales_orders_cleaned(
   CONSTRAINT valid_order_number EXPECT (order_number IS NOT NULL) ON VIOLATION DROP ROW
 )
 COMMENT "The cleaned sales orders with valid order_number(s) and partitioned by order_datetime."
@@ -137,7 +136,7 @@ AS
 
 -- COMMAND ----------
 
-CREATE LIVE TABLE sales_order_in_la
+CREATE OR REFRESH LIVE TABLE sales_order_in_la
 COMMENT "Sales orders in LA."
 AS
   SELECT city, order_date, customer_id, customer_name, ordered_products_explode.curr, 
@@ -182,7 +181,7 @@ AS
 -- COMMAND ----------
 
 -- TODO
--- CREATE LIVE TABLE sales_order_in_chicago
+-- CREATE OR REFRESH LIVE TABLE sales_order_in_chicago
 -- COMMENT "Sales orders in Chicago."
 -- AS
 --   SELECT city, order_date, customer_id, customer_name, ordered_products_explode.curr, 

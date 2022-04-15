@@ -104,10 +104,10 @@
 # MAGIC 
 # MAGIC This approach _only_ works if the streaming source is replayable; replayable sources include cloud-based object storage and pub/sub messaging services.
 # MAGIC 
-# MAGIC At a high level, the underlying streaming mechanism relies on a couple approaches:
+# MAGIC At a high level, the underlying streaming mechanism relies on a couple of approaches:
 # MAGIC 
 # MAGIC * First, Structured Streaming uses checkpointing and write-ahead logs to record the offset range of data being processed during each trigger interval.
-# MAGIC * Next, the streaming sinks are designed to be _idempotent_—that is, multiple writes of the same data (as identified by the offset) do _not_ result in duplicates being written to the sink.
+# MAGIC * Next, the streaming sinks are designed to be _idempotent_ - that is, multiple writes of the same data (as identified by the offset) do _not_ result in duplicates being written to the sink.
 # MAGIC 
 # MAGIC Taken together, replayable data sources and idempotent sinks allow Structured Streaming to ensure **end-to-end, exactly-once semantics** under any failure condition.
 
@@ -275,13 +275,17 @@ for s in spark.streams.active:
 # MAGIC 
 # MAGIC When defining a streaming write, the **`trigger`** method specifies when the system should process the next set of data..
 # MAGIC 
-# MAGIC | Trigger Type                           | Example | Notes |
-# MAGIC |----------------------------------------|-----------|-------------|
-# MAGIC | Unspecified                            |  | **This is the default.** This is equivalent to using **`processingTime="500ms"`** |
-# MAGIC | Fixed interval micro-batches           | **`.trigger(processingTime="2 minutes")`** | The query will be executed in micro-batches and kicked off at the user-specified intervals |
-# MAGIC | One-time micro-batch                   | **`.trigger(once=True)`** | The query will execute a single micro-batch to process all the available data and then stop on its own |
 # MAGIC 
-# MAGIC Note that triggers are specified when defining how data will be written to a sink and control the frequency of micro-batches. By default, Spark will automatically detect and process all data in the source that has been added since the last trigger.
+# MAGIC | Trigger Type                           | Example | Behavior |
+# MAGIC |----------------------------------------|----------|----------|
+# MAGIC | Unspecified                 |  | **This is the default.** This is equivalent to using **`processingTime="500ms"`** |
+# MAGIC | Fixed interval micro-batches      | **`.trigger(processingTime="2 minutes")`** | The query will be executed in micro-batches and kicked off at the user-specified intervals |
+# MAGIC | Triggered micro-batch               | **`.trigger(once=True)`** | The query will execute a single micro-batch to process all the available data and then stop on its own |
+# MAGIC | Triggered micro-batches       | **`.trigger(availableNow=True)`** | The query will execute multiple micro-batches to process all the available data and then stop on its own |
+# MAGIC 
+# MAGIC Triggers are specified when defining how data will be written to a sink and control the frequency of micro-batches. By default, Spark will automatically detect and process all data in the source that has been added since the last trigger.
+# MAGIC 
+# MAGIC **NOTE:** **`Trigger.AvailableNow`**</a> is a new trigger type that is available in DBR 10.1 for Scala only and available in DBR 10.2 and above for Python and Scala.
 
 # COMMAND ----------
 
@@ -292,7 +296,7 @@ for s in spark.streams.active:
 # MAGIC 
 # MAGIC The code below demonstrates using **`spark.table()`** to load data from a streaming temp view back to a DataFrame. Note that Spark will always load streaming views as a streaming DataFrame and static views as static DataFrames (meaning that incremental processing must be defined with read logic to support incremental writing).
 # MAGIC 
-# MAGIC In this first query, we'll demonstrate using **`trigger(once=True)`** to perform incremental batch processing.
+# MAGIC In this first query, we'll demonstrate using **`trigger(availableNow=True)`** to perform incremental batch processing.
 
 # COMMAND ----------
 
@@ -300,7 +304,7 @@ for s in spark.streams.active:
     .writeStream                                                
     .option("checkpointLocation", f"{DA.paths.checkpoints}/silver")
     .outputMode("complete")
-    .trigger(once=True)
+    .trigger(availableNow=True)
     .table("device_counts")
     .awaitTermination() # This optional method blocks execution of the next cell until the incremental batch write has succeeded
 )
