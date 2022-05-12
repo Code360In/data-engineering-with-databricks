@@ -48,9 +48,9 @@
 -- mode "FAILFAST" will abort file parsing with a RuntimeException if any malformed lines are encountered
 CREATE TABLE external_table
 USING CSV OPTIONS (
-  path '${da.paths.working_dir}/flight_delays',
-  header "true",
-  mode "FAILFAST"
+  path = '${da.paths.working_dir}/flight_delays',
+  header = "true",
+  mode = "FAILFAST"
 );
 
 SELECT * FROM external_table;

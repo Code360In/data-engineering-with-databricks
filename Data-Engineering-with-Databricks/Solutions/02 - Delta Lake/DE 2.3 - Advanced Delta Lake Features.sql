@@ -110,7 +110,18 @@ DESCRIBE EXTENDED students
 -- MAGIC %md
 -- MAGIC 
 -- MAGIC 
--- MAGIC Note the **`Location`** row.
+-- MAGIC **`DESCRIBE DETAIL`** is another command that allows us to explore table metadata.
+
+-- COMMAND ----------
+
+DESCRIBE DETAIL students
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC 
+-- MAGIC Note the **`Location`** field.
 -- MAGIC 
 -- MAGIC While we've so far been thinking about our table as just a relational entity within a database, a Delta Lake table is actually backed by a collection of files stored in cloud object storage.
 
@@ -175,7 +186,7 @@ DESCRIBE DETAIL students
 -- MAGIC %md
 -- MAGIC 
 -- MAGIC 
--- MAGIC Here we see that our table currently contains 3 data files in its present version. So what are all those other Parquet files doing in our table directory? 
+-- MAGIC Here we see that our table currently contains 4 data files in its present version. So what are all those other Parquet files doing in our table directory? 
 -- MAGIC 
 -- MAGIC Rather than overwriting or immediately deleting files containing changed data, Delta Lake uses the transaction log to indicate whether or not files are valid in a current version of the table.
 -- MAGIC 
@@ -347,7 +358,7 @@ VACUUM students RETAIN 0 HOURS DRY RUN
 -- MAGIC %md
 -- MAGIC 
 -- MAGIC 
--- MAGIC By running **`VACUUM`** and deleting the 9 files above, we will permanently remove access to versions of the table that require these files to materialize.
+-- MAGIC By running **`VACUUM`** and deleting the 10 files above, we will permanently remove access to versions of the table that require these files to materialize.
 
 -- COMMAND ----------
 
