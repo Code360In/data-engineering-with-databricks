@@ -91,9 +91,9 @@ CREATE OR REPLACE TEMP VIEW sales_tmp_vw
   (order_id LONG, email STRING, transactions_timestamp LONG, total_item_quantity INTEGER, purchase_revenue_in_usd DOUBLE, unique_items INTEGER, items STRING)
 USING CSV
 OPTIONS (
-  path "${da.paths.datasets}/raw/sales-csv",
-  header "true",
-  delimiter "|"
+  path = "${da.paths.datasets}/raw/sales-csv",
+  header = "true",
+  delimiter = "|"
 );
 
 CREATE TABLE sales_delta AS

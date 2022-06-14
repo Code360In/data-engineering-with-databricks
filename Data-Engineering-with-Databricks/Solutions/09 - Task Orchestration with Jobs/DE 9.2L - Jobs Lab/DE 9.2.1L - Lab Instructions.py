@@ -86,7 +86,7 @@ print_pipeline_config()
 
 # COMMAND ----------
 
-# MAGIC %md --i18n-f98768ac-cbcc-42a2-8c51-ffdc3778aa11
+# MAGIC %md
 # MAGIC 
 # MAGIC 
 # MAGIC ## Schedule a Notebook Job
